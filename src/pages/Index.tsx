@@ -11,8 +11,11 @@ import { TestimonialSection } from "@/components/TestimonialSection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { FaqSection } from "@/components/FaqSection";
 import { Link } from "react-router-dom";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Index = () => {
+  const isMobile = useIsMobile();
+  
   // Function to scroll to top when clicking "Back to Top" button
   const scrollToTop = () => {
     window.scrollTo({
@@ -37,10 +40,20 @@ const Index = () => {
         </div>
       </nav>
       
-      {/* Hero Section */}
+      {/* Hero Section - Responsive layout */}
       <section className="relative z-10 pt-12 md:pt-24 pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div>
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
+          {/* For mobile view - laptop first, text second */}
+          {isMobile && (
+            <div className="w-full flex justify-center">
+              <div className="w-full max-w-[600px]">
+                <AppScreens />
+              </div>
+            </div>
+          )}
+          
+          {/* Text content */}
+          <div className="lg:flex-1">
             <div className="inline-block mb-4 px-3 py-1 bg-brand-gray rounded-full text-sm font-medium text-gray-700">
               <span className="inline-block w-2 h-2 rounded-full bg-brand-green mr-2"></span>
               Coming Soon
@@ -61,12 +74,12 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="relative">
-            <div className="pulse-animation absolute w-full h-full rounded-full"></div>
-            <div className="relative">
+          {/* For desktop view - text first, laptop second */}
+          {!isMobile && (
+            <div className="lg:flex-1">
               <AppScreens />
             </div>
-          </div>
+          )}
         </div>
       </section>
       

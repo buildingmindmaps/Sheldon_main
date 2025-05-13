@@ -146,6 +146,19 @@
   animation: pulse-green 2s infinite;
 }
 
+@keyframes laptop-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(132, 255, 1, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(132, 255, 1, 0);
+  }
+}
+
+.laptop-pulse-animation {
+  animation: laptop-pulse 2s infinite;
+}
+
 .glossy-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);

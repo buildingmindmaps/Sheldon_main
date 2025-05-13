@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Mic, Video, Monitor, ArrowRight, Users } from "lucide-react";
+import { MessageCircle, Mic, Video, Monitor, ArrowRight, Users, BarChart3, Briefcase, BookText } from "lucide-react";
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export function InterviewScreen() {
@@ -34,8 +34,8 @@ export function InterviewScreen() {
           <div className="rounded-lg overflow-hidden bg-gray-900 h-[280px] relative">
             {/* Interviewer - centered in the call */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-brand-green to-green-400 opacity-90 rounded-full flex items-center justify-center">
-                <span className="text-white text-xl font-bold">AI</span>
+              <div className="w-20 h-20 bg-gradient-to-r from-brand-green to-green-400 opacity-90 rounded-full flex items-center justify-center">
+                <span className="text-white text-2xl font-bold">AI</span>
               </div>
               <div className="absolute bottom-4 left-4 bg-black/60 text-white text-xs py-1 px-2 rounded">
                 AI Interviewer
@@ -43,9 +43,9 @@ export function InterviewScreen() {
             </div>
             
             {/* User camera - properly positioned */}
-            <div className="absolute bottom-4 right-4 w-32 h-24 bg-gray-800 rounded-lg overflow-hidden border-2 border-gray-700">
+            <div className="absolute bottom-4 right-4 w-28 h-20 bg-gray-800 rounded-lg overflow-hidden border-2 border-gray-700">
               <div className="w-full h-full flex items-center justify-center bg-gray-700">
-                <Users className="h-8 w-8 text-gray-400" />
+                <Users className="h-6 w-6 text-gray-400" />
               </div>
             </div>
             
@@ -76,12 +76,12 @@ export function InterviewScreen() {
               <div className="w-6 h-6 bg-gradient-to-r from-brand-green to-green-400 rounded-full flex-shrink-0 flex items-center justify-center">
                 <span className="text-white text-[8px] font-medium">AI</span>
               </div>
-              <div className="bg-gray-100 p-2 rounded-lg text-[11px] max-w-[80%]">
+              <div className="bg-gray-100 p-2 rounded-lg text-[10px] max-w-[80%]">
                 <p>Let's start with market sizing. What's the total addressable market for sports beverages?</p>
               </div>
             </div>
             <div className="flex items-start gap-2 justify-end">
-              <div className="bg-black text-white p-2 rounded-lg text-[11px] max-w-[80%]">
+              <div className="bg-black text-white p-2 rounded-lg text-[10px] max-w-[80%]">
                 <p>I'd start by estimating the population and percentage of active consumers...</p>
               </div>
               <div className="w-6 h-6 bg-gray-200 rounded-full flex-shrink-0 flex items-center justify-center">
@@ -92,7 +92,7 @@ export function InterviewScreen() {
               <div className="w-6 h-6 bg-gradient-to-r from-brand-green to-green-400 rounded-full flex-shrink-0 flex items-center justify-center">
                 <span className="text-white text-[8px] font-medium">AI</span>
               </div>
-              <div className="bg-gray-100 p-2 rounded-lg text-[11px] max-w-[80%]">
+              <div className="bg-gray-100 p-2 rounded-lg text-[10px] max-w-[80%]">
                 <p>Good approach. What factors might influence market growth?</p>
               </div>
             </div>
@@ -125,7 +125,7 @@ export function InterviewScreen() {
           <Card className="p-2 min-w-[180px] flex-shrink-0">
             <div className="flex gap-2 items-start">
               <div className="w-8 h-8 bg-gradient-to-r from-brand-green to-green-400 rounded-full flex-shrink-0 flex items-center justify-center">
-                <Users className="h-4 w-4 text-white" />
+                <BarChart3 className="h-4 w-4 text-white" />
               </div>
               <div>
                 <p className="text-xs font-medium">Market Expansion Strategy</p>
@@ -141,7 +141,7 @@ export function InterviewScreen() {
           <Card className="p-2 min-w-[180px] flex-shrink-0">
             <div className="flex gap-2 items-start">
               <div className="w-8 h-8 bg-gradient-to-r from-brand-green to-green-400 rounded-full flex-shrink-0 flex items-center justify-center">
-                <Users className="h-4 w-4 text-white" />
+                <Briefcase className="h-4 w-4 text-white" />
               </div>
               <div>
                 <p className="text-xs font-medium">Pricing Strategy Analysis</p>
@@ -157,7 +157,7 @@ export function InterviewScreen() {
           <Card className="p-2 min-w-[180px] flex-shrink-0">
             <div className="flex gap-2 items-start">
               <div className="w-8 h-8 bg-gradient-to-r from-brand-green to-green-400 rounded-full flex-shrink-0 flex items-center justify-center">
-                <Users className="h-4 w-4 text-white" />
+                <BookText className="h-4 w-4 text-white" />
               </div>
               <div>
                 <p className="text-xs font-medium">Merger Acquisition Case</p>
