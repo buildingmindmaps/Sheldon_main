@@ -13,6 +13,14 @@ import { FaqSection } from "@/components/FaqSection";
 import { Link } from "react-router-dom";
 
 const Index = () => {
+  // Function to scroll to top when clicking "Back to Top" button
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+  
   return (
     <div className="min-h-screen relative overflow-hidden bg-white">
       <FloatingElements />
@@ -115,7 +123,12 @@ const Index = () => {
           <div className="flex flex-col md:flex-row gap-6 md:items-center">
             <a href="#" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
             <a href="#" className="text-gray-600 hover:text-gray-900">Terms of Service</a>
-            <Button variant="outline" size="sm" className="mt-4 md:mt-0">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4 md:mt-0"
+              onClick={scrollToTop}
+            >
               <ArrowUp className="h-4 w-4 mr-2" />
               Back to Top
             </Button>
