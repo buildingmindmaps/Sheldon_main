@@ -1,12 +1,16 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { BookText, BarChart3, Users, Briefcase, ArrowUp } from "lucide-react";
+import { BookText, BarChart3, Users, Briefcase, ArrowUp, ArrowRight } from "lucide-react";
 import { LogoCloud } from "@/components/LogoCloud";
-import { FeatureCard } from "@/components/FeatureCard";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { FloatingElements } from "@/components/FloatingElements";
 import { AppScreens } from "@/components/AppScreens";
+import { InteractiveFeatures } from "@/components/InteractiveFeatures";
+import { TestimonialSection } from "@/components/TestimonialSection";
+import { HowItWorksSection } from "@/components/HowItWorksSection";
+import { FaqSection } from "@/components/FaqSection";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -17,6 +21,9 @@ const Index = () => {
       <nav className="relative z-10 py-6 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto flex justify-between items-center">
         <div className="font-bold text-xl">CaseAI</div>
         <div className="flex gap-4 items-center">
+          <Button variant="ghost" asChild>
+            <Link to="/icons-playbook">Icons Playbook</Link>
+          </Button>
           <Button variant="outline" className="border-gray-300 hover:bg-gray-50">Login</Button>
           <Button className="bg-black hover:bg-gray-800 text-white">Sign Up</Button>
         </div>
@@ -64,36 +71,17 @@ const Index = () => {
           </p>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <FeatureCard
-            title="Case Gym Reps"
-            description="Practice with written & video cases across industries, with timer, instant scoring, and highlighted insights."
-            icon={<BookText className="w-6 h-6 text-brand-green" />}
-            animationDelay="animation-delay-200"
-          />
-          
-          <FeatureCard
-            title="Adaptive Difficulty"
-            description="Our MECE Engine ramps complexity as you improve, preventing plateaus and keeping stretch consistent."
-            icon={<BarChart3 className="w-6 h-6 text-brand-green" />}
-            animationDelay="animation-delay-400"
-          />
-          
-          <FeatureCard
-            title="Live 1-v-1 Battles"
-            description="Schedule head-to-head matches vs. peers with real-time scoring, public leaderboard, and post-match debrief."
-            icon={<Users className="w-6 h-6 text-brand-green" />}
-            animationDelay="animation-delay-200"
-          />
-          
-          <FeatureCard
-            title="Icon Playbooks"
-            description="Weekly 'Think Like Elon/Jobs/Nadella' cases with step-by-step solution walkthroughs & mental-model breakdowns."
-            icon={<Briefcase className="w-6 h-6 text-brand-green" />}
-            animationDelay="animation-delay-400"
-          />
-        </div>
+        <InteractiveFeatures />
       </section>
+      
+      {/* How It Works Section */}
+      <HowItWorksSection />
+      
+      {/* Testimonial Section */}
+      <TestimonialSection />
+      
+      {/* FAQ Section */}
+      <FaqSection />
       
       {/* CTA Section */}
       <section className="relative z-10 py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
@@ -106,6 +94,11 @@ const Index = () => {
             </p>
             <div className="mb-6">
               <NewsletterForm />
+            </div>
+            <div className="mt-8">
+              <Link to="/icons-playbook" className="inline-flex items-center text-brand-green font-medium hover:underline">
+                Check out our Icons Playbook <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
             </div>
           </div>
         </div>
