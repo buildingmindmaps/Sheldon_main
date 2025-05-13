@@ -41,46 +41,45 @@ const Index = () => {
       </nav>
       
       {/* Hero Section - Responsive layout */}
-      <section className="relative z-10 pt-12 md:pt-16 pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
-        <div className="flex flex-col items-center">
-          {/* Mobile layout - When in mobile, laptop first then text */}
+      <section className="relative z-10 pt-12 md:pt-24 pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
+          {/* For mobile view - laptop first, text second */}
           {isMobile && (
-            <div className="w-full mb-8 flex justify-center px-2 max-w-md mx-auto">
-              <AppScreens />
+            <div className="w-full flex justify-center">
+              <div className="w-full max-w-[600px]">
+                <AppScreens />
+              </div>
             </div>
           )}
           
-          {/* Tablet/Desktop layout - Two columns side by side */}
-          <div className="flex flex-col md:flex-row gap-10 w-full items-center">
-            {/* Text content */}
-            <div className="w-full md:w-1/2">
-              <div className="inline-block mb-4 px-3 py-1 bg-brand-gray rounded-full text-sm font-medium text-gray-700">
-                <span className="inline-block w-2 h-2 rounded-full bg-brand-green mr-2"></span>
-                Coming Soon
-              </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                Practice Case Interviews <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-green-400">with AI</span>
-              </h1>
-              <p className="text-lg text-gray-600 mb-8 max-w-lg">
-                Master business problem-solving through structured practice with our AI interviewer. Get instant feedback and improve with every session.
-              </p>
-              
-              <div className="mb-12">
-                <NewsletterForm />
-              </div>
-              
-              <div className="mb-8">
-                <LogoCloud />
-              </div>
+          {/* Text content */}
+          <div className="lg:flex-1">
+            <div className="inline-block mb-4 px-3 py-1 bg-brand-gray rounded-full text-sm font-medium text-gray-700">
+              <span className="inline-block w-2 h-2 rounded-full bg-brand-green mr-2"></span>
+              Coming Soon
+            </div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
+              Practice Case Interviews <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-green-400">with AI</span>
+            </h1>
+            <p className="text-lg text-gray-600 mb-8 max-w-lg">
+              Master business problem-solving through structured practice with our AI interviewer. Get instant feedback and improve with every session.
+            </p>
+            
+            <div className="mb-12">
+              <NewsletterForm />
             </div>
             
-            {/* Laptop - Don't display for mobile, but show for tablet and desktop */}
-            {!isMobile && (
-              <div className="w-full md:w-1/2 overflow-hidden">
-                <AppScreens />
-              </div>
-            )}
+            <div className="mb-8">
+              <LogoCloud />
+            </div>
           </div>
+          
+          {/* For desktop view - text first, laptop second */}
+          {!isMobile && (
+            <div className="lg:flex-1">
+              <AppScreens />
+            </div>
+          )}
         </div>
       </section>
       
@@ -151,6 +150,6 @@ const Index = () => {
       </footer>
     </div>
   );
-}
+};
 
 export default Index;
