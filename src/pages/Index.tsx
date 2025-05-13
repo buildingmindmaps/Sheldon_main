@@ -1,26 +1,18 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookText, BarChart3, Users, Briefcase, ArrowUp, ArrowRight } from "lucide-react";
 import { LogoCloud } from "@/components/LogoCloud";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { FloatingElements } from "@/components/FloatingElements";
+import { AppScreens } from "@/components/AppScreens";
 import { InteractiveFeatures } from "@/components/InteractiveFeatures";
 import { TestimonialSection } from "@/components/TestimonialSection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { FaqSection } from "@/components/FaqSection";
 import { Link } from "react-router-dom";
-import { DeviceMockups } from "@/components/DeviceMockups";
 
 const Index = () => {
-  // Back to top functionality
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
   return (
     <div className="min-h-screen relative overflow-hidden bg-white">
       <FloatingElements />
@@ -62,7 +54,10 @@ const Index = () => {
           </div>
           
           <div className="relative">
-            <DeviceMockups />
+            <div className="pulse-animation absolute w-full h-full rounded-full"></div>
+            <div className="relative">
+              <AppScreens />
+            </div>
           </div>
         </div>
       </section>
@@ -120,7 +115,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row gap-6 md:items-center">
             <a href="#" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
             <a href="#" className="text-gray-600 hover:text-gray-900">Terms of Service</a>
-            <Button variant="outline" size="sm" className="mt-4 md:mt-0" onClick={scrollToTop}>
+            <Button variant="outline" size="sm" className="mt-4 md:mt-0">
               <ArrowUp className="h-4 w-4 mr-2" />
               Back to Top
             </Button>
