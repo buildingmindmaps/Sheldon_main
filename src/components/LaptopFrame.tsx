@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { cn } from "@/lib/utils";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface LaptopFrameProps {
   children: React.ReactNode;
@@ -10,9 +9,9 @@ interface LaptopFrameProps {
 
 export function LaptopFrame({ children, className }: LaptopFrameProps) {
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative mx-auto", className)}>
       {/* Laptop body */}
-      <div className="relative mx-auto bg-gray-800 rounded-t-xl w-[700px] h-[450px] p-4 shadow-xl">
+      <div className="relative mx-auto bg-gray-800 rounded-t-xl w-full max-w-[650px] h-[420px] p-4 shadow-xl">
         {/* Laptop screen bezel */}
         <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-900 rounded-t-xl p-2">
           {/* Camera */}
@@ -28,7 +27,7 @@ export function LaptopFrame({ children, className }: LaptopFrameProps) {
       </div>
 
       {/* Laptop base */}
-      <div className="mx-auto w-[800px] h-[30px] bg-gradient-to-b from-gray-700 to-gray-800 rounded-b-lg"></div>
+      <div className="mx-auto w-full max-w-[750px] h-[30px] bg-gradient-to-b from-gray-700 to-gray-800 rounded-b-lg"></div>
     </div>
   );
 }
