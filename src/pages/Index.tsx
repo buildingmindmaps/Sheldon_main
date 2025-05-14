@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookText, BarChart3, Users, Briefcase, ArrowUp, ArrowRight } from "lucide-react";
@@ -12,10 +11,9 @@ import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { FaqSection } from "@/components/FaqSection";
 import { Link } from "react-router-dom";
 import { useIsMobile } from '@/hooks/use-mobile';
-
 const Index = () => {
   const isMobile = useIsMobile();
-  
+
   // Function to scroll to top when clicking "Back to Top" button
   const scrollToTop = () => {
     window.scrollTo({
@@ -23,9 +21,7 @@ const Index = () => {
       behavior: 'smooth'
     });
   };
-  
-  return (
-    <div className="min-h-screen relative overflow-hidden bg-white">
+  return <div className="min-h-screen relative overflow-hidden bg-white">
       <FloatingElements />
       
       {/* Navbar */}
@@ -44,13 +40,11 @@ const Index = () => {
       <section className="relative z-10 pt-12 md:pt-24 pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row items-center">
           {/* For mobile and tablet view - mockup first, text second */}
-          {(isMobile || window.innerWidth < 1024) && (
-            <div className="w-full mb-8">
+          {(isMobile || window.innerWidth < 1024) && <div className="w-full mb-8">
               <div className="w-full max-w-[95%] mx-auto">
                 <AppScreens />
               </div>
-            </div>
-          )}
+            </div>}
           
           {/* Text content - 40% width on desktop */}
           <div className="lg:w-[40%] lg:pr-8">
@@ -75,13 +69,11 @@ const Index = () => {
           </div>
           
           {/* For desktop view - text first, mockup second - 60% width on desktop */}
-          {!isMobile && window.innerWidth >= 1024 && (
-            <div className="lg:w-[60%]">
+          {!isMobile && window.innerWidth >= 1024 && <div className="lg:w-[60%]">
               <div className="w-full max-w-[95%] mx-auto">
                 <AppScreens />
               </div>
-            </div>
-          )}
+            </div>}
         </div>
       </section>
       
@@ -138,20 +130,13 @@ const Index = () => {
           <div className="flex flex-col md:flex-row gap-6 md:items-center">
             <a href="#" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
             <a href="#" className="text-gray-600 hover:text-gray-900">Terms of Service</a>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mt-4 md:mt-0"
-              onClick={scrollToTop}
-            >
+            <Button variant="outline" size="sm" className="mt-4 md:mt-0" onClick={scrollToTop}>
               <ArrowUp className="h-4 w-4 mr-2" />
               Back to Top
             </Button>
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
