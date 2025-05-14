@@ -127,41 +127,86 @@ export function InteractiveFeatures() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="text-lg font-bold mb-4 text-center text-gray-800">Your Problem-Solving Growth</div>
-                <div className="relative w-full h-48">
-                  <svg className="w-full h-full" viewBox="0 0 400 200">
+                <div className="text-lg font-bold mb-6 text-center text-gray-800">Your Problem-Solving Skills</div>
+                
+                {/* Standard Deviation Bell Curve */}
+                <div className="relative w-full h-44 mb-6">
+                  {/* The Bell Curve */}
+                  <svg className="w-full h-full" viewBox="0 0 400 150">
+                    {/* Bell Curve Path */}
+                    <path 
+                      d="M 40,140 C 40,140 70,140 100,130 C 130,120 150,80 200,80 C 250,80 270,120 300,130 C 330,140 360,140 360,140" 
+                      stroke="#e5e7eb"
+                      strokeWidth="2"
+                      fill="none"
+                    />
+                    
+                    {/* Filled area under the curve */}
+                    <path 
+                      d="M 40,140 C 40,140 70,140 100,130 C 130,120 150,80 200,80 C 250,80 270,120 300,130 C 330,140 360,140 360,140 L 360,140 L 40,140 Z" 
+                      fill="url(#bellGradient)"
+                      opacity="0.2"
+                    />
+
                     <defs>
-                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#84ff01" />
-                        <stop offset="100%" stopColor="#94ff33" />
+                      <linearGradient id="bellGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#e0e7ff" />
+                        <stop offset="86%" stopColor="#84ff01" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#84ff01" stopOpacity="0.5" />
                       </linearGradient>
                     </defs>
-                    <path d="M 40 160 L 80 120 L 120 140 L 160 100 L 200 80 L 240 60 L 280 40 L 320 20 L 360 40" 
-                          stroke="url(#gradient)" strokeWidth="4" fill="none" />
-                    <path d="M 40 160 L 80 150 L 120 155 L 160 140 L 200 130 L 240 120 L 280 110 L 320 100 L 360 95" 
-                          stroke="#999" strokeWidth="2" fill="none" strokeDasharray="5,5" />
-                    <circle cx="200" cy="80" r="8" fill="#84ff01">
-                      <animate attributeName="r" values="8;10;8" dur="2s" repeatCount="indefinite" />
+                    
+                    {/* The 86% marker */}
+                    <line
+                      x1="300"
+                      y1="50"
+                      x2="300"
+                      y2="140"
+                      stroke="#84ff01"
+                      strokeWidth="2"
+                      strokeDasharray="4,4"
+                    />
+                    
+                    {/* You are here marker */}
+                    <circle cx="300" cy="130" r="8" fill="#84ff01">
+                      <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite" />
                     </circle>
-                    <text x="210" y="75" fontSize="14" fill="#333" fontWeight="bold">You are here</text>
-                    <text x="40" y="180" fontSize="12" fill="#666">Beginner</text>
-                    <text x="320" y="180" fontSize="12" fill="#666">Expert</text>
-                    <text x="100" y="40" fontSize="12" fill="#666">Industry Average</text>
-                    <text x="250" y="20" fontSize="12" fill="#666">Your trajectory</text>
+                    
+                    {/* Labels for skill levels */}
+                    <text x="40" y="125" fontSize="12" fill="#6b7280">Beginner</text>
+                    <text x="190" y="125" fontSize="12" fill="#6b7280" textAnchor="middle">Average</text>
+                    <text x="360" y="125" fontSize="12" fill="#6b7280" textAnchor="end">Expert</text>
                   </svg>
                 </div>
-                <div className="mt-2 flex justify-between w-full px-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-brand-green">87%</div>
-                    <div className="text-sm text-gray-600">Growth rate</div>
+                
+                {/* Performance Stats */}
+                <div className="w-full max-w-md bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <div className="text-center text-lg font-bold text-gray-800 mb-2">
+                    You're better than <span className="text-brand-green">86%</span> of peers
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-500">12</div>
-                    <div className="text-sm text-gray-600">Cases solved</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-amber-500">4.5x</div>
-                    <div className="text-sm text-gray-600">Improvement</div>
+                  <p className="text-center text-sm text-gray-600">
+                    Your structured approach and analytical skills put you in the top performers bracket
+                  </p>
+                  
+                  <div className="mt-4 flex justify-between items-center">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-brand-green">12</div>
+                      <div className="text-xs text-gray-500">Cases solved</div>
+                    </div>
+                    
+                    <div className="h-10 border-l border-gray-200"></div>
+                    
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-500">4.5x</div>
+                      <div className="text-xs text-gray-500">Improvement</div>
+                    </div>
+                    
+                    <div className="h-10 border-l border-gray-200"></div>
+                    
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-amber-500">89%</div>
+                      <div className="text-xs text-gray-500">Accuracy</div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
