@@ -43,10 +43,10 @@ const Index = () => {
       {/* Hero Section - Responsive layout */}
       <section className="relative z-10 pt-12 md:pt-24 pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row items-center">
-          {/* For mobile view - laptop first, text second */}
-          {isMobile && (
+          {/* For mobile and tablet view - mockup first, text second */}
+          {(isMobile || window.innerWidth < 1024) && (
             <div className="w-full mb-8">
-              <div className="w-full max-w-[90%] mx-auto">
+              <div className="w-full max-w-[95%] mx-auto">
                 <AppScreens />
               </div>
             </div>
@@ -74,8 +74,8 @@ const Index = () => {
             </div>
           </div>
           
-          {/* For desktop view - text first, laptop second - 60% width on desktop */}
-          {!isMobile && (
+          {/* For desktop view - text first, mockup second - 60% width on desktop */}
+          {!isMobile && window.innerWidth >= 1024 && (
             <div className="lg:w-[60%]">
               <div className="w-full max-w-[95%] mx-auto">
                 <AppScreens />
