@@ -4,11 +4,11 @@ import React from 'react';
 export function InterviewScreen() {
   return (
     <div className="h-full w-full flex items-center justify-center py-8">
-      <div className="animated-mockup">
+      <div className="floating">
         <img 
-          src="/lovable-uploads/e7a4b751-d87a-4f88-9dae-be8adb6a10e5.png" 
+          src="/lovable-uploads/1e8f6cfb-9991-4717-add0-c06aae652bac.png" 
           alt="Case Interview Interface" 
-          className="w-full h-auto object-contain rounded-lg"
+          className="w-full h-auto object-contain rounded-lg shadow-lg"
         />
       </div>
     </div>
