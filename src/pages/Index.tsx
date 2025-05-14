@@ -42,18 +42,18 @@ const Index = () => {
       
       {/* Hero Section - Responsive layout */}
       <section className="relative z-10 pt-12 md:pt-24 pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
+        <div className="flex flex-col lg:flex-row items-center">
           {/* For mobile view - laptop first, text second */}
           {isMobile && (
-            <div className="w-full flex justify-center">
-              <div className="w-full max-w-[600px]">
+            <div className="w-full mb-8">
+              <div className="w-full max-w-[90%] mx-auto">
                 <AppScreens />
               </div>
             </div>
           )}
           
-          {/* Text content */}
-          <div className="lg:flex-1">
+          {/* Text content - 40% width on desktop */}
+          <div className="lg:w-[40%] lg:pr-8">
             <div className="inline-block mb-4 px-3 py-1 bg-brand-gray rounded-full text-sm font-medium text-gray-700">
               <span className="inline-block w-2 h-2 rounded-full bg-brand-green mr-2"></span>
               Coming Soon
@@ -74,10 +74,12 @@ const Index = () => {
             </div>
           </div>
           
-          {/* For desktop view - text first, laptop second */}
+          {/* For desktop view - text first, laptop second - 60% width on desktop */}
           {!isMobile && (
-            <div className="lg:flex-1">
-              <AppScreens />
+            <div className="lg:w-[60%]">
+              <div className="w-full max-w-[95%] mx-auto">
+                <AppScreens />
+              </div>
             </div>
           )}
         </div>
