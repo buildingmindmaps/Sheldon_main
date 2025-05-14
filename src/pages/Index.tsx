@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookText, BarChart3, Users, Briefcase, ArrowUp, ArrowRight } from "lucide-react";
@@ -11,6 +12,8 @@ import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { FaqSection } from "@/components/FaqSection";
 import { Link } from "react-router-dom";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { LogoBrand } from '@/components/LogoBrand';
+
 const Index = () => {
   const isMobile = useIsMobile();
 
@@ -21,6 +24,7 @@ const Index = () => {
       behavior: 'smooth'
     });
   };
+  
   return <div className="min-h-screen relative overflow-hidden bg-white">
       <FloatingElements />
       
@@ -36,7 +40,7 @@ const Index = () => {
         </div>
       </nav>
       
-      {/* Hero Section - Responsive layout */}
+      {/* Hero Section - Responsive layout with 50/50 split on desktop */}
       <section className="relative z-10 pt-12 md:pt-24 pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row items-center">
           {/* For mobile and tablet view - mockup first, text second */}
@@ -46,8 +50,8 @@ const Index = () => {
               </div>
             </div>}
           
-          {/* Text content - 40% width on desktop */}
-          <div className="lg:w-[40%] lg:pr-8">
+          {/* Text content - 50% width on desktop */}
+          <div className="lg:w-1/2 lg:pr-8">
             <div className="inline-block mb-4 px-3 py-1 bg-brand-gray rounded-full text-sm font-medium text-gray-700">
               <span className="inline-block w-2 h-2 rounded-full bg-brand-green mr-2"></span>
               Coming Soon
@@ -68,14 +72,17 @@ const Index = () => {
             </div>
           </div>
           
-          {/* For desktop view - text first, mockup second - 60% width on desktop */}
-          {!isMobile && window.innerWidth >= 1024 && <div className="lg:w-[60%]">
+          {/* For desktop view - text first, mockup second - 50% width on desktop */}
+          {!isMobile && window.innerWidth >= 1024 && <div className="lg:w-1/2">
               <div className="w-full max-w-[95%] mx-auto">
                 <AppScreens />
               </div>
             </div>}
         </div>
       </section>
+      
+      {/* Logo Brand Section (new section) */}
+      <LogoBrand />
       
       {/* Features Section */}
       <section className="relative z-10 py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
