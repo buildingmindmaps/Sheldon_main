@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { BookText, BarChart3, Users, Briefcase } from "lucide-react";
+import { BookText, BarChart3, Users, Briefcase, Timer, Award } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 
 interface Feature {
   id: string;
@@ -174,47 +176,71 @@ export function InteractiveFeatures() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="text-lg font-bold mb-6 text-center text-gray-800">Live Case Battle Simulation</div>
-                <div className="flex w-full justify-between items-center">
-                  <motion.div 
-                    className="text-center"
-                    initial={{ scale: 1 }}
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-xl">YOU</div>
-                    <div className="text-xl font-bold">85 pts</div>
-                    <div className="text-sm text-gray-500 font-medium">Problem framing</div>
-                    <div className="mt-2 w-32 h-3 bg-gray-200 rounded-full">
-                      <div className="h-full w-4/5 bg-blue-500 rounded-full"></div>
-                    </div>
-                  </motion.div>
+                <div className="text-lg font-bold mb-4 text-center text-gray-800">Live Case Battle</div>
+                <div className="flex w-full justify-between items-center mb-6">
+                  {/* Left Player */}
+                  <div className="flex flex-col items-center">
+                    <Avatar className="h-16 w-16 border-2 border-purple-200">
+                      <AvatarImage src="/lovable-uploads/6c539c76-8de0-4c4c-95c4-7af17365ad69.png" alt="Alex" />
+                      <AvatarFallback className="bg-purple-100 text-purple-800 font-semibold">A</AvatarFallback>
+                    </Avatar>
+                    <div className="font-medium mt-2">Alex</div>
+                    <div className="text-xs text-gray-500">Harvard MBA</div>
+                    <div className="mt-3 text-xl font-bold text-purple-500">78</div>
+                  </div>
                   
-                  <div className="py-3 px-6 bg-gray-100 rounded-full font-bold text-xl text-gray-800 border-2 border-dashed border-gray-300">VS</div>
+                  {/* VS Badge */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="py-2 px-5 bg-gray-100 rounded-full font-bold text-gray-700">VS</div>
+                    <div className="text-xs text-gray-500 font-medium">Live Match</div>
+                  </div>
                   
-                  <motion.div 
-                    className="text-center"
-                    initial={{ scale: 1 }}
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                  >
-                    <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-xl">PEER</div>
-                    <div className="text-xl font-bold">78 pts</div>
-                    <div className="text-sm text-gray-500 font-medium">Solution quality</div>
-                    <div className="mt-2 w-32 h-3 bg-gray-200 rounded-full">
-                      <div className="h-full w-3/4 bg-orange-500 rounded-full"></div>
-                    </div>
-                  </motion.div>
+                  {/* Right Player */}
+                  <div className="flex flex-col items-center">
+                    <Avatar className="h-16 w-16 border-2 border-cyan-200">
+                      <AvatarImage src="/lovable-uploads/7f7ec580-d4a1-45d6-9221-b2785493fd3b.png" alt="Jamie" />
+                      <AvatarFallback className="bg-cyan-100 text-cyan-800 font-semibold">J</AvatarFallback>
+                    </Avatar>
+                    <div className="font-medium mt-2">Jamie</div>
+                    <div className="text-xs text-gray-500">Wharton MBA</div>
+                    <div className="mt-3 text-xl font-bold text-cyan-500">72</div>
+                  </div>
                 </div>
-                <div className="mt-8 w-full px-8">
-                  <div className="text-sm font-medium text-center mb-2">Time Remaining</div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full">
-                    <motion.div 
-                      className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full"
-                      initial={{ width: "80%" }}
-                      animate={{ width: "30%" }}
-                      transition={{ duration: 15, repeat: Infinity }}
-                    ></motion.div>
+                
+                {/* Progress Bar */}
+                <div className="w-full space-y-3">
+                  {/* Time Remaining */}
+                  <div className="flex justify-between items-center text-sm">
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <Timer className="h-4 w-4" />
+                      <span>Time Remaining</span>
+                    </div>
+                    <div className="font-medium">02:45</div>
+                  </div>
+                  
+                  <Progress value={30} className="h-1.5 bg-gray-100" 
+                    style={{ 
+                      background: 'linear-gradient(to right, #e9d5ff, #ddd6fe, #c7d2fe, #bfdbfe)',
+                    }} 
+                  />
+                  
+                  {/* Challenge Container */}
+                  <div className="mt-6 border border-gray-200 rounded-xl p-4 bg-white">
+                    <div className="text-sm font-medium mb-2 flex items-center gap-1">
+                      <Award className="h-4 w-4 text-brand-green" />
+                      Current Challenge:
+                    </div>
+                    <p className="text-center font-medium text-gray-800 mb-3">
+                      How should Tesla approach the Indian electric vehicle market?
+                    </p>
+                    <div className="flex justify-between mt-2">
+                      <div className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">
+                        Strategy
+                      </div>
+                      <div className="px-3 py-1 bg-cyan-50 text-cyan-700 rounded-full text-xs font-medium">
+                        Market Entry
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
