@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookText, BarChart3, Users, Briefcase, ArrowUp, ArrowRight } from "lucide-react";
@@ -13,7 +12,6 @@ import { FaqSection } from "@/components/FaqSection";
 import { Link } from "react-router-dom";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LogoBrand } from '@/components/LogoBrand';
-
 const Index = () => {
   const isMobile = useIsMobile();
 
@@ -24,7 +22,6 @@ const Index = () => {
       behavior: 'smooth'
     });
   };
-  
   return <div className="min-h-screen relative overflow-hidden bg-white">
       <FloatingElements />
       
