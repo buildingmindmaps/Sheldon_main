@@ -318,55 +318,81 @@ export function InteractiveFeatures() {
             {activeFeature === "playbooks" && (
               <motion.div 
                 key="playbooks"
-                className="w-full h-full flex flex-col items-center justify-center p-6"
+                className="w-full h-full flex flex-col items-center justify-center"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.5 }}
               >
                 <div className="text-lg font-bold mb-4 text-center text-gray-800">Business Icons Thought Process</div>
-                <div className="grid grid-cols-3 gap-6 w-full max-w-2xl">
-                  <motion.div 
-                    className="aspect-square bg-gradient-to-b from-amber-50 to-amber-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-amber-200 shadow-sm"
-                    whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-                  >
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 mb-3 flex items-center justify-center">
-                      <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M18 4V20M6 4V20M3 8H7M17 8H21M3 12H21M3 16H7M17 16H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                      </svg>
-                    </div>
-                    <div className="text-base font-bold text-gray-900">Elon Musk</div>
-                    <div className="text-xs text-gray-600 mt-1">First Principles</div>
-                    <div className="absolute bottom-0 right-0 w-24 h-24 bg-amber-300 opacity-10 rounded-full -mr-10 -mb-10"></div>
-                  </motion.div>
-                  <motion.div 
-                    className="aspect-square bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-gray-200 shadow-sm"
-                    whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-                  >
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 mb-3 flex items-center justify-center">
-                      <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 12L11 14L15 10M12 3L4 7V17L12 21L20 17V7L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                    <div className="text-base font-bold text-gray-900">Steve Jobs</div>
-                    <div className="text-xs text-gray-600 mt-1">Customer Experience</div>
-                    <div className="absolute bottom-0 right-0 w-24 h-24 bg-gray-300 opacity-10 rounded-full -mr-10 -mb-10"></div>
-                  </motion.div>
-                  <motion.div 
-                    className="aspect-square bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-blue-200 shadow-sm"
-                    whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-                  >
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 mb-3 flex items-center justify-center">
-                      <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15 5L18 2M18 2L21 5M18 2V8M12 12L9.17 14.83M9.17 14.83L6 18M9.17 14.83H14.83M14.83 14.83L18 18M14.83 14.83L12 12M6 6L9 9M9 9L12 12M3 3L6 6M6 18H12M12 18L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                      </svg>
-                    </div>
-                    <div className="text-base font-bold text-gray-900">Satya Nadella</div>
-                    <div className="text-xs text-gray-600 mt-1">Growth Mindset</div>
-                    <div className="absolute bottom-0 right-0 w-24 h-24 bg-blue-300 opacity-10 rounded-full -mr-10 -mb-10"></div>
-                  </motion.div>
-                </div>
-                <div className="mt-4 text-center">
+                
+                {/* Mobile optimized icon grid */}
+                {isMobile ? (
+                  <div className="grid grid-cols-3 gap-3 w-full max-w-[90%]">
+                    <motion.div 
+                      className="aspect-square bg-gradient-to-b from-amber-50 to-amber-100 rounded-lg flex flex-col items-center justify-center p-2 relative overflow-hidden border border-amber-200 shadow-sm"
+                      whileHover={{ y: -3, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+                    >
+                      <div className="text-base font-semibold text-center text-gray-900">Elon Musk</div>
+                    </motion.div>
+                    <motion.div 
+                      className="aspect-square bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg flex flex-col items-center justify-center p-2 relative overflow-hidden border border-gray-200 shadow-sm"
+                      whileHover={{ y: -3, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+                    >
+                      <div className="text-base font-semibold text-center text-gray-900">Steve Jobs</div>
+                    </motion.div>
+                    <motion.div 
+                      className="aspect-square bg-gradient-to-b from-blue-50 to-blue-100 rounded-lg flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 shadow-sm"
+                      whileHover={{ y: -3, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+                    >
+                      <div className="text-base font-semibold text-center text-gray-900">Satya Nadella</div>
+                    </motion.div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-6 w-full max-w-2xl">
+                    <motion.div 
+                      className="aspect-square bg-gradient-to-b from-amber-50 to-amber-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-amber-200 shadow-sm"
+                      whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+                    >
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 mb-3 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M18 4V20M6 4V20M3 8H7M17 8H21M3 12H21M3 16H7M17 16H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                      </div>
+                      <div className="text-base font-bold text-gray-900">Elon Musk</div>
+                      <div className="text-xs text-gray-600 mt-1">First Principles</div>
+                      <div className="absolute bottom-0 right-0 w-24 h-24 bg-amber-300 opacity-10 rounded-full -mr-10 -mb-10"></div>
+                    </motion.div>
+                    <motion.div 
+                      className="aspect-square bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-gray-200 shadow-sm"
+                      whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+                    >
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 mb-3 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9 12L11 14L15 10M12 3L4 7V17L12 21L20 17V7L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                      <div className="text-base font-bold text-gray-900">Steve Jobs</div>
+                      <div className="text-xs text-gray-600 mt-1">Customer Experience</div>
+                      <div className="absolute bottom-0 right-0 w-24 h-24 bg-gray-300 opacity-10 rounded-full -mr-10 -mb-10"></div>
+                    </motion.div>
+                    <motion.div 
+                      className="aspect-square bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-blue-200 shadow-sm"
+                      whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
+                    >
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 mb-3 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M15 5L18 2M18 2L21 5M18 2V8M12 12L9.17 14.83M9.17 14.83L6 18M9.17 14.83H14.83M14.83 14.83L18 18M14.83 14.83L12 12M6 6L9 9M9 9L12 12M3 3L6 6M6 18H12M12 18L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                      </div>
+                      <div className="text-base font-bold text-gray-900">Satya Nadella</div>
+                      <div className="text-xs text-gray-600 mt-1">Growth Mindset</div>
+                      <div className="absolute bottom-0 right-0 w-24 h-24 bg-blue-300 opacity-10 rounded-full -mr-10 -mb-10"></div>
+                    </motion.div>
+                  </div>
+                )}
+                
+                <div className={cn("mt-4 text-center", isMobile ? "mt-2" : "mt-4")}>
                   <span className="text-sm text-brand-green font-medium">New icon playbooks added weekly</span>
                 </div>
               </motion.div>
