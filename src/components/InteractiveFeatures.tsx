@@ -127,15 +127,23 @@ export function InteractiveFeatures() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="text-lg font-bold mb-6 text-center text-gray-800">Your Problem-Solving Skills</div>
+                <div className="text-lg font-bold mb-4 text-center text-gray-800">Your Problem-Solving Skills</div>
                 
-                {/* Standard Deviation Bell Curve */}
-                <div className="relative w-full h-44 mb-6">
-                  {/* The Bell Curve */}
-                  <svg className="w-full h-full" viewBox="0 0 400 150">
+                {/* Simplified Standard Deviation Bell Curve */}
+                <div className="relative w-full max-w-md h-32 mb-4">
+                  {/* Bell Curve Path */}
+                  <svg className="w-full h-full" viewBox="0 0 400 100">
+                    {/* Background Line */}
+                    <path 
+                      d="M 50,80 C 50,80 100,80 150,80 C 200,80 250,80 300,80 C 350,80 350,80 350,80" 
+                      stroke="#e5e7eb"
+                      strokeWidth="1"
+                      fill="none"
+                    />
+                    
                     {/* Bell Curve Path */}
                     <path 
-                      d="M 40,140 C 40,140 70,140 100,130 C 130,120 150,80 200,80 C 250,80 270,120 300,130 C 330,140 360,140 360,140" 
+                      d="M 50,80 C 50,80 100,75 150,60 C 200,40 250,60 300,75 C 350,80 350,80 350,80" 
                       stroke="#e5e7eb"
                       strokeWidth="2"
                       fill="none"
@@ -143,7 +151,7 @@ export function InteractiveFeatures() {
                     
                     {/* Filled area under the curve */}
                     <path 
-                      d="M 40,140 C 40,140 70,140 100,130 C 130,120 150,80 200,80 C 250,80 270,120 300,130 C 330,140 360,140 360,140 L 360,140 L 40,140 Z" 
+                      d="M 50,80 C 50,80 100,75 150,60 C 200,40 250,60 300,75 C 350,80 350,80 350,80 L 350,80 L 50,80 Z" 
                       fill="url(#bellGradient)"
                       opacity="0.2"
                     />
@@ -156,55 +164,55 @@ export function InteractiveFeatures() {
                       </linearGradient>
                     </defs>
                     
-                    {/* The 86% marker */}
+                    {/* The marker point position (86% position) */}
                     <line
                       x1="300"
-                      y1="50"
+                      y1="30"
                       x2="300"
-                      y2="140"
+                      y2="80"
                       stroke="#84ff01"
                       strokeWidth="2"
                       strokeDasharray="4,4"
                     />
                     
                     {/* You are here marker */}
-                    <circle cx="300" cy="130" r="8" fill="#84ff01">
-                      <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite" />
+                    <circle cx="300" cy="75" r="6" fill="#84ff01">
+                      <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" />
                     </circle>
                     
                     {/* Labels for skill levels */}
-                    <text x="40" y="125" fontSize="12" fill="#6b7280">Beginner</text>
-                    <text x="190" y="125" fontSize="12" fill="#6b7280" textAnchor="middle">Average</text>
-                    <text x="360" y="125" fontSize="12" fill="#6b7280" textAnchor="end">Expert</text>
+                    <text x="50" y="95" fontSize="12" fill="#6b7280">Beginner</text>
+                    <text x="200" y="95" fontSize="12" fill="#6b7280" textAnchor="middle">Average</text>
+                    <text x="350" y="95" fontSize="12" fill="#6b7280" textAnchor="end">Expert</text>
                   </svg>
                 </div>
                 
-                {/* Performance Stats */}
-                <div className="w-full max-w-md bg-gray-50 rounded-xl p-4 border border-gray-200">
-                  <div className="text-center text-lg font-bold text-gray-800 mb-2">
+                {/* Performance Stats Card */}
+                <div className="w-full max-w-md bg-white rounded-xl p-5 border border-gray-200">
+                  <div className="text-center text-lg font-bold text-gray-800 mb-1">
                     You're better than <span className="text-brand-green">86%</span> of peers
                   </div>
-                  <p className="text-center text-sm text-gray-600">
+                  <p className="text-center text-sm text-gray-600 mb-4">
                     Your structured approach and analytical skills put you in the top performers bracket
                   </p>
                   
-                  <div className="mt-4 flex justify-between items-center">
+                  <div className="flex justify-between items-center">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-brand-green">12</div>
+                      <div className="text-xl font-bold text-brand-green">12</div>
                       <div className="text-xs text-gray-500">Cases solved</div>
                     </div>
                     
                     <div className="h-10 border-l border-gray-200"></div>
                     
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-500">4.5x</div>
+                      <div className="text-xl font-bold text-blue-500">4.5x</div>
                       <div className="text-xs text-gray-500">Improvement</div>
                     </div>
                     
                     <div className="h-10 border-l border-gray-200"></div>
                     
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-amber-500">89%</div>
+                      <div className="text-xl font-bold text-amber-500">89%</div>
                       <div className="text-xs text-gray-500">Accuracy</div>
                     </div>
                   </div>
@@ -270,15 +278,15 @@ export function InteractiveFeatures() {
                   />
                   
                   {/* Challenge Container */}
-                  <div className="mt-6 border border-gray-200 rounded-xl p-4 bg-white">
-                    <div className="text-sm font-medium mb-2 flex items-center gap-1">
+                  <div className="mt-4 border border-gray-200 rounded-xl p-3 bg-white">
+                    <div className="text-sm font-medium mb-1 flex items-center gap-1">
                       <Award className="h-4 w-4 text-brand-green" />
                       Current Challenge:
                     </div>
-                    <p className="text-center font-medium text-gray-800 mb-3">
+                    <p className="text-sm font-medium text-gray-800 mb-2">
                       How should Tesla approach the Indian electric vehicle market?
                     </p>
-                    <div className="flex justify-between mt-2">
+                    <div className="flex justify-between">
                       <div className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">
                         Strategy
                       </div>
