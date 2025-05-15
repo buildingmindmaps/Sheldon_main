@@ -139,12 +139,12 @@ export function NavBar() {
           <motion.div 
             className="md:hidden fixed inset-0 top-[72px] bg-white z-40 border-t shadow-lg"
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
+            animate={{ opacity: 1, height: "100vh" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <motion.div 
-              className="flex flex-col p-6 space-y-5 h-full"
+              className="flex flex-col p-6 space-y-5 h-full bg-white"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, staggerChildren: 0.1 }}

@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookText, BarChart3, Users, Briefcase, ArrowUp, ArrowRight } from "lucide-react";
-import { NewsletterForm } from "@/components/NewsletterForm";
+import { WaitlistForm } from "@/components/WaitlistForm";
 import { FloatingElements } from "@/components/FloatingElements";
 import { AppScreens } from "@/components/AppScreens";
 import { InteractiveFeatures } from "@/components/InteractiveFeatures";
@@ -57,7 +58,7 @@ const Index = () => {
             </p>
             
             <div className="mb-12">
-              <NewsletterForm />
+              <WaitlistForm />
             </div>
           </div>
           
@@ -129,7 +130,7 @@ const Index = () => {
               Join our waitlist and get early access when we launch. Plus, receive exclusive tips to prepare for your case interviews.
             </p>
             <div className="mb-6">
-              <NewsletterForm />
+              <WaitlistForm />
             </div>
             <div className="mt-8">
               <Link to="/playbook" className="inline-flex items-center text-brand-green font-medium hover:underline">
