@@ -63,7 +63,11 @@ export function JourneySection() {
 
   return (
     <section className="relative h-screen overflow-hidden">
-      {/* Animated gradient background */}
+      {/* Enhanced gradient background with more vibrant colors */}
+      <div 
+        className="absolute inset-0 -z-30 bg-gradient-to-br from-white via-brand-gray to-white"
+      />
+      
       <motion.div 
         className="absolute inset-0 -z-20"
         animate={{ 
@@ -75,22 +79,22 @@ export function JourneySection() {
           repeatType: "reverse"
         }}
         style={{
-          background: 'linear-gradient(135deg, rgba(132, 255, 1, 0.08) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(132, 255, 1, 0.08) 100%)',
+          background: 'linear-gradient(135deg, rgba(132, 255, 1, 0.15) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(132, 255, 1, 0.15) 100%)',
           backgroundSize: '400% 400%'
         }}
       />
       
-      {/* Glass effect overlay */}
-      <div className="absolute inset-0 -z-10 backdrop-blur-md bg-white/10"></div>
+      {/* Enhanced glass effect overlay with more pronounced blur and transparency */}
+      <div className="absolute inset-0 -z-10 backdrop-blur-xl bg-white/20 border-y border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)]"></div>
       
-      <div className="h-screen w-full flex flex-col items-center justify-center px-4">
+      <div className="relative z-10 h-screen w-full flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-5xl mx-auto h-full flex flex-col">
-          {/* Title */}
+          {/* Title with enhanced styling */}
           <div className="text-center py-12">
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-800">The Evolution</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-800 drop-shadow-sm">The Evolution</h2>
           </div>
           
-          {/* Main content area */}
+          {/* Main content area with enhanced glass card */}
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full max-w-3xl mx-auto relative">
               <AnimatePresence mode="wait">
@@ -100,7 +104,7 @@ export function JourneySection() {
                   animate={{ opacity: 1, y: 0, rotateX: 0 }}
                   exit={{ opacity: 0, y: -20, rotateX: -45 }}
                   transition={{ duration: 0.7 }}
-                  className="p-8 rounded-2xl shadow-lg border border-white/20 bg-white/5 backdrop-blur-sm"
+                  className="p-8 rounded-2xl backdrop-blur-lg bg-white/30 border border-white/50 shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_35px_rgba(0,0,0,0.15)] transition-all duration-300"
                 >
                   {currentIndex === journeySentences.length - 1 ? (
                     // Final sentence with waitlist form
@@ -136,23 +140,27 @@ export function JourneySection() {
             </div>
           </div>
           
-          {/* Navigation buttons */}
+          {/* Navigation buttons with enhanced styling */}
           <div className="py-12 flex justify-center items-center gap-4">
             <Button 
               variant="outline" 
               size="icon" 
-              className="rounded-full backdrop-blur-md bg-white/30 hover:bg-white/50 border border-white/30"
+              className="rounded-full backdrop-blur-md bg-white/40 hover:bg-white/60 border border-white/50 shadow-sm"
               onClick={handlePrevious}
               disabled={currentIndex === 0}
             >
               <ChevronLeft className="h-5 w-5 text-gray-800" />
             </Button>
             
-            <div className="flex gap-1">
+            <div className="flex gap-1.5">
               {journeySentences.map((_, i) => (
                 <div 
                   key={i} 
-                  className={`w-2 h-2 rounded-full ${currentIndex === i ? 'bg-brand-green' : 'bg-gray-300'}`}
+                  className={`w-2.5 h-2.5 rounded-full cursor-pointer transition-all duration-300 ${
+                    currentIndex === i 
+                      ? 'bg-brand-green scale-125 shadow-[0_0_10px_rgba(132,255,1,0.5)]' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
                   onClick={() => {
                     setIsAutoPlay(false);
                     setCurrentIndex(i);
@@ -164,7 +172,7 @@ export function JourneySection() {
             <Button 
               variant="outline" 
               size="icon" 
-              className="rounded-full backdrop-blur-md bg-white/30 hover:bg-white/50 border border-white/30"
+              className="rounded-full backdrop-blur-md bg-white/40 hover:bg-white/60 border border-white/50 shadow-sm"
               onClick={handleNext}
               disabled={currentIndex === journeySentences.length - 1}
             >
