@@ -61,38 +61,33 @@ export function JourneySection() {
     }
   };
 
-  // Random moving gradients for the background
-  const gradientVariants = {
-    animate: {
-      backgroundPosition: ['0% 0%', '100% 100%'],
-      transition: {
-        duration: 15,
-        ease: "linear",
-        repeat: Infinity,
-        repeatType: "reverse" as const
-      }
-    }
-  };
-
   return (
     <section className="relative h-screen overflow-hidden">
-      {/* Glass background with animated gradient */}
-      <motion.div
-        className="absolute inset-0 -z-10"
-        variants={gradientVariants}
-        animate="animate"
+      {/* Animated gradient background */}
+      <motion.div 
+        className="absolute inset-0 -z-20"
+        animate={{ 
+          backgroundPosition: ['0% 0%', '100% 100%'] 
+        }}
+        transition={{ 
+          duration: 15,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
         style={{
-          background: 'linear-gradient(135deg, rgba(132, 255, 1, 0.05) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(132, 255, 1, 0.05) 100%)',
-          backgroundSize: '400% 400%',
-          filter: 'blur(40px)'
+          background: 'linear-gradient(135deg, rgba(132, 255, 1, 0.08) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(132, 255, 1, 0.08) 100%)',
+          backgroundSize: '400% 400%'
         }}
       />
       
-      <div className="backdrop-blur-lg bg-white/20 h-screen w-full flex flex-col items-center justify-center px-4">
+      {/* Glass effect overlay */}
+      <div className="absolute inset-0 -z-10 backdrop-blur-md bg-white/10"></div>
+      
+      <div className="h-screen w-full flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-5xl mx-auto h-full flex flex-col">
-          {/* Heading */}
+          {/* Title */}
           <div className="text-center py-12">
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-800">The Journey</h2>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-800">The Evolution</h2>
           </div>
           
           {/* Main content area */}
@@ -105,7 +100,7 @@ export function JourneySection() {
                   animate={{ opacity: 1, y: 0, rotateX: 0 }}
                   exit={{ opacity: 0, y: -20, rotateX: -45 }}
                   transition={{ duration: 0.7 }}
-                  className="p-8 backdrop-blur-sm bg-white/30 border border-white/30 rounded-2xl shadow-xl"
+                  className="p-8 rounded-2xl shadow-lg border border-white/20 bg-white/5 backdrop-blur-sm"
                 >
                   {currentIndex === journeySentences.length - 1 ? (
                     // Final sentence with waitlist form
