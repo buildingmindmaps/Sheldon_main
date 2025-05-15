@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookText, BarChart3, Users, Briefcase, ArrowUp, ArrowRight } from "lucide-react";

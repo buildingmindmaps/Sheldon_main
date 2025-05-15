@@ -138,64 +138,18 @@ export function JourneySection() {
   const CurrentIcon = journeyIcons[currentIndex];
 
   return (
-    <section className="relative h-screen overflow-hidden">
-      {/* Enhanced gradient background with more depth */}
-      <div className="absolute inset-0 -z-40">
-        <div className="absolute inset-0 bg-gradient-to-br from-white via-brand-gray to-white opacity-70" />
-      </div>
-      
-      {/* Advanced animated gradient overlay */}
-      <motion.div 
-        className="absolute inset-0 -z-30"
-        animate={{ 
-          backgroundPosition: ['0% 0%', '100% 100%'] 
-        }}
-        transition={{ 
-          duration: 20,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-        style={{
-          background: 'linear-gradient(135deg, rgba(132, 255, 1, 0.15) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(132, 255, 1, 0.15) 100%)',
-          backgroundSize: '400% 400%'
-        }}
-      />
-      
-      {/* Secondary animated gradient for more depth */}
-      <motion.div 
-        className="absolute inset-0 -z-25"
-        animate={{ 
-          backgroundPosition: ['100% 0%', '0% 100%'] 
-        }}
-        transition={{ 
-          duration: 15,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-        style={{
-          background: 'linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0%, rgba(132, 255, 1, 0.08) 50%, rgba(255, 255, 255, 0.08) 100%)',
-          backgroundSize: '300% 300%'
-        }}
-      />
-      
-      {/* Enhanced true glassmorphism effect */}
-      <div className="absolute inset-0 -z-20 backdrop-blur-2xl bg-transparent"></div>
-      
+    <section className="relative h-screen">      
       <div className="relative z-10 h-screen w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-5xl mx-auto h-full flex flex-col">
           {/* Title with refined styling */}
           <div className="text-center py-12 mt-8">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 drop-shadow-sm">The Evolution</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800">The Evolution</h2>
           </div>
           
-          {/* Main content area with enhanced glass card */}
+          {/* Main content area with transparent background */}
           <div className="flex-1 flex items-center justify-center px-4">
             <div className="w-full max-w-3xl mx-auto relative">
-              <motion.div
-                className="p-10 rounded-3xl backdrop-blur-xl bg-white/30 border border-white/50 shadow-[0_15px_35px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all duration-300"
-                initial={{ boxShadow: "0 15px 35px rgba(0,0,0,0.1)" }}
-                whileHover={{ boxShadow: "0 20px 40px rgba(0,0,0,0.15)" }}
-              >
+              <div className="p-10 rounded-3xl">
                 <AnimatePresence mode="wait">
                   {currentIndex === journeySentences.length - 1 ? (
                     // Final sentence with waitlist form
@@ -257,7 +211,7 @@ export function JourneySection() {
                     </div>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
             </div>
           </div>
           
@@ -267,7 +221,7 @@ export function JourneySection() {
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="rounded-full backdrop-blur-xl bg-white/25 hover:bg-white/40 border border-white/40 shadow-md"
+                className="rounded-full"
                 onClick={handlePrevious}
                 disabled={currentIndex === 0}
               >
@@ -294,7 +248,7 @@ export function JourneySection() {
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="rounded-full backdrop-blur-xl bg-white/25 hover:bg-white/40 border border-white/40 shadow-md"
+                className="rounded-full"
                 onClick={handleNext}
                 disabled={currentIndex === journeySentences.length - 1}
               >
@@ -310,7 +264,7 @@ export function JourneySection() {
               className={`mt-2 px-4 py-1 text-sm transition-all duration-300 rounded-full 
                 ${isAutoPlay 
                   ? 'bg-brand-green/20 text-gray-800 border-brand-green/50 hover:bg-brand-green/30' 
-                  : 'bg-white/25 text-gray-600 hover:bg-white/40 border-white/40'
+                  : 'bg-transparent text-gray-600 hover:bg-white/40 border-white/40'
                 }`}
             >
               {isAutoPlay ? "Pause" : "Auto-Play"}
