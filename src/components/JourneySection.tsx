@@ -260,9 +260,10 @@ export function JourneySection() {
     opacity: isHovering ? 0.6 + Math.sin(cursorPosition.x * Math.PI) * 0.4 : 0.3,
     scale: isHovering ? 1 + Math.sin(cursorPosition.y * Math.PI) * 0.1 : 1
   };
+  
   return <section ref={sectionRef} onMouseMove={handleMouseMove} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} style={{
-    background: "linear-gradient(to bottom right, rgba(230, 255, 230, 0.7), rgba(210, 255, 210, 0.5))"
-  }} className="relative min-h-screen py-24 bg-gray-50">      
+    background: "#FAFAFA"
+  }} className="relative min-h-screen py-24">      
       {/* Dynamic background particles based on cursor position */}
       <motion.div className="absolute inset-0 overflow-hidden pointer-events-none z-0" animate={{
       backgroundPosition: isHovering ? `${cursorPosition.x * 10}% ${cursorPosition.y * 10}%` : '50% 50%'
