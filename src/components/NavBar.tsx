@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -69,6 +68,14 @@ export function NavBar() {
     };
   }, [mobileMenuOpen]);
 
+  // Function to ensure page scrolls to top when clicking links
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <header 
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -81,19 +88,19 @@ export function NavBar() {
     >
       <nav className="relative py-4 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto flex justify-between items-center">
         <div className="font-bold text-xl">
-          <Link to="/">CaseAI</Link>
+          <Link to="/" onClick={scrollToTop}>CaseAI</Link>
         </div>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-6 items-center">
           <Button variant="ghost" asChild>
-            <Link to="/">Home</Link>
+            <Link to="/playbook" onClick={scrollToTop}>Playbook</Link>
           </Button>
           <Button variant="ghost" asChild>
-            <Link to="/playbook">Playbook</Link>
+            <Link to="/careers" onClick={scrollToTop}>Careers</Link>
           </Button>
           <Button variant="ghost" asChild>
-            <Link to="/careers">Careers</Link>
+            <Link to="/contact" onClick={scrollToTop}>Contact Us</Link>
           </Button>
         </div>
 
@@ -156,8 +163,8 @@ export function NavBar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => setMobileMenuOpen(false)}>
-                  <Link to="/">Home</Link>
+                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => {setMobileMenuOpen(false); scrollToTop();}}>
+                  <Link to="/playbook">Playbook</Link>
                 </Button>
               </motion.div>
               <motion.div
@@ -165,8 +172,8 @@ export function NavBar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: 0.1 }}
               >
-                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => setMobileMenuOpen(false)}>
-                  <Link to="/playbook">Playbook</Link>
+                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => {setMobileMenuOpen(false); scrollToTop();}}>
+                  <Link to="/careers">Careers</Link>
                 </Button>
               </motion.div>
               <motion.div
@@ -174,8 +181,8 @@ export function NavBar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: 0.2 }}
               >
-                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => setMobileMenuOpen(false)}>
-                  <Link to="/careers">Careers</Link>
+                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => {setMobileMenuOpen(false); scrollToTop();}}>
+                  <Link to="/contact">Contact Us</Link>
                 </Button>
               </motion.div>
             </motion.div>
