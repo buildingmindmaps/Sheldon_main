@@ -3,9 +3,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { InteractiveFeatures as BaseInteractiveFeatures } from './InteractiveFeatures';
 
-// Images for the competitors
-const competitor1Image = "/lovable-uploads/fdf72b65-326d-43e5-8205-4caea7ec555e.png";
-const competitor2Image = "/lovable-uploads/22f4e367-a601-4e71-a9b0-5c4252d3d0c9.png";
+// Updated images for the competitors
+const competitor1Image = "/lovable-uploads/57780257-3f19-4fb3-99d6-002738aa752f.png";
+const competitor2Image = "/lovable-uploads/17b4bc10-d43f-4d5f-a166-f8b276281c3d.png";
 
 // Create a style patch for the live battle feature
 const injectCompetitorStyles = () => {
