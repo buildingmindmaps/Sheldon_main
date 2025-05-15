@@ -55,7 +55,7 @@ const Index = () => {
               Think Different,<span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-green-400">Think in Systems</span>
             </h1>
             <p className="text-lg text-gray-600 mb-8 max-w-lg">
-              While they taught you what to think, we  will show you how to outthink everyone else.
+              While they taught you <strong>what to think</strong>, we  will show you how to outthink everyone else.
             </p>
             
             <div className="mb-12">
