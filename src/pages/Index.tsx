@@ -52,10 +52,10 @@ const Index = () => {
               Coming Soon
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              Think Different,<span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-green-400">Think in Systems</span>
+              Think Different,<br><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-green-400">Think in Systems</span>
             </h1>
             <p className="text-lg text-gray-600 mb-8 max-w-lg">
-              While they taught you <strong>what to think</strong>, we  will show you how to outthink everyone else.
+              They prepare you for tests, we prepare you for challenges no one solved yet!
             </p>
             
             <div className="mb-12">
