@@ -36,7 +36,7 @@ export function JourneySection() {
           }
           return prev + 1;
         });
-      }, 5000); // Change sentence every 5 seconds
+      }, 3000); // Changed to 3 seconds as requested
     }
 
     return () => {
@@ -61,78 +61,107 @@ export function JourneySection() {
     }
   };
 
+  // Toggle auto-play
+  const toggleAutoPlay = () => {
+    setIsAutoPlay(!isAutoPlay);
+  };
+
+  // Animation variants for text
+  const containerVariants = {
+    hidden: { 
+      y: -20,
+      opacity: 0,
+      filter: "blur(8px)"
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    },
+    exit: { 
+      y: 20,
+      opacity: 0,
+      filter: "blur(8px)",
+      transition: { 
+        duration: 0.4, 
+        ease: "easeIn"
+      }
+    },
+  };
+
   return (
     <section className="relative h-screen overflow-hidden">
-      {/* Enhanced gradient background with more vibrant colors */}
-      <div 
-        className="absolute inset-0 -z-30 bg-gradient-to-br from-white via-brand-gray to-white"
-      />
+      {/* Main background - subtle gradient */}
+      <div className="absolute inset-0 -z-40 bg-gradient-to-br from-white via-brand-gray to-white" />
       
+      {/* Animated gradient overlay */}
       <motion.div 
-        className="absolute inset-0 -z-20"
+        className="absolute inset-0 -z-30"
         animate={{ 
           backgroundPosition: ['0% 0%', '100% 100%'] 
         }}
         transition={{ 
-          duration: 15,
+          duration: 20,
           repeat: Infinity,
           repeatType: "reverse"
         }}
         style={{
-          background: 'linear-gradient(135deg, rgba(132, 255, 1, 0.15) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(132, 255, 1, 0.15) 100%)',
+          background: 'linear-gradient(135deg, rgba(132, 255, 1, 0.2) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(132, 255, 1, 0.2) 100%)',
           backgroundSize: '400% 400%'
         }}
       />
       
-      {/* Enhanced glass effect overlay with more pronounced blur and transparency */}
-      <div className="absolute inset-0 -z-10 backdrop-blur-xl bg-white/20 border-y border-white/30 shadow-[0_4px_30px_rgba(0,0,0,0.1)]"></div>
+      {/* Enhanced true glassmorphism effect */}
+      <div className="absolute inset-0 -z-20 backdrop-blur-2xl bg-white/20 border-y border-white/40 shadow-[0_10px_50px_rgba(0,0,0,0.15)]"></div>
       
-      <div className="relative z-10 h-screen w-full flex flex-col items-center justify-center px-4">
+      <div className="relative z-10 h-screen w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-5xl mx-auto h-full flex flex-col">
-          {/* Title with enhanced styling */}
-          <div className="text-center py-12">
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-800 drop-shadow-sm">The Evolution</h2>
+          {/* Title with refined styling */}
+          <div className="text-center py-12 mt-8">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 drop-shadow-sm">The Evolution</h2>
           </div>
           
-          {/* Main content area with enhanced glass card */}
-          <div className="flex-1 flex items-center justify-center">
+          {/* Main content area with glass card */}
+          <div className="flex-1 flex items-center justify-center px-4">
             <div className="w-full max-w-3xl mx-auto relative">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
-                  initial={{ opacity: 0, y: 20, rotateX: 45 }}
-                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                  exit={{ opacity: 0, y: -20, rotateX: -45 }}
-                  transition={{ duration: 0.7 }}
-                  className="p-8 rounded-2xl backdrop-blur-lg bg-white/30 border border-white/50 shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_35px_rgba(0,0,0,0.15)] transition-all duration-300"
+                  className="p-10 rounded-3xl backdrop-blur-xl bg-white/40 border border-white/70 shadow-[0_15px_35px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all duration-300"
                 >
                   {currentIndex === journeySentences.length - 1 ? (
                     // Final sentence with waitlist form
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                       <motion.p 
                         className="text-xl md:text-2xl text-gray-800 leading-relaxed text-center"
                         dangerouslySetInnerHTML={{ __html: journeySentences[currentIndex] }}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
                       />
                       
                       <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.8, duration: 0.5 }}
+                        transition={{ delay: 0.6, duration: 0.5 }}
                       >
                         <WaitlistForm />
                       </motion.div>
                     </div>
                   ) : (
-                    // Regular sentence display with animations
+                    // Regular sentence display with enhanced animations
                     <motion.p 
                       className="text-xl md:text-2xl text-gray-800 leading-relaxed text-center"
                       dangerouslySetInnerHTML={{ __html: journeySentences[currentIndex] }}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
                     />
                   )}
                 </motion.div>
@@ -140,43 +169,59 @@ export function JourneySection() {
             </div>
           </div>
           
-          {/* Navigation buttons with enhanced styling */}
-          <div className="py-12 flex justify-center items-center gap-4">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="rounded-full backdrop-blur-md bg-white/40 hover:bg-white/60 border border-white/50 shadow-sm"
-              onClick={handlePrevious}
-              disabled={currentIndex === 0}
-            >
-              <ChevronLeft className="h-5 w-5 text-gray-800" />
-            </Button>
-            
-            <div className="flex gap-1.5">
-              {journeySentences.map((_, i) => (
-                <div 
-                  key={i} 
-                  className={`w-2.5 h-2.5 rounded-full cursor-pointer transition-all duration-300 ${
-                    currentIndex === i 
-                      ? 'bg-brand-green scale-125 shadow-[0_0_10px_rgba(132,255,1,0.5)]' 
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                  onClick={() => {
-                    setIsAutoPlay(false);
-                    setCurrentIndex(i);
-                  }}
-                />
-              ))}
+          {/* Navigation and toggle control */}
+          <div className="py-12 flex flex-col items-center gap-4">
+            <div className="flex items-center gap-6">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="rounded-full backdrop-blur-xl bg-white/50 hover:bg-white/70 border border-white/60 shadow-md"
+                onClick={handlePrevious}
+                disabled={currentIndex === 0}
+              >
+                <ChevronLeft className="h-5 w-5 text-gray-800" />
+              </Button>
+              
+              <div className="flex gap-2">
+                {journeySentences.map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${
+                      currentIndex === i 
+                        ? 'bg-brand-green scale-125 shadow-[0_0_15px_rgba(132,255,1,0.6)]' 
+                        : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    onClick={() => {
+                      setIsAutoPlay(false);
+                      setCurrentIndex(i);
+                    }}
+                  />
+                ))}
+              </div>
+              
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="rounded-full backdrop-blur-xl bg-white/50 hover:bg-white/70 border border-white/60 shadow-md"
+                onClick={handleNext}
+                disabled={currentIndex === journeySentences.length - 1}
+              >
+                <ChevronRight className="h-5 w-5 text-gray-800" />
+              </Button>
             </div>
             
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="rounded-full backdrop-blur-md bg-white/40 hover:bg-white/60 border border-white/50 shadow-sm"
-              onClick={handleNext}
-              disabled={currentIndex === journeySentences.length - 1}
+            {/* Auto-play toggle button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleAutoPlay}
+              className={`mt-2 px-4 py-1 text-sm transition-all duration-300 rounded-full 
+                ${isAutoPlay 
+                  ? 'bg-brand-green/20 text-gray-800 border-brand-green/50 hover:bg-brand-green/30' 
+                  : 'bg-white/40 text-gray-600 hover:bg-white/60'
+                }`}
             >
-              <ChevronRight className="h-5 w-5 text-gray-800" />
+              {isAutoPlay ? "Pause" : "Auto-Play"}
             </Button>
           </div>
         </div>
