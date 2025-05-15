@@ -5,13 +5,13 @@ import { motion } from "framer-motion";
 export function TestimonialSection() {
   const testimonials = [
     {
-      quote: "The beta version of CaseAI impressed me with its realistic interview scenarios. I can already tell this will be a game-changer for case preparation.",
+      quote: "The beta version of SheldonAI impressed me with its realistic interview scenarios. I can already tell this will be a game-changer for case preparation.",
       author: "Atithee Nandanwar",
       role: "PGP, Masters' Union",
       avatar: "https://randomuser.me/api/portraits/women/32.jpg"
     },
     {
-      quote: "After just a week of testing CaseAI, I noticed a significant improvement in how I structure my thoughts. The instant feedback is exactly what I've been looking for.",
+      quote: "After just a week of testing SheldonAI, I noticed a significant improvement in how I structure my thoughts. The instant feedback is exactly what I've been looking for.",
       author: "Sushant Raj Gupta",
       role: "PGP, Masters' Union",
       avatar: "https://randomuser.me/api/portraits/men/44.jpg"
@@ -34,7 +34,7 @@ export function TestimonialSection() {
       <div className="text-center mb-12">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4">Early Feedback</h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          What our beta testers are saying about CaseAI's unique approach to case interview preparation
+          What our beta testers are saying about SheldonAI's unique approach to case interview preparation
         </p>
       </div>
       

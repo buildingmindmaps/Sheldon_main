@@ -17,14 +17,14 @@ const TermsOfService = () => {
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">1. Agreement to Terms</h2>
             <p>
-              By accessing or using CaseAI's website and services ("Services"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you should not access or use our Services.
+              By accessing or using SheldonAI's website and services ("Services"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you should not access or use our Services.
             </p>
           </section>
           
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">2. Description of Services</h2>
             <p>
-              CaseAI provides an AI-powered platform for practicing case interviews and developing business problem-solving skills. Our Services include practice case scenarios, feedback on performance, and resources to improve your interview skills.
+              SheldonAI provides an AI-powered platform for practicing case interviews and developing business problem-solving skills. Our Services include practice case scenarios, feedback on performance, and resources to improve your interview skills.
             </p>
           </section>
           
@@ -55,7 +55,7 @@ const TermsOfService = () => {
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">5. Intellectual Property</h2>
             <p className="mb-4">
-              Our Services, including all content, features, and functionality, are owned by CaseAI and are protected by copyright, trademark, and other intellectual property laws.
+              Our Services, including all content, features, and functionality, are owned by SheldonAI and are protected by copyright, trademark, and other intellectual property laws.
             </p>
             <p>
               We grant you a limited, non-exclusive, non-transferable, and revocable license to access and use our Services for your personal, non-commercial use, subject to these Terms.
@@ -99,14 +99,14 @@ const TermsOfService = () => {
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">10. Limitation of Liability</h2>
             <p>
-              TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL CASEAI BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE THE SERVICES.
+              TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL SHELDONAI BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE THE SERVICES.
             </p>
           </section>
           
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">11. Governing Law</h2>
             <p>
-              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which CaseAI is established, without regard to its conflict of law provisions.
+              These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which SheldonAI is established, without regard to its conflict of law provisions.
             </p>
           </section>
           

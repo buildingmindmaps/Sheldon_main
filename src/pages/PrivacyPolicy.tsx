@@ -17,7 +17,7 @@ const PrivacyPolicy = () => {
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">1. Introduction</h2>
             <p>
-              Welcome to CaseAI ("we," "our," or "us"). We are committed to protecting your privacy and handling your data with transparency. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our AI case interview practice services.
+              Welcome to SheldonAI ("we," "our," or "us"). We are committed to protecting your privacy and handling your data with transparency. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our AI case interview practice services.
             </p>
           </section>
           

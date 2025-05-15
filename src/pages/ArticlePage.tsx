@@ -11,7 +11,7 @@ const ArticlePage = () => {
   const fullArticle = {
     title: "Think Like Elon Musk: First Principles Thinking",
     subtitle: "Breaking Down Complex Problems to Their Fundamental Truths",
-    author: "CaseAI Team",
+    author: "SheldonAI Team",
     publishDate: "May 10, 2025",
     readTime: "8 min read",
     heroImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1470&auto=format&fit=crop",

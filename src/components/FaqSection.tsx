@@ -81,7 +81,7 @@ export function FaqSection() {
       <div className="text-center mb-12">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
         <p className="text-lg text-gray-600">
-          Everything you need to know about CaseAI
+          Everything you need to know about SheldonAI
         </p>
       </div>
       
