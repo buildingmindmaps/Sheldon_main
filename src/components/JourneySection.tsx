@@ -1,9 +1,9 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Circle, SquareStack, Sparkles, Brain, Rocket, Users, Target, Lightbulb, Trophy, Zap } from "lucide-react";
 import { WaitlistForm } from "@/components/WaitlistForm";
-import { Toggle } from "@/components/ui/toggle";
 
 // The journey sentences that will be displayed with animations
 const journeySentences = [
@@ -142,7 +142,7 @@ export function JourneySection() {
   // Get the current interactive elements based on the current index
   const currentInteractiveElements = interactiveElements[currentIndex]?.elements || [];
 
-  // Handle auto-cycling through the sentences - Changed to 5 seconds (from 6)
+  // Handle auto-cycling through the sentences - Changed to 6 seconds
   useEffect(() => {
     if (isAutoPlay) {
       intervalRef.current = setInterval(() => {
@@ -150,7 +150,7 @@ export function JourneySection() {
           // Loop back to the beginning when reaching the end
           return (prev + 1) % journeySentences.length;
         });
-      }, 5000); // Changed from 6000 to 5000 (5 seconds)
+      }, 6000); // Changed from 3000 to 6000 (6 seconds)
     }
 
     return () => {
@@ -271,40 +271,71 @@ export function JourneySection() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >      
-      {/* New animated light green gradient background */}
+      {/* Dynamic background particles based on cursor position */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-br from-[#f2fce2] to-[#e5ffd4]"
-          animate={{
-            backgroundPosition: ['0% 0%', '100% 100%'],
-          }}
-          transition={{
-            duration: 15,
-            ease: "linear",
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-        
-        {/* Subtle moving accent elements */}
-        <motion.div 
-          className="absolute w-full h-full"
-          animate={{
-            background: [
-              'radial-gradient(circle at 20% 30%, rgba(132,255,1,0.08) 0%, rgba(255,255,255,0) 50%)',
-              'radial-gradient(circle at 70% 60%, rgba(132,255,1,0.08) 0%, rgba(255,255,255,0) 50%)',
-              'radial-gradient(circle at 30% 70%, rgba(132,255,1,0.08) 0%, rgba(255,255,255,0) 50%)',
-              'radial-gradient(circle at 80% 20%, rgba(132,255,1,0.08) 0%, rgba(255,255,255,0) 50%)',
-              'radial-gradient(circle at 20% 30%, rgba(132,255,1,0.08) 0%, rgba(255,255,255,0) 50%)',
-            ]
-          }}
-          transition={{
-            duration: 20,
-            ease: "easeInOut",
-            repeat: Infinity,
-          }}
-        />
+        {Array.from({ length: 20 }).map((_, i) => {
+          const size = 2 + Math.random() * 8;
+          const initialX = Math.random() * 100;
+          const initialY = Math.random() * 100;
+          const speed = 0.5 + Math.random() * 2;
+          
+          return (
+            <motion.div
+              key={`particle-${i}`}
+              className="absolute rounded-full"
+              initial={{ 
+                left: `${initialX}%`, 
+                top: `${initialY}%`, 
+                width: size, 
+                height: size,
+                opacity: 0.3 + Math.random() * 0.4,
+                backgroundColor: i % 3 === 0 
+                  ? 'hsl(var(--brand-green))' 
+                  : 'rgba(255, 255, 255, 0.8)'
+              }}
+              animate={{
+                left: `${initialX + (isHovering ? cursorPosition.x * 20 - 10 : 0)}%`,
+                top: `${initialY + (isHovering ? cursorPosition.y * 20 - 10 : 0)}%`,
+                opacity: isHovering 
+                  ? 0.3 + Math.random() * 0.7 
+                  : 0.1 + Math.random() * 0.3,
+                scale: isHovering 
+                  ? [1, 1.1 + (Math.sin(Date.now() / (1000 * speed)) * 0.2), 1] 
+                  : 1
+              }}
+              transition={{
+                left: { duration: 1, ease: "easeOut" },
+                top: { duration: 1, ease: "easeOut" },
+                opacity: { duration: 0.8 },
+                scale: { 
+                  repeat: Infinity, 
+                  duration: 3 * speed, 
+                  ease: "easeInOut" 
+                }
+              }}
+            />
+          );
+        })}
       </div>
+
+      {/* Light beam effect */}
+      {isHovering && (
+        <motion.div 
+          className="absolute pointer-events-none"
+          style={{
+            left: `${cursorPosition.x * 100}%`,
+            top: `${cursorPosition.y * 100}%`,
+            width: '300px',
+            height: '300px',
+            marginLeft: '-150px',
+            marginTop: '-150px',
+            background: 'radial-gradient(circle, rgba(132,255,1,0.15) 0%, rgba(132,255,1,0.05) 40%, rgba(0,0,0,0) 70%)',
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        />
+      )}
       
       <div className="relative z-10 w-full flex flex-col items-center justify-center min-h-[70vh]">
         <div className="w-full max-w-5xl mx-auto flex flex-col">
@@ -436,10 +467,10 @@ export function JourneySection() {
             </div>
             
             {/* Auto-play toggle button - MADE SMALLER */}
-            <Toggle
-              pressed={isAutoPlay}
-              onPressedChange={toggleAutoPlay}
+            <Button
+              variant="outline"
               size="sm"
+              onClick={toggleAutoPlay}
               className={`mt-0 px-3 py-0.5 text-xs transition-all duration-300 rounded-full 
                 ${isAutoPlay 
                   ? 'bg-brand-green/20 text-gray-800 border-brand-green/50 hover:bg-brand-green/30' 
@@ -447,7 +478,7 @@ export function JourneySection() {
                 }`}
             >
               {isAutoPlay ? "Pause" : "Auto-Play"}
-            </Toggle>
+            </Button>
           </div>
         </div>
       </div>

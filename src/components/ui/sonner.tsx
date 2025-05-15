@@ -1,15 +1,14 @@
-
-import * as React from "react"
-import { Toaster as Sonner } from "sonner"
+import { useTheme } from "next-themes"
+import { Toaster as Sonner, toast } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  // Since we're having issues with next-themes, let's use a simpler approach
-  // and just use the default theme instead of trying to access the theme context
+  const { theme = "system" } = useTheme()
+
   return (
     <Sonner
-      theme="light"
+      theme={theme as ToasterProps["theme"]}
       className="toaster group"
       toastOptions={{
         classNames: {
@@ -27,4 +26,4 @@ const Toaster = ({ ...props }: ToasterProps) => {
   )
 }
 
-export { Toaster, toast } from "sonner"
+export { Toaster, toast }
