@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { BookText, BarChart3, Users, Briefcase, ArrowUp, ArrowRight } from "lucide-react";
+import { BookText, BarChart3, Users, Briefcase, ArrowRight } from "lucide-react";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { FloatingElements } from "@/components/FloatingElements";
 import { AppScreens } from "@/components/AppScreens";
-import { InteractiveFeaturesWithProfiles } from "@/components/InteractiveFeaturesWithProfiles"; // Updated import
+import { InteractiveFeaturesWithProfiles } from "@/components/InteractiveFeaturesWithProfiles";
 import { TestimonialSection } from "@/components/TestimonialSection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { FaqSection } from "@/components/FaqSection";
@@ -13,6 +12,7 @@ import { Link } from "react-router-dom";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { JourneySection } from '@/components/JourneySection';
 import { NavBar } from '@/components/NavBar';
+import { Footer } from '@/components/Footer';
 
 // Add custom border width style
 const customStyles = `
@@ -75,7 +75,7 @@ const Index = () => {
       <JourneySection />
       
       {/* Features Section */}
-      <section className="relative z-10 py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
+      <section id="features" className="relative z-10 py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Your Path to Structured Problem Solving</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -117,24 +117,7 @@ const Index = () => {
       </section>
       
       {/* Footer */}
-      <footer className="relative z-10 py-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto border-t border-gray-100">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <span className="font-bold text-xl">CaseAI</span>
-            <p className="text-gray-600 text-sm mt-1">© 2025 CaseAI. All rights reserved.</p>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-6 md:items-center">
-            <a href="#" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
-            <a href="#" className="text-gray-600 hover:text-gray-900">Terms of Service</a>
-            <Link to="/careers" className="text-gray-600 hover:text-gray-900">Careers</Link>
-            <Button variant="outline" size="sm" className="mt-4 md:mt-0" onClick={scrollToTop}>
-              <ArrowUp className="h-4 w-4 mr-2" />
-              Back to Top
-            </Button>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>;
 };
 
