@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from "framer-motion";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export function NavBar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -87,8 +88,14 @@ export function NavBar() {
       }`}
     >
       <nav className="relative py-4 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto flex justify-between items-center">
-        <div className="font-bold text-xl">
-          <Link to="/" onClick={scrollToTop}>CaseAI</Link>
+        <div className="font-bold text-xl flex items-center gap-2">
+          <Link to="/" onClick={scrollToTop} className="flex items-center gap-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src="/lovable-uploads/365f4f40-afd0-40d0-8588-0b97fe4b4699.png" alt="SheldonAI Logo" />
+              <AvatarFallback>SA</AvatarFallback>
+            </Avatar>
+            <span>SheldonAI</span>
+          </Link>
         </div>
 
         {/* Desktop Menu */}

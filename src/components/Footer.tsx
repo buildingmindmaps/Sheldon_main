@@ -1,8 +1,9 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface FooterLinkGroupProps {
   title: string;
@@ -78,7 +79,13 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
           {/* Company info */}
           <div>
-            <Link to="/" className="font-bold text-xl mb-4 block" onClick={scrollToTop}>CaseAI</Link>
+            <Link to="/" className="flex items-center gap-2 mb-4" onClick={scrollToTop}>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="/lovable-uploads/365f4f40-afd0-40d0-8588-0b97fe4b4699.png" alt="SheldonAI Logo" />
+                <AvatarFallback>SA</AvatarFallback>
+              </Avatar>
+              <span className="font-bold text-xl">SheldonAI</span>
+            </Link>
             <p className="text-gray-600 mb-6">
               Master business problem-solving with our structured AI practice platform. Get instant feedback and improve with every session.
             </p>
@@ -118,7 +125,7 @@ export function Footer() {
         {/* Copyright and bottom links */}
         <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <p className="text-gray-600 text-sm">© 2025 CaseAI. All rights reserved.</p>
+            <p className="text-gray-600 text-sm">© 2025 SheldonAI. All rights reserved.</p>
           </div>
           
           <div className="flex items-center space-x-4">
