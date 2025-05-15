@@ -52,7 +52,7 @@ const Index = () => {
               Coming Soon
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              Think Different <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-green-400">Think in Systems</span>
+              Think Different,<br></><span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-green-400">Think in Systems</span>
             </h1>
             <p className="text-lg text-gray-600 mb-8 max-w-lg">
               Master business problem-solving through structured practice with our AI interviewer. Get instant feedback and improve with every session.
