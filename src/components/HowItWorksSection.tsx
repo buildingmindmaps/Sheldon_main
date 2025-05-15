@@ -170,13 +170,13 @@ export function HowItWorksSection() {
                 borderColor: "rgba(132, 255, 1, 0.5)"
               }}
             >
-              {/* Further reduced visual container height and padding */}
-              <div className="h-20 mb-2 relative pt-3">
+              {/* Added top margin to create space between number and graphic */}
+              <div className="h-20 mb-2 relative pt-3 mt-5">
                 {step.visual}
               </div>
               
-              {/* Made step number even more prominent */}
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white border-3 border-gray-300 flex items-center justify-center font-bold text-gray-800 shadow-md text-lg">
+              {/* Increased z-index for better visibility and adjusted styling */}
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white border-3 border-gray-300 flex items-center justify-center font-bold text-gray-900 shadow-lg text-lg z-20">
                 {index + 1}
               </div>
               
@@ -236,3 +236,4 @@ export function HowItWorksSection() {
     </section>
   );
 }
+
