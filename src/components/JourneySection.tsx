@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Circle, SquareStack, Sparkles, Brain, Rocket, Users, Target, Lightbulb, Trophy, Zap } from "lucide-react";
 import { WaitlistForm } from "@/components/WaitlistForm";
@@ -31,11 +31,108 @@ const journeyIcons = [
   Zap
 ];
 
+// Interactive elements for each sentence
+const interactiveElements = [
+  // 1. Questions & Answers (Circle)
+  {
+    elements: Array(5).fill(0).map((_, i) => ({
+      x: Math.random() * 100 - 50,
+      y: Math.random() * 100 - 50,
+      size: 6 + Math.random() * 10,
+      delay: i * 0.1,
+      color: i % 2 === 0 ? "rgba(132, 255, 1, 0.5)" : "rgba(255, 255, 255, 0.3)",
+    })),
+  },
+  // 2. Drive & Rockets (Rocket)
+  {
+    elements: Array(10).fill(0).map((_, i) => ({
+      x: Math.random() * 100 - 50,
+      y: Math.random() * 100 - 50,
+      size: 2 + Math.random() * 4,
+      delay: i * 0.1,
+      color: "rgba(255, 255, 255, 0.4)",
+    })),
+  },
+  // 3. Daily Habit (Sparkles)
+  {
+    elements: Array(6).fill(0).map((_, i) => ({
+      x: Math.random() * 100 - 50,
+      y: Math.random() * 100 - 50,
+      size: 12 + Math.random() * 14,
+      delay: i * 0.15,
+      color: i % 3 === 0 ? "rgba(132, 255, 1, 0.4)" : "rgba(255, 255, 255, 0.2)",
+    })),
+  },
+  // 4. Ideas & Future (Lightbulb)
+  {
+    elements: Array(4).fill(0).map((_, i) => ({
+      x: Math.random() * 80 - 40,
+      y: Math.random() * 80 - 40,
+      size: 15 + Math.random() * 20,
+      delay: i * 0.2,
+      color: i % 2 === 0 ? "rgba(132, 255, 1, 0.3)" : "rgba(255, 255, 255, 0.2)",
+    })),
+  },
+  // 5. Rivals & Competition (Users)
+  {
+    elements: Array(8).fill(0).map((_, i) => ({
+      x: Math.random() * 100 - 50,
+      y: Math.random() * 100 - 50,
+      size: 8 + Math.random() * 12,
+      delay: i * 0.1,
+      color: i % 3 === 0 ? "rgba(132, 255, 1, 0.35)" : "rgba(255, 255, 255, 0.25)",
+    })),
+  },
+  // 6. Workshop & Skills (Brain)
+  {
+    elements: Array(12).fill(0).map((_, i) => ({
+      x: Math.random() * 120 - 60,
+      y: Math.random() * 120 - 60,
+      size: 4 + Math.random() * 8,
+      delay: i * 0.08,
+      color: i % 4 === 0 ? "rgba(132, 255, 1, 0.4)" : "rgba(255, 255, 255, 0.2)",
+    })),
+  },
+  // 7. Purpose & Problems (Target)
+  {
+    elements: Array(3).fill(0).map((_, i) => ({
+      x: Math.random() * 60 - 30,
+      y: Math.random() * 60 - 30,
+      size: 20 + Math.random() * 30,
+      delay: i * 0.3,
+      color: "rgba(132, 255, 1, 0.25)",
+    })),
+  },
+  // 8. Crew & Thinkers (SquareStack)
+  {
+    elements: Array(15).fill(0).map((_, i) => ({
+      x: Math.random() * 100 - 50,
+      y: Math.random() * 100 - 50,
+      size: 5 + Math.random() * 10,
+      delay: i * 0.07,
+      color: i % 5 === 0 ? "rgba(132, 255, 1, 0.3)" : "rgba(255, 255, 255, 0.15)",
+    })),
+  },
+  // 9. Training & Power (Zap)
+  {
+    elements: Array(7).fill(0).map((_, i) => ({
+      x: Math.random() * 80 - 40,
+      y: Math.random() * 80 - 40,
+      size: 10 + Math.random() * 15,
+      delay: i * 0.12,
+      color: i % 2 === 0 ? "rgba(132, 255, 1, 0.45)" : "rgba(255, 255, 255, 0.2)",
+    })),
+  },
+];
+
 export function JourneySection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const controlsRef = useRef(null);
+  const animationControls = useAnimation();
 
   // Handle auto-cycling through the sentences
   useEffect(() => {
@@ -54,6 +151,22 @@ export function JourneySection() {
       }
     };
   }, [currentIndex, isAutoPlay]);
+
+  // Track mouse position for interactive elements
+  const handleMouseMove = (event: React.MouseEvent) => {
+    if (!sectionRef.current) return;
+    
+    const rect = sectionRef.current.getBoundingClientRect();
+    setMousePosition({
+      x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
+      y: ((event.clientY - rect.top) / rect.height) * 2 - 1
+    });
+    
+    animationControls.start({
+      scale: [1, 1.05, 1],
+      transition: { duration: 0.5 }
+    });
+  };
 
   // Handle manual navigation
   const handlePrevious = () => {
@@ -128,14 +241,53 @@ export function JourneySection() {
 
   // Get current icon component
   const CurrentIcon = journeyIcons[currentIndex];
+  
+  // Get current interactive elements
+  const currentInteractiveElements = interactiveElements[currentIndex]?.elements || [];
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen py-24">      
-      <div className="relative z-10 w-full flex flex-col items-center justify-center">
+    <section 
+      ref={sectionRef} 
+      className="relative min-h-screen py-24"
+      onMouseMove={handleMouseMove}
+    >      
+      <div className="relative z-10 w-full flex flex-col items-center justify-center min-h-[70vh]">
         <div className="w-full max-w-5xl mx-auto flex flex-col">
           {/* Title with refined styling */}
           <div className="text-center py-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800">The Evolution</h2>
+          </div>
+          
+          {/* Interactive floating elements that respond to mouse position */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {currentInteractiveElements.map((element, index) => (
+              <motion.div
+                key={`element-${currentIndex}-${index}`}
+                className="absolute rounded-full"
+                initial={{ 
+                  x: `calc(50% + ${element.x}px)`, 
+                  y: `calc(50% + ${element.y}px)`,
+                  opacity: 0 
+                }}
+                animate={{ 
+                  x: `calc(50% + ${element.x + (mousePosition.x * 30)}px)`, 
+                  y: `calc(50% + ${element.y + (mousePosition.y * 30)}px)`,
+                  opacity: 0.8,
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{
+                  x: { duration: 0.8 + element.delay, ease: "easeOut" },
+                  y: { duration: 0.8 + element.delay, ease: "easeOut" },
+                  opacity: { duration: 0.5, delay: element.delay },
+                  scale: { repeat: Infinity, duration: 3 + element.delay, ease: "easeInOut" }
+                }}
+                style={{
+                  width: element.size,
+                  height: element.size,
+                  backgroundColor: element.color,
+                }}
+              />
+            ))}
           </div>
           
           {/* Main content area with transparent background */}
@@ -153,6 +305,12 @@ export function JourneySection() {
                           initial="hidden"
                           animate="visible"
                           exit="exit"
+                          whileHover={{ 
+                            scale: 1.2, 
+                            rotate: [0, 10, -10, 0],
+                            transition: { duration: 0.6 } 
+                          }}
+                          animate={animationControls}
                         >
                           <CurrentIcon size={48} strokeWidth={1.5} />
                         </motion.div>
@@ -186,6 +344,12 @@ export function JourneySection() {
                           animate="visible"
                           exit="exit"
                           key={`icon-${currentIndex}`}
+                          whileHover={{ 
+                            scale: 1.2, 
+                            rotate: [0, 10, -10, 0],
+                            transition: { duration: 0.6 } 
+                          }}
+                          animate={animationControls}
                         >
                           <CurrentIcon size={48} strokeWidth={1.5} />
                         </motion.div>
@@ -208,12 +372,15 @@ export function JourneySection() {
           </div>
           
           {/* Navigation and toggle control - fixed position at bottom */}
-          <div className="py-8 flex flex-col items-center gap-4 relative">
-            <div className="flex items-center gap-6 mb-2">
+          <div 
+            ref={controlsRef}
+            className="fixed bottom-8 left-0 right-0 z-20 flex flex-col items-center gap-4"
+          >
+            <div className="flex items-center gap-6 mb-2 bg-white/10 backdrop-blur-sm py-3 px-6 rounded-full shadow-lg">
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="rounded-full"
+                className="rounded-full hover:bg-brand-green/20 hover:border-brand-green/40 transition-colors"
                 onClick={handlePrevious}
               >
                 <ChevronLeft className="h-5 w-5 text-gray-800" />
@@ -221,13 +388,14 @@ export function JourneySection() {
               
               <div className="flex gap-2">
                 {journeySentences.map((_, i) => (
-                  <div 
+                  <motion.div 
                     key={i} 
                     className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${
                       currentIndex === i 
                         ? 'bg-brand-green scale-125 shadow-[0_0_15px_rgba(132,255,1,0.6)]' 
                         : 'bg-gray-300 hover:bg-gray-400'
                     }`}
+                    whileHover={{ scale: 1.3 }}
                     onClick={() => {
                       setIsAutoPlay(false);
                       setCurrentIndex(i);
@@ -239,7 +407,7 @@ export function JourneySection() {
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="rounded-full"
+                className="rounded-full hover:bg-brand-green/20 hover:border-brand-green/40 transition-colors"
                 onClick={handleNext}
               >
                 <ChevronRight className="h-5 w-5 text-gray-800" />
