@@ -13,7 +13,6 @@ import { Link } from "react-router-dom";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LogoBrand } from '@/components/LogoBrand';
 import { NavBar } from '@/components/NavBar';
-import { NarrativeSection } from '@/components/NarrativeSection';
 
 // Add custom border width style
 const customStyles = `
@@ -72,7 +71,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Logo Section */}
+      {/* Rest of the page remains unchanged */}
+      {/* New Logo Section */}
       <section className="relative z-10 py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex flex-wrap justify-center gap-8 md:gap-16">
@@ -96,11 +96,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Logo Brand Section */}
+      {/* Logo Brand Section (keeping this as it might have other functionality) */}
       <LogoBrand />
-      
-      {/* New Narrative Section */}
-      <NarrativeSection />
       
       {/* Features Section */}
       <section className="relative z-10 py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
