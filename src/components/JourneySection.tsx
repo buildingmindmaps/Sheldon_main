@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Button } from "@/components/ui/button";
@@ -134,6 +135,12 @@ export function JourneySection() {
   const animationControls = useAnimation();
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+
+  // Get the current icon component based on the current index
+  const CurrentIcon = journeyIcons[currentIndex];
+  
+  // Get the current interactive elements based on the current index
+  const currentInteractiveElements = interactiveElements[currentIndex]?.elements || [];
 
   // Handle auto-cycling through the sentences - Changed to 6 seconds
   useEffect(() => {
@@ -335,38 +342,6 @@ export function JourneySection() {
           {/* Title with refined styling */}
           <div className="text-center py-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800">The Evolution</h2>
-          </div>
-          
-          {/* Interactive floating elements that respond to mouse position */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {currentInteractiveElements.map((element, index) => (
-              <motion.div
-                key={`element-${currentIndex}-${index}`}
-                className="absolute rounded-full"
-                initial={{ 
-                  x: `calc(50% + ${element.x}px)`, 
-                  y: `calc(50% + ${element.y}px)`,
-                  opacity: 0 
-                }}
-                animate={{ 
-                  x: `calc(50% + ${element.x + (mousePosition.x * 30)}px)`, 
-                  y: `calc(50% + ${element.y + (mousePosition.y * 30)}px)`,
-                  opacity: 0.8,
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{
-                  x: { duration: 0.8 + element.delay, ease: "easeOut" },
-                  y: { duration: 0.8 + element.delay, ease: "easeOut" },
-                  opacity: { duration: 0.5, delay: element.delay },
-                  scale: { repeat: Infinity, duration: 3 + element.delay, ease: "easeInOut" }
-                }}
-                style={{
-                  width: element.size,
-                  height: element.size,
-                  backgroundColor: element.color,
-                }}
-              />
-            ))}
           </div>
           
           {/* Main content area with transparent background */}
