@@ -78,8 +78,9 @@ export function WaitlistForm() {
               <FormItem className="flex-1">
                 <FormControl>
                   <Input
-                    placeholder="Your name"
+                    placeholder="Your name*"
                     className="h-12 bg-white border-gray-200 focus-visible:ring-brand-green"
+                    required
                     {...field}
                   />
                 </FormControl>
@@ -95,8 +96,9 @@ export function WaitlistForm() {
               <FormItem className="flex-1">
                 <FormControl>
                   <Input
-                    placeholder="Education"
+                    placeholder="Education*"
                     className="h-12 bg-white border-gray-200 focus-visible:ring-brand-green"
+                    required
                     {...field}
                   />
                 </FormControl>
@@ -114,8 +116,9 @@ export function WaitlistForm() {
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="Your email address"
+                  placeholder="Your email address*"
                   className="h-12 bg-white border-gray-200 focus-visible:ring-brand-green"
+                  required
                   {...field}
                 />
               </FormControl>
