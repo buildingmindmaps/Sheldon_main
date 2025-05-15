@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BookText, BarChart3, Users, Briefcase, Timer, Award } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -5,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { useIsMobile } from "@/hooks/use-mobile";
+
 interface Feature {
   id: string;
   title: string;
@@ -12,6 +14,7 @@ interface Feature {
   icon: React.ReactNode;
   color: string;
 }
+
 export function InteractiveFeatures() {
   const [activeFeature, setActiveFeature] = useState<string>("case-gym");
   const isMobile = useIsMobile();
@@ -436,7 +439,7 @@ export function InteractiveFeatures() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </motion.div>
-          </motion.div>}
+          </motion.div>)}
       </div>
     </div>;
 }
