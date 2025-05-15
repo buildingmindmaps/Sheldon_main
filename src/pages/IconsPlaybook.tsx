@@ -1,10 +1,13 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, BookText, Calendar } from "lucide-react";
+import { ArrowRight, BookText, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { NavBar } from '@/components/NavBar';
+import { Footer } from '@/components/Footer';
+import { NewsletterForm } from '@/components/NewsletterForm';
 
 const IconsPlaybook = () => {
   const featuredPost = {
@@ -40,15 +43,118 @@ const IconsPlaybook = () => {
     }
   ];
 
-  const categories = [
-    "Mental Models", "Leadership", "Innovation", 
-    "Market Entry", "Pricing Strategy", "Digital Transformation",
-    "M&A", "Product Strategy", "Supply Chain"
-  ];
+  // Full article content
+  const fullArticle = {
+    title: "Think Like Elon Musk: First Principles Thinking",
+    subtitle: "Breaking Down Complex Problems to Their Fundamental Truths",
+    author: "CaseAI Team",
+    publishDate: "May 10, 2025",
+    readTime: "8 min read",
+    heroImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1470&auto=format&fit=crop",
+    content: [
+      {
+        type: "paragraph",
+        text: "In the world of business problem-solving, few approaches are as powerful as first principles thinking. Made famous by Elon Musk, this method involves breaking down complex problems into their most fundamental truths and then rebuilding solutions from the ground up—rather than by analogy to what others have done before."
+      },
+      {
+        type: "heading",
+        text: "What is First Principles Thinking?"
+      },
+      {
+        type: "paragraph",
+        text: "First principles thinking is a problem-solving approach that involves decomposing a complex problem into its most basic, fundamental elements. Instead of following conventional wisdom or making decisions based on what others have done, you start with the most fundamental truths you know to be solid and build up from there."
+      },
+      {
+        type: "quote",
+        text: "I think it's important to reason from first principles rather than by analogy. The normal way we conduct our lives is we reason by analogy. We are doing this because it's like something else that was done, or it is like what other people are doing... with slight iterations on a theme. First principles is kind of a physics way of looking at the world. You boil things down to the most fundamental truths and say, 'What are we sure is true?' ... and then reason up from there.",
+        author: "Elon Musk"
+      },
+      {
+        type: "image",
+        url: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?q=80&w=1470&auto=format&fit=crop",
+        caption: "Breaking down problems to their core components is essential to first principles thinking"
+      },
+      {
+        type: "heading",
+        text: "How Musk Applied First Principles to SpaceX"
+      },
+      {
+        type: "paragraph",
+        text: "When Musk wanted to create SpaceX, conventional wisdom suggested that rockets were expensive, and space exploration was only for governments with massive budgets. Instead of accepting this, he asked: \"What are rockets made of? What is the value of those materials on the market?\""
+      },
+      {
+        type: "paragraph",
+        text: "He discovered that the raw materials for rockets (aluminum, titanium, carbon fiber, etc.) cost only about 2% of the typical price of a rocket. This insight led him to conclude that vertical integration and reusability could dramatically reduce costs—a fundamental rethinking that has revolutionized the space industry."
+      },
+      {
+        type: "heading",
+        text: "How to Apply First Principles to Case Interviews"
+      },
+      {
+        type: "paragraph",
+        text: "For consultants and business leaders, first principles thinking can be a game-changer in case interviews and real-world problem-solving. Here's how to apply this approach:"
+      },
+      {
+        type: "list",
+        items: [
+          "<strong>Identify and question assumptions:</strong> What facts do we know to be true? What assumptions are we making that might not be valid?",
+          "<strong>Break down the problem:</strong> What are the fundamental elements of this business challenge?",
+          "<strong>Rebuild from scratch:</strong> If we were to create this business/product/solution from scratch, how would we do it?",
+          "<strong>Focus on fundamental value:</strong> What is the core value proposition for the customer? What fundamental need are we addressing?"
+        ]
+      },
+      {
+        type: "image",
+        url: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1470&auto=format&fit=crop",
+        caption: "Working through complex business problems requires systematic thinking"
+      },
+      {
+        type: "heading",
+        text: "Case Example: Reimagining Product Pricing"
+      },
+      {
+        type: "paragraph",
+        text: "Consider a case where a software company is struggling with pricing their enterprise product. Traditional thinking might lead you to benchmark against competitors and make incremental changes. But first principles thinking would ask:"
+      },
+      {
+        type: "list",
+        items: [
+          "What fundamental value does our product provide to customers?",
+          "What is the actual cost structure of delivering this value?",
+          "What would be the most rational way to price based on the value created, not what others charge?",
+          "Could we completely reimagine the pricing model based on actual usage or value delivered?"
+        ]
+      },
+      {
+        type: "paragraph",
+        text: "This might lead to innovative solutions like value-based pricing or completely new business models, rather than simply adjusting existing pricing structures."
+      },
+      {
+        type: "heading",
+        text: "Exercises to Develop First Principles Thinking"
+      },
+      {
+        type: "list",
+        items: [
+          "<strong>The Five Whys:</strong> For any business problem, ask \"why\" at least five times to get to the root cause.",
+          "<strong>Assumption Listing:</strong> List all assumptions about a problem, then systematically question each one.",
+          "<strong>Blank Page Exercise:</strong> Imagine you're solving a problem with no existing solutions to reference.",
+          "<strong>Fundamental Value Analysis:</strong> Define what fundamental value your product/service provides, without referencing features or competitors."
+        ]
+      },
+      {
+        type: "paragraph",
+        text: "By developing these thinking skills, you'll approach case interviews and real business problems with a fresh perspective that can lead to breakthrough insights and solutions."
+      },
+      {
+        type: "conclusion",
+        text: "First principles thinking is not just a tool for visionaries like Elon Musk—it's a powerful approach that any business leader can use to solve complex problems and drive innovation. By breaking down challenges to their fundamental truths and building solutions from there, you can discover opportunities that others miss and create value in ways that others haven't imagined."
+      }
+    ]
+  };
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navbar - replaced with the new NavBar component */}
       <NavBar />
       
       {/* Header - with spacing for fixed navbar */}
@@ -73,8 +179,7 @@ const IconsPlaybook = () => {
         </div>
       </header>
       
-      {/* Rest of the page content - unchanged */}
-      {/* Featured Post */}
+      {/* Featured Post - Full Article */}
       <section className="py-8 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <motion.div 
           className="relative rounded-2xl overflow-hidden"
@@ -107,12 +212,77 @@ const IconsPlaybook = () => {
                 </div>
                 
                 <Button className="bg-white text-black hover:bg-gray-200">
-                  Read More <ArrowRight className="ml-1 h-4 w-4" />
+                  Read Playbook <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
             </div>
           </div>
         </motion.div>
+      </section>
+      
+      {/* Full Article Content */}
+      <section className="py-12 px-4 sm:px-6 lg:px-12 max-w-4xl mx-auto">
+        <article>
+          <header className="mb-10">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">{fullArticle.title}</h1>
+            <p className="text-xl text-gray-600 mb-6">{fullArticle.subtitle}</p>
+            
+            <div className="flex items-center justify-between border-b border-gray-200 pb-6">
+              <div className="flex items-center space-x-4">
+                <div className="h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center text-lg font-semibold">
+                  CA
+                </div>
+                <div>
+                  <p className="font-medium">{fullArticle.author}</p>
+                  <p className="text-sm text-gray-600">{fullArticle.publishDate}</p>
+                </div>
+              </div>
+              <span className="text-sm text-gray-500">{fullArticle.readTime}</span>
+            </div>
+          </header>
+          
+          <div className="prose prose-lg max-w-none mb-12">
+            {fullArticle.content.map((block, index) => {
+              switch(block.type) {
+                case 'paragraph':
+                  return <p key={index} className="mb-6">{block.text}</p>;
+                case 'heading':
+                  return <h2 key={index} className="text-2xl font-bold mt-8 mb-4">{block.text}</h2>;
+                case 'quote':
+                  return (
+                    <blockquote key={index} className="border-l-4 border-brand-green pl-4 italic my-8 py-2 text-gray-700">
+                      <p>"{block.text}"</p>
+                      {block.author && <cite className="block mt-2 text-sm not-italic font-medium">— {block.author}</cite>}
+                    </blockquote>
+                  );
+                case 'image':
+                  return (
+                    <figure key={index} className="my-10">
+                      <img src={block.url} alt={block.caption || ''} className="rounded-lg w-full h-auto" />
+                      <figcaption className="text-center text-sm text-gray-500 mt-2">{block.caption}</figcaption>
+                    </figure>
+                  );
+                case 'list':
+                  return (
+                    <ul key={index} className="list-disc pl-6 space-y-2 mb-6">
+                      {block.items.map((item, itemIndex) => (
+                        <li key={itemIndex} dangerouslySetInnerHTML={{__html: item}}></li>
+                      ))}
+                    </ul>
+                  );
+                case 'conclusion':
+                  return (
+                    <div key={index} className="bg-gray-50 p-6 rounded-lg border-l-4 border-brand-green my-8">
+                      <h3 className="font-bold text-xl mb-3">Conclusion</h3>
+                      <p>{block.text}</p>
+                    </div>
+                  );
+                default:
+                  return null;
+              }
+            })}
+          </div>
+        </article>
       </section>
       
       {/* Recent Posts */}
@@ -159,31 +329,7 @@ const IconsPlaybook = () => {
         </div>
       </section>
       
-      {/* Categories */}
-      <section className="py-16 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold mb-8">Browse by Category</h2>
-        <div className="flex flex-wrap gap-3">
-          {categories.map((category, index) => (
-            <motion.div 
-              key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <Button 
-                variant="outline" 
-                className="rounded-full border-gray-200 hover:border-brand-green hover:bg-brand-gray"
-              >
-                {category}
-              </Button>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-      
-      {/* Newsletter */}
+      {/* Newsletter - Updated to match home page */}
       <section className="py-16 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="bg-brand-gray rounded-2xl p-8 sm:p-12 relative overflow-hidden">
           <div className="absolute right-0 bottom-0 w-64 h-64 bg-brand-green opacity-10 rounded-full -mr-20 -mb-20"></div>
@@ -193,41 +339,15 @@ const IconsPlaybook = () => {
             <p className="text-gray-600 mb-6">
               Subscribe to receive our Playbook directly to your email every week, plus exclusive tips on structured problem-solving.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent"
-              />
-              <Button className="bg-black hover:bg-gray-800 text-white whitespace-nowrap">
-                Subscribe
-              </Button>
+            <div className="max-w-md">
+              <NewsletterForm />
             </div>
           </div>
         </div>
       </section>
       
-      {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto border-t border-gray-100">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <Link to="/" className="font-bold text-xl">CaseAI</Link>
-            <p className="text-gray-600 text-sm mt-1">© 2025 CaseAI. All rights reserved.</p>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-6 md:items-center">
-            <a href="#" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
-            <a href="#" className="text-gray-600 hover:text-gray-900">Terms of Service</a>
-            <Link to="/careers" className="text-gray-600 hover:text-gray-900">Careers</Link>
-            <Button variant="outline" size="sm" className="mt-4 md:mt-0" asChild>
-              <Link to="/">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </footer>
+      {/* Using global Footer component */}
+      <Footer />
     </div>
   );
 };
