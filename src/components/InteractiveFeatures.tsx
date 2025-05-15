@@ -222,7 +222,7 @@ export function InteractiveFeatures() {
                 <div className="flex w-full justify-between items-center mb-6">
                   {/* Left Player */}
                   <div className="flex flex-col items-center">
-                    <Avatar className="h-16 w-16 border-2 border-purple-200">
+                    <Avatar className="h-16 w-16 border-2 border-purple-200" data-testid="live-battle-competitor-1">
                       <AvatarImage src="/lovable-uploads/6c539c76-8de0-4c4c-95c4-7af17365ad69.png" alt="Alex" />
                       <AvatarFallback className="bg-purple-100 text-purple-800 font-semibold">A</AvatarFallback>
                     </Avatar>
@@ -239,7 +239,7 @@ export function InteractiveFeatures() {
                   
                   {/* Right Player */}
                   <div className="flex flex-col items-center">
-                    <Avatar className="h-16 w-16 border-2 border-cyan-200">
+                    <Avatar className="h-16 w-16 border-2 border-cyan-200" data-testid="live-battle-competitor-2">
                       <AvatarImage src="/lovable-uploads/7f7ec580-d4a1-45d6-9221-b2785493fd3b.png" alt="Jamie" />
                       <AvatarFallback className="bg-cyan-100 text-cyan-800 font-semibold">J</AvatarFallback>
                     </Avatar>
@@ -436,7 +436,7 @@ export function InteractiveFeatures() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </motion.div>
-          </motion.div>)}
+          </motion.div>}
       </div>
     </div>;
 }

@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import { InteractiveFeatures as BaseInteractiveFeatures } from './InteractiveFeatures';
 
 // Images for the competitors
-const competitor1Image = "/lovable-uploads/1ae02e55-7319-4db9-b53d-d5b281651d25.png";
-const competitor2Image = "/lovable-uploads/9e014a92-5754-4395-82a1-70383e5dc717.png";
+const competitor1Image = "/lovable-uploads/fdf72b65-326d-43e5-8205-4caea7ec555e.png";
+const competitor2Image = "/lovable-uploads/22f4e367-a601-4e71-a9b0-5c4252d3d0c9.png";
 
 // Create a style patch for the live battle feature
 const injectCompetitorStyles = () => {
