@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 interface Feature {
   id: string;
   title: string;
@@ -13,41 +12,34 @@ interface Feature {
   icon: React.ReactNode;
   color: string;
 }
-
 export function InteractiveFeatures() {
   const [activeFeature, setActiveFeature] = useState<string>("case-gym");
   const isMobile = useIsMobile();
-  
-  const features: Feature[] = [
-    {
-      id: "case-gym",
-      title: "Case Gym Reps",
-      description: "Practice with written & video cases across industries, with timer, instant scoring, and highlighted insights.",
-      icon: <BookText className="w-6 h-6" />,
-      color: "from-green-400 to-emerald-500"
-    },
-    {
-      id: "adaptive",
-      title: "Adaptive Difficulty",
-      description: "Our MECE Engine ramps complexity as you improve, preventing plateaus and keeping stretch consistent.",
-      icon: <BarChart3 className="w-6 h-6" />,
-      color: "from-blue-400 to-cyan-500"
-    },
-    {
-      id: "battles",
-      title: "Live 1-v-1 Battles",
-      description: "Schedule head-to-head matches vs. peers with real-time scoring, public leaderboard, and post-match debrief.",
-      icon: <Users className="w-6 h-6" />,
-      color: "from-purple-400 to-indigo-500"
-    },
-    {
-      id: "playbooks",
-      title: "Icon Playbooks",
-      description: "Weekly 'Think Like Elon/Jobs/Nadella' cases with step-by-step solution walkthroughs & mental-model breakdowns.",
-      icon: <Briefcase className="w-6 h-6" />,
-      color: "from-amber-400 to-orange-500"
-    }
-  ];
+  const features: Feature[] = [{
+    id: "case-gym",
+    title: "Case Gym Reps",
+    description: "Practice with written & video cases across industries, with timer, instant scoring, and highlighted insights.",
+    icon: <BookText className="w-6 h-6" />,
+    color: "from-green-400 to-emerald-500"
+  }, {
+    id: "adaptive",
+    title: "Adaptive Difficulty",
+    description: "Our MECE Engine ramps complexity as you improve, preventing plateaus and keeping stretch consistent.",
+    icon: <BarChart3 className="w-6 h-6" />,
+    color: "from-blue-400 to-cyan-500"
+  }, {
+    id: "battles",
+    title: "Live 1-v-1 Battles",
+    description: "Schedule head-to-head matches vs. peers with real-time scoring, public leaderboard, and post-match debrief.",
+    icon: <Users className="w-6 h-6" />,
+    color: "from-purple-400 to-indigo-500"
+  }, {
+    id: "playbooks",
+    title: "Icon Playbooks",
+    description: "Weekly 'Think Like Elon/Jobs/Nadella' cases with step-by-step solution walkthroughs & mental-model breakdowns.",
+    icon: <Briefcase className="w-6 h-6" />,
+    color: "from-amber-400 to-orange-500"
+  }];
 
   // Auto-rotation effect
   useEffect(() => {
@@ -56,54 +48,54 @@ export function InteractiveFeatures() {
       const nextIndex = (currentIndex + 1) % features.length;
       setActiveFeature(features[nextIndex].id);
     }, 6000);
-    
     return () => clearInterval(interval);
   }, [activeFeature, features]);
 
   // Calculate height styles based on device
-  const previewHeight = isMobile 
-    ? "h-[76.8vh] sm:h-[380px]" // Mobile: reduced by 20% from previous 96vh
-    : "h-[92vh] md:h-[380px]"; // Laptop: unchanged
+  const previewHeight = isMobile ? "h-[76.8vh] sm:h-[380px]" // Mobile: reduced by 20% from previous 96vh
+  : "h-[92vh] md:h-[380px]"; // Laptop: unchanged
 
   // Calculate padding styles based on device
-  const previewPadding = isMobile
-    ? "px-[5px] py-[10px]" // Mobile: 5px left/right, 10px top/bottom
-    : "p-6"; // Laptop: unchanged at 25px all around (p-6 = 1.5rem = ~24px)
+  const previewPadding = isMobile ? "px-[5px] py-[10px]" // Mobile: 5px left/right, 10px top/bottom
+  : "p-6"; // Laptop: unchanged at 25px all around (p-6 = 1.5rem = ~24px)
 
-  return (
-    <div className="relative">
+  return <div className="relative bg-white">
       {/* Interactive Background Element */}
       <div className="absolute inset-0 bg-gray-50 rounded-3xl -z-10 overflow-hidden">
         <div className="absolute w-64 h-64 bg-gradient-to-r from-green-200 to-brand-green opacity-20 rounded-full -top-20 -left-20 animate-pulse"></div>
-        <div className="absolute w-64 h-64 bg-gradient-to-r from-blue-200 to-blue-400 opacity-20 rounded-full -bottom-20 -right-20 animate-pulse" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute w-64 h-64 bg-gradient-to-r from-blue-200 to-blue-400 opacity-20 rounded-full -bottom-20 -right-20 animate-pulse" style={{
+        animationDelay: "1s"
+      }}></div>
       </div>
       
       {/* Feature Visualization Preview - Adjusted height and padding */}
-      <motion.div 
-        className={cn(
-          "mb-12 border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden",
-          previewHeight,
-          previewPadding
-        )}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
+      <motion.div className={cn("mb-12 border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden", previewHeight, previewPadding)} initial={{
+      opacity: 0
+    }} animate={{
+      opacity: 1
+    }} transition={{
+      duration: 0.5
+    }}>
         <div className="relative h-full flex items-center justify-center">
           <AnimatePresence mode="wait">
-            {activeFeature === "case-gym" && (
-              <motion.div 
-                key="case-gym"
-                className="flex flex-col md:flex-row items-center justify-center w-full h-full p-4 gap-4"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.5 }}
-              >
+            {activeFeature === "case-gym" && <motion.div key="case-gym" className="flex flex-col md:flex-row items-center justify-center w-full h-full p-4 gap-4" initial={{
+            opacity: 0,
+            x: 20
+          }} animate={{
+            opacity: 1,
+            x: 0
+          }} exit={{
+            opacity: 0,
+            x: -20
+          }} transition={{
+            duration: 0.5
+          }}>
                 <div className="flex-1 h-full flex flex-col justify-center">
                   <div className="text-lg font-bold mb-4 text-center text-gray-800">Case Progress Tracker</div>
                   <div className="w-full h-4 bg-gray-200 rounded-full mb-2">
-                    <div className="h-4 bg-gradient-to-r from-green-400 to-brand-green rounded-full" style={{ width: '70%' }}>
+                    <div className="h-4 bg-gradient-to-r from-green-400 to-brand-green rounded-full" style={{
+                  width: '70%'
+                }}>
                       <div className="h-full w-full bg-white/20 rounded-full animate-pulse"></div>
                     </div>
                   </div>
@@ -130,18 +122,20 @@ export function InteractiveFeatures() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            )}
+              </motion.div>}
             
-            {activeFeature === "adaptive" && (
-              <motion.div 
-                key="adaptive"
-                className="w-full h-full flex flex-col items-center justify-center p-6"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.5 }}
-              >
+            {activeFeature === "adaptive" && <motion.div key="adaptive" className="w-full h-full flex flex-col items-center justify-center p-6" initial={{
+            opacity: 0,
+            x: 20
+          }} animate={{
+            opacity: 1,
+            x: 0
+          }} exit={{
+            opacity: 0,
+            x: -20
+          }} transition={{
+            duration: 0.5
+          }}>
                 <div className="text-lg font-bold mb-4 text-center text-gray-800">Your Problem-Solving Skills</div>
                 
                 {/* Simplified Standard Deviation Bell Curve */}
@@ -149,27 +143,13 @@ export function InteractiveFeatures() {
                   {/* Bell Curve Path */}
                   <svg className="w-full h-full" viewBox="0 0 400 100">
                     {/* Background Line */}
-                    <path 
-                      d="M 50,80 C 50,80 100,80 150,80 C 200,80 250,80 300,80 C 350,80 350,80 350,80" 
-                      stroke="#e5e7eb"
-                      strokeWidth="1"
-                      fill="none"
-                    />
+                    <path d="M 50,80 C 50,80 100,80 150,80 C 200,80 250,80 300,80 C 350,80 350,80 350,80" stroke="#e5e7eb" strokeWidth="1" fill="none" />
                     
                     {/* Bell Curve Path */}
-                    <path 
-                      d="M 50,80 C 50,80 100,75 150,60 C 200,40 250,60 300,75 C 350,80 350,80 350,80" 
-                      stroke="#e5e7eb"
-                      strokeWidth="2"
-                      fill="none"
-                    />
+                    <path d="M 50,80 C 50,80 100,75 150,60 C 200,40 250,60 300,75 C 350,80 350,80 350,80" stroke="#e5e7eb" strokeWidth="2" fill="none" />
                     
                     {/* Filled area under the curve */}
-                    <path 
-                      d="M 50,80 C 50,80 100,75 150,60 C 200,40 250,60 300,75 C 350,80 350,80 350,80 L 350,80 L 50,80 Z" 
-                      fill="url(#bellGradient)"
-                      opacity="0.2"
-                    />
+                    <path d="M 50,80 C 50,80 100,75 150,60 C 200,40 250,60 300,75 C 350,80 350,80 350,80 L 350,80 L 50,80 Z" fill="url(#bellGradient)" opacity="0.2" />
 
                     <defs>
                       <linearGradient id="bellGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -180,15 +160,7 @@ export function InteractiveFeatures() {
                     </defs>
                     
                     {/* The marker point position (86% position) */}
-                    <line
-                      x1="300"
-                      y1="30"
-                      x2="300"
-                      y2="80"
-                      stroke="#84ff01"
-                      strokeWidth="2"
-                      strokeDasharray="4,4"
-                    />
+                    <line x1="300" y1="30" x2="300" y2="80" stroke="#84ff01" strokeWidth="2" strokeDasharray="4,4" />
                     
                     {/* You are here marker */}
                     <circle cx="300" cy="75" r="6" fill="#84ff01">
@@ -232,18 +204,20 @@ export function InteractiveFeatures() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            )}
+              </motion.div>}
             
-            {activeFeature === "battles" && (
-              <motion.div 
-                key="battles"
-                className="w-full h-full flex flex-col items-center justify-center p-6"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.5 }}
-              >
+            {activeFeature === "battles" && <motion.div key="battles" className="w-full h-full flex flex-col items-center justify-center p-6" initial={{
+            opacity: 0,
+            x: 20
+          }} animate={{
+            opacity: 1,
+            x: 0
+          }} exit={{
+            opacity: 0,
+            x: -20
+          }} transition={{
+            duration: 0.5
+          }}>
                 <div className="text-lg font-bold mb-4 text-center text-gray-800">Live Case Battle</div>
                 <div className="flex w-full justify-between items-center mb-6">
                   {/* Left Player */}
@@ -286,11 +260,9 @@ export function InteractiveFeatures() {
                     <div className="font-medium">02:45</div>
                   </div>
                   
-                  <Progress value={30} className="h-1.5 bg-gray-100" 
-                    style={{ 
-                      background: 'linear-gradient(to right, #e9d5ff, #ddd6fe, #c7d2fe, #bfdbfe)',
-                    }} 
-                  />
+                  <Progress value={30} className="h-1.5 bg-gray-100" style={{
+                background: 'linear-gradient(to right, #e9d5ff, #ddd6fe, #c7d2fe, #bfdbfe)'
+              }} />
                   
                   {/* Challenge Container */}
                   <div className="mt-4 border border-gray-200 rounded-xl p-3 bg-white">
@@ -311,29 +283,30 @@ export function InteractiveFeatures() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            )}
+              </motion.div>}
             
-            {activeFeature === "playbooks" && (
-              <motion.div 
-                key="playbooks"
-                className="w-full h-full flex flex-col items-center justify-center"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.5 }}
-              >
+            {activeFeature === "playbooks" && <motion.div key="playbooks" className="w-full h-full flex flex-col items-center justify-center" initial={{
+            opacity: 0,
+            x: 20
+          }} animate={{
+            opacity: 1,
+            x: 0
+          }} exit={{
+            opacity: 0,
+            x: -20
+          }} transition={{
+            duration: 0.5
+          }}>
                 <div className="text-lg font-bold mb-4 text-center text-gray-800">Business Icons Thought Process</div>
                 
                 {/* Mobile optimized icon grid - Redesigned with pyramid layout option */}
-                {isMobile ? (
-                  <div className="flex flex-col items-center w-full max-w-[95%]">
+                {isMobile ? <div className="flex flex-col items-center w-full max-w-[95%]">
                     {/* Pyramid layout for mobile - One card on top, two below */}
                     <div className="w-full mb-3">
-                      <motion.div 
-                        className="mx-auto w-[80%] aspect-square bg-gradient-to-b from-amber-50 to-amber-100 rounded-lg flex flex-col items-center justify-center p-3 relative overflow-hidden border border-amber-200 shadow-sm"
-                        whileHover={{ y: -3, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-                      >
+                      <motion.div className="mx-auto w-[80%] aspect-square bg-gradient-to-b from-amber-50 to-amber-100 rounded-lg flex flex-col items-center justify-center p-3 relative overflow-hidden border border-amber-200 shadow-sm" whileHover={{
+                  y: -3,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
+                }}>
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 mb-2 flex items-center justify-center">
                           <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18 4V20M6 4V20M3 8H7M17 8H21M3 12H21M3 16H7M17 16H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -345,10 +318,10 @@ export function InteractiveFeatures() {
                     </div>
                     
                     <div className="flex justify-between w-full gap-3">
-                      <motion.div 
-                        className="flex-1 aspect-square bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg flex flex-col items-center justify-center p-3 relative overflow-hidden border border-gray-200 shadow-sm"
-                        whileHover={{ y: -3, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-                      >
+                      <motion.div className="flex-1 aspect-square bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg flex flex-col items-center justify-center p-3 relative overflow-hidden border border-gray-200 shadow-sm" whileHover={{
+                  y: -3,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
+                }}>
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 mb-2 flex items-center justify-center">
                           <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9 12L11 14L15 10M12 3L4 7V17L12 21L20 17V7L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -358,10 +331,10 @@ export function InteractiveFeatures() {
                         <div className="text-xs text-gray-600 mt-1">Customer Experience</div>
                       </motion.div>
                       
-                      <motion.div 
-                        className="flex-1 aspect-square bg-gradient-to-b from-blue-50 to-blue-100 rounded-lg flex flex-col items-center justify-center p-3 relative overflow-hidden border border-blue-200 shadow-sm"
-                        whileHover={{ y: -3, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-                      >
+                      <motion.div className="flex-1 aspect-square bg-gradient-to-b from-blue-50 to-blue-100 rounded-lg flex flex-col items-center justify-center p-3 relative overflow-hidden border border-blue-200 shadow-sm" whileHover={{
+                  y: -3,
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
+                }}>
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 mb-2 flex items-center justify-center">
                           <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15 5L18 2M18 2L21 5M18 2V8M12 12L9.17 14.83M9.17 14.83L6 18M9.17 14.83H14.83M14.83 14.83L18 18M14.83 14.83L12 12M6 6L9 9M9 9L12 12M3 3L6 6M6 18H12M12 18L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -371,14 +344,13 @@ export function InteractiveFeatures() {
                         <div className="text-xs text-gray-600 mt-1">Growth Mindset</div>
                       </motion.div>
                     </div>
-                  </div>
-                ) : (
-                  // Desktop layout remains unchanged
-                  <div className="grid grid-cols-3 gap-6 w-full max-w-2xl">
-                    <motion.div 
-                      className="aspect-square bg-gradient-to-b from-amber-50 to-amber-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-amber-200 shadow-sm"
-                      whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-                    >
+                  </div> :
+            // Desktop layout remains unchanged
+            <div className="grid grid-cols-3 gap-6 w-full max-w-2xl">
+                    <motion.div className="aspect-square bg-gradient-to-b from-amber-50 to-amber-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-amber-200 shadow-sm" whileHover={{
+                y: -5,
+                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
+              }}>
                       <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 mb-3 flex items-center justify-center">
                         <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M18 4V20M6 4V20M3 8H7M17 8H21M3 12H21M3 16H7M17 16H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -388,10 +360,10 @@ export function InteractiveFeatures() {
                       <div className="text-xs text-gray-600 mt-1">First Principles</div>
                       <div className="absolute bottom-0 right-0 w-24 h-24 bg-amber-300 opacity-10 rounded-full -mr-10 -mb-10"></div>
                     </motion.div>
-                    <motion.div 
-                      className="aspect-square bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-gray-200 shadow-sm"
-                      whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-                    >
+                    <motion.div className="aspect-square bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-gray-200 shadow-sm" whileHover={{
+                y: -5,
+                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
+              }}>
                       <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 mb-3 flex items-center justify-center">
                         <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M9 12L11 14L15 10M12 3L4 7V17L12 21L20 17V7L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -401,10 +373,10 @@ export function InteractiveFeatures() {
                       <div className="text-xs text-gray-600 mt-1">Customer Experience</div>
                       <div className="absolute bottom-0 right-0 w-24 h-24 bg-gray-300 opacity-10 rounded-full -mr-10 -mb-10"></div>
                     </motion.div>
-                    <motion.div 
-                      className="aspect-square bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-blue-200 shadow-sm"
-                      whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-                    >
+                    <motion.div className="aspect-square bg-gradient-to-b from-blue-50 to-blue-100 rounded-xl flex flex-col items-center justify-center p-4 relative overflow-hidden border border-blue-200 shadow-sm" whileHover={{
+                y: -5,
+                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)"
+              }}>
                       <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 mb-3 flex items-center justify-center">
                         <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path d="M15 5L18 2M18 2L21 5M18 2V8M12 12L9.17 14.83M9.17 14.83L6 18M9.17 14.83H14.83M14.83 14.83L18 18M14.83 14.83L12 12M6 6L9 9M9 9L12 12M3 3L6 6M6 18H12M12 18L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -414,52 +386,34 @@ export function InteractiveFeatures() {
                       <div className="text-xs text-gray-600 mt-1">Growth Mindset</div>
                       <div className="absolute bottom-0 right-0 w-24 h-24 bg-blue-300 opacity-10 rounded-full -mr-10 -mb-10"></div>
                     </motion.div>
-                  </div>
-                )}
+                  </div>}
                 
                 <div className={cn("mt-4 text-center", isMobile ? "mt-2" : "mt-4")}>
                   <span className="text-sm text-brand-green font-medium">New icon playbooks added weekly</span>
                 </div>
-              </motion.div>
-            )}
+              </motion.div>}
           </AnimatePresence>
           
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
-            {features.map((feature) => (
-              <button
-                key={feature.id}
-                className={cn(
-                  "w-2 h-2 rounded-full transition-all",
-                  activeFeature === feature.id ? "w-8 bg-brand-green" : "bg-gray-300"
-                )}
-                onClick={() => setActiveFeature(feature.id)}
-              />
-            ))}
+            {features.map(feature => <button key={feature.id} className={cn("w-2 h-2 rounded-full transition-all", activeFeature === feature.id ? "w-8 bg-brand-green" : "bg-gray-300")} onClick={() => setActiveFeature(feature.id)} />)}
           </div>
         </div>
       </motion.div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {features.map((feature) => (
-          <motion.div
-            key={feature.id}
-            className={cn(
-              "relative p-6 rounded-xl border bg-white shadow-sm transition-all duration-300",
-              "hover:shadow-lg hover:scale-105 cursor-pointer",
-              activeFeature === feature.id ? "ring-2 ring-offset-2 ring-brand-green" : "border-gray-100"
-            )}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: features.indexOf(feature) * 0.1 }}
-            onClick={() => setActiveFeature(feature.id)}
-          >
-            <div className={cn(
-              "mb-4 p-3 rounded-lg bg-gradient-to-r w-fit",
-              feature.color,
-              "transition-all duration-300",
-              activeFeature === feature.id ? "scale-110" : ""
-            )}>
+        {features.map(feature => <motion.div key={feature.id} className={cn("relative p-6 rounded-xl border bg-white shadow-sm transition-all duration-300", "hover:shadow-lg hover:scale-105 cursor-pointer", activeFeature === feature.id ? "ring-2 ring-offset-2 ring-brand-green" : "border-gray-100")} initial={{
+        opacity: 0,
+        y: 20
+      }} whileInView={{
+        opacity: 1,
+        y: 0
+      }} viewport={{
+        once: true
+      }} transition={{
+        duration: 0.5,
+        delay: features.indexOf(feature) * 0.1
+      }} onClick={() => setActiveFeature(feature.id)}>
+            <div className={cn("mb-4 p-3 rounded-lg bg-gradient-to-r w-fit", feature.color, "transition-all duration-300", activeFeature === feature.id ? "scale-110" : "")}>
               <div className="text-white">
                 {feature.icon}
               </div>
@@ -469,29 +423,20 @@ export function InteractiveFeatures() {
             <p className="text-gray-600">{feature.description}</p>
             
             {/* Feature-specific interactive element that appears on hover */}
-            <motion.div 
-              className={cn(
-                "absolute -bottom-2 -right-2 w-12 h-12 rounded-full flex items-center justify-center text-white",
-                "bg-gradient-to-r",
-                feature.id === "case-gym" ? "from-green-400 to-emerald-500" :
-                feature.id === "adaptive" ? "from-blue-400 to-cyan-500" :
-                feature.id === "battles" ? "from-purple-400 to-indigo-500" :
-                "from-amber-400 to-orange-500"
-              )}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ 
-                scale: activeFeature === feature.id ? 1 : 0, 
-                opacity: activeFeature === feature.id ? 1 : 0
-              }}
-              transition={{ duration: 0.3 }}
-            >
+            <motion.div className={cn("absolute -bottom-2 -right-2 w-12 h-12 rounded-full flex items-center justify-center text-white", "bg-gradient-to-r", feature.id === "case-gym" ? "from-green-400 to-emerald-500" : feature.id === "adaptive" ? "from-blue-400 to-cyan-500" : feature.id === "battles" ? "from-purple-400 to-indigo-500" : "from-amber-400 to-orange-500")} initial={{
+          scale: 0,
+          opacity: 0
+        }} animate={{
+          scale: activeFeature === feature.id ? 1 : 0,
+          opacity: activeFeature === feature.id ? 1 : 0
+        }} transition={{
+          duration: 0.3
+        }}>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </motion.div>
-          </motion.div>
-        ))}
+          </motion.div>)}
       </div>
-    </div>
-  );
+    </div>;
 }
