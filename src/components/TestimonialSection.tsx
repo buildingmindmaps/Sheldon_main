@@ -8,19 +8,19 @@ export function TestimonialSection() {
       quote: "The beta version of SheldonAI impressed me with its realistic interview scenarios. I can already tell this will be a game-changer for case preparation.",
       author: "Atithee Nandanwar",
       role: "PGP, Masters' Union",
-      avatar: "https://randomuser.me/api/portraits/women/32.jpg"
+      avatar: "/lovable-uploads/73fec0f3-ba1c-4afa-b501-f4125827ff90.png"
     },
     {
       quote: "After just a week of testing SheldonAI, I noticed a significant improvement in how I structure my thoughts. The instant feedback is exactly what I've been looking for.",
       author: "Sushant Raj Gupta",
       role: "PGP, Masters' Union",
-      avatar: "https://randomuser.me/api/portraits/men/44.jpg"
+      avatar: "/lovable-uploads/45b7e438-86e6-468b-b2ae-9cca21a80d02.png"
     },
     {
       quote: "The early access to the Icon Playbooks gave me invaluable insights into executive thinking. Can't wait for the full release of this powerful tool.",
       author: "Srishti Kumari",
       role: "PGP, Masters' Union",
-      avatar: "https://randomuser.me/api/portraits/women/67.jpg"
+      avatar: "/lovable-uploads/2376b705-d592-40ec-8b5f-5a5139234008.png"
     }
   ];
 
