@@ -2,7 +2,17 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { BookText, BarChart3, Users } from "lucide-react";
+
 export function HowItWorksSection() {
+  // Define a CSS class for the number badge styling
+  const numberBadgeStyle = {
+    background: "#1A1F2C",
+    color: "white",
+    boxShadow: "0 0 0 3px white, 0 4px 6px rgba(0, 0, 0, 0.2)",
+    border: "2px solid #84FF01",
+    fontWeight: 700
+  };
+
   const steps = [{
     icon: <BookText className="w-6 h-6 text-white" />,
     title: "Select a Case",
@@ -87,6 +97,7 @@ export function HowItWorksSection() {
           </motion.div>
         </div>
   }];
+  
   return <section className="relative py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto bg-gray-50 rounded-3xl overflow-hidden">
       <motion.div className="absolute w-64 h-64 bg-gradient-to-r from-brand-green to-green-200 rounded-full blur-3xl opacity-20 -z-10" animate={{
       x: [0, 50, 0],
@@ -139,34 +150,37 @@ export function HowItWorksSection() {
           boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)",
           borderColor: "rgba(132, 255, 1, 0.5)"
         }}>
-              {/* Step visual with reduced height and more appropriate margins */}
+              {/* Step visual with appropriate spacing */}
               <div className="h-20 mb-4 relative mt-8">
                 {step.visual}
               </div>
               
-              {/* Enhanced step number styling */}
-              <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg z-30 number-badge">
+              {/* Enhanced step number styling with inline styles instead of jsx */}
+              <div 
+                className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg z-30" 
+                style={numberBadgeStyle}
+              >
                 {index + 1}
               </div>
               
               <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 mx-auto" style={{
-            background: step.color
-          }}>
+                background: step.color
+              }}>
                 {step.icon}
               </div>
               
               <h3 className="text-xl font-bold mb-2 text-center">{step.title}</h3>
               <p className="text-gray-600 text-center">{step.description}</p>
               <motion.div className="absolute bottom-0 right-0 w-40 h-40 rounded-full" initial={{
-            opacity: 0.05
-          }} whileHover={{
-            opacity: 0.1,
-            scale: 1.2
-          }} style={{
-            background: step.color,
-            translateX: '40%',
-            translateY: '40%'
-          }} />
+                opacity: 0.05
+              }} whileHover={{
+                opacity: 0.1,
+                scale: 1.2
+              }} style={{
+                background: step.color,
+                translateX: '40%',
+                translateY: '40%'
+              }} />
             </motion.div>)}
         </div>
       </div>
@@ -201,16 +215,5 @@ export function HowItWorksSection() {
         </div>
         <div className="absolute -bottom-16 -right-16 w-64 h-64 bg-brand-green opacity-5 rounded-full"></div>
       </motion.div>
-
-      {/* Add custom styles for the step numbers to ensure they're clearly visible */}
-      <style jsx>{`
-        .number-badge {
-          background: #1A1F2C;
-          color: white;
-          box-shadow: 0 0 0 3px white, 0 4px 6px rgba(0, 0, 0, 0.2);
-          border: 2px solid #84FF01;
-          font-weight: 700;
-        }
-      `}</style>
     </section>;
 }
