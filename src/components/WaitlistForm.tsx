@@ -2,14 +2,14 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Form, FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-// Define form validation schema with required fields
+// Define form validation schema
 const waitlistSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   education: z.string().min(2, { message: "Please provide your education" }),
@@ -80,7 +80,6 @@ export function WaitlistForm() {
                   <Input
                     placeholder="Your name"
                     className="h-12 bg-white border-gray-200 focus-visible:ring-brand-green"
-                    required
                     {...field}
                   />
                 </FormControl>
@@ -98,7 +97,6 @@ export function WaitlistForm() {
                   <Input
                     placeholder="Education"
                     className="h-12 bg-white border-gray-200 focus-visible:ring-brand-green"
-                    required
                     {...field}
                   />
                 </FormControl>
@@ -118,7 +116,6 @@ export function WaitlistForm() {
                   type="email"
                   placeholder="Your email address"
                   className="h-12 bg-white border-gray-200 focus-visible:ring-brand-green"
-                  required
                   {...field}
                 />
               </FormControl>
