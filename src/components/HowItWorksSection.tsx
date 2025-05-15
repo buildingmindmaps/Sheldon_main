@@ -1,7 +1,7 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { BookText, BarChart3, Users } from "lucide-react";
+import { WaitlistForm } from "@/components/WaitlistForm";
 
 export function HowItWorksSection() {
   // Define a CSS class for the number badge styling
@@ -202,13 +202,8 @@ export function HowItWorksSection() {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-green via-blue-500 to-amber-500"></div>
         <p className="text-brand-green font-medium">Ready to elevate your case interview skills?</p>
         <h3 className="text-2xl font-bold mt-2 mb-6">Join our waitlist today and be among the first to experience CaseAI</h3>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
-          <div className="flex-1 w-full">
-            <input type="email" placeholder="Enter your email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent" />
-          </div>
-          <button className="px-6 py-2 bg-brand-green text-gray-900 font-medium rounded-lg hover:bg-opacity-90 transition-all">
-            Join Waitlist
-          </button>
+        <div className="max-w-md mx-auto">
+          <WaitlistForm />
         </div>
         <div className="mt-4 text-sm text-gray-500">
           Be the first to know when we launch. Limited spots available.

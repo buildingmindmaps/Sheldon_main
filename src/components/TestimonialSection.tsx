@@ -6,21 +6,21 @@ export function TestimonialSection() {
   const testimonials = [
     {
       quote: "The beta version of CaseAI impressed me with its realistic interview scenarios. I can already tell this will be a game-changer for case preparation.",
-      author: "Alex K.",
-      role: "Beta Tester, MBA Candidate",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg"
+      author: "Atithee Nandanwar",
+      role: "PGP, Masters' Union",
+      avatar: "https://randomuser.me/api/portraits/women/32.jpg"
     },
     {
       quote: "After just a week of testing CaseAI, I noticed a significant improvement in how I structure my thoughts. The instant feedback is exactly what I've been looking for.",
-      author: "Sarah L.",
-      role: "Beta Tester, Consulting Aspirant",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg"
+      author: "Sushant Raj Gupta",
+      role: "PGP, Masters' Union",
+      avatar: "https://randomuser.me/api/portraits/men/44.jpg"
     },
     {
       quote: "The early access to the Icon Playbooks gave me invaluable insights into executive thinking. Can't wait for the full release of this powerful tool.",
-      author: "Michael T.",
-      role: "Beta Tester, Product Manager",
-      avatar: "https://randomuser.me/api/portraits/men/67.jpg"
+      author: "Srishti Kumari",
+      role: "PGP, Masters' Union",
+      avatar: "https://randomuser.me/api/portraits/women/67.jpg"
     }
   ];
 

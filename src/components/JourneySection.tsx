@@ -102,6 +102,7 @@ const interactiveElements = [
     color: i % 2 === 0 ? "rgba(132, 255, 1, 0.45)" : "rgba(255, 255, 255, 0.2)"
   }))
 }];
+
 export function JourneySection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
@@ -118,28 +119,42 @@ export function JourneySection() {
     y: 0
   });
   const [isHovering, setIsHovering] = useState(false);
-
+  const [timeProgress, setTimeProgress] = useState(100);
+  
   // Get the current icon component based on the current index
   const CurrentIcon = journeyIcons[currentIndex];
 
   // Get the current interactive elements based on the current index
   const currentInteractiveElements = interactiveElements[currentIndex]?.elements || [];
 
-  // Handle auto-cycling through the sentences - Changed to 6 seconds
+  // Handle auto-cycling through the sentences - Changed to 5 seconds
   useEffect(() => {
     if (isAutoPlay) {
+      // Reset progress to 100% when changing slides
+      setTimeProgress(100);
+      
+      // Start decreasing progress
+      const progressInterval = setInterval(() => {
+        setTimeProgress((prev) => Math.max(prev - 2, 0));
+      }, 100);
+      
       intervalRef.current = setInterval(() => {
         setCurrentIndex(prev => {
           // Loop back to the beginning when reaching the end
           return (prev + 1) % journeySentences.length;
         });
-      }, 6000); // Changed from 3000 to 6000 (6 seconds)
+      }, 5000); // Changed to 5 seconds
+      
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        clearInterval(progressInterval);
+      };
+    } else {
+      // If not in autoplay, reset progress
+      setTimeProgress(0);
     }
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
   }, [currentIndex, isAutoPlay]);
 
   // Track mouse position for interactive elements
@@ -173,6 +188,7 @@ export function JourneySection() {
     setIsAutoPlay(false);
     setCurrentIndex(prev => (prev - 1 + journeySentences.length) % journeySentences.length);
   };
+  
   const handleNext = () => {
     setIsAutoPlay(false);
     setCurrentIndex(prev => (prev + 1) % journeySentences.length);
@@ -181,6 +197,9 @@ export function JourneySection() {
   // Toggle auto-play
   const toggleAutoPlay = () => {
     setIsAutoPlay(!isAutoPlay);
+    if (!isAutoPlay) {
+      setTimeProgress(100);
+    }
   };
 
   // Animation variants for text
@@ -244,9 +263,29 @@ export function JourneySection() {
     opacity: isHovering ? 0.6 + Math.sin(cursorPosition.x * Math.PI) * 0.4 : 0.3,
     scale: isHovering ? 1 + Math.sin(cursorPosition.y * Math.PI) * 0.1 : 1
   };
-  return <section ref={sectionRef} className="relative min-h-screen py-24" onMouseMove={handleMouseMove} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>      
+  
+  return <section 
+    ref={sectionRef} 
+    className="relative min-h-screen py-24" 
+    onMouseMove={handleMouseMove} 
+    onMouseEnter={handleMouseEnter} 
+    onMouseLeave={handleMouseLeave}
+    style={{
+      background: "linear-gradient(to bottom right, rgba(230, 255, 230, 0.7), rgba(210, 255, 210, 0.5))"
+    }}
+  >      
       {/* Dynamic background particles based on cursor position */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <motion.div 
+        className="absolute inset-0 overflow-hidden pointer-events-none z-0"
+        animate={{
+          backgroundPosition: isHovering ? `${cursorPosition.x * 10}% ${cursorPosition.y * 10}%` : '50% 50%'
+        }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+        style={{
+          background: "radial-gradient(circle at 50% 50%, rgba(210, 255, 210, 0.8) 0%, rgba(230, 255, 230, 0.4) 50%, rgba(240, 255, 240, 0.2) 100%)",
+          backgroundSize: "120% 120%"
+        }}
+      >
         {Array.from({
         length: 20
       }).map((_, i) => {
@@ -285,7 +324,7 @@ export function JourneySection() {
           }
         }} />;
       })}
-      </div>
+      </motion.div>
 
       {/* Light beam effect */}
       {isHovering && <motion.div className="absolute pointer-events-none" style={{
@@ -305,7 +344,7 @@ export function JourneySection() {
     }} />}
       
       <div className="relative z-10 w-full flex flex-col items-center justify-center min-h-[70vh]">
-        <div className="w-full max-w-5xl mx-auto flex flex-col bg-gray-50">
+        <div className="w-full max-w-5xl mx-auto flex flex-col bg-transparent">
           {/* Title with refined styling */}
           <div className="text-center py-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800">The Evolution</h2>
@@ -314,24 +353,24 @@ export function JourneySection() {
           {/* Main content area with transparent background */}
           <div className="flex-1 flex items-center justify-center px-4 mb-16">
             <div className="w-full max-w-3xl mx-auto relative">
-              <div className="p-10 rounded-3xl">
+              <div className="p-8 rounded-3xl">
                 <AnimatePresence mode="wait">
                   {currentIndex === journeySentences.length - 1 ?
                 // Final sentence with waitlist form
-                <div className="space-y-8">
-                      <div className="flex justify-center mb-6">
-                        <motion.div className="text-[hsl(var(--brand-green))] flex items-center justify-center h-16 w-16" variants={iconVariants} initial="hidden" animate="visible" exit="exit" whileHover={{
+                <div className="space-y-6">
+                      <div className="flex justify-center mb-4">
+                        <motion.div className="text-[hsl(var(--brand-green))] flex items-center justify-center h-12 w-12" variants={iconVariants} initial="hidden" animate="visible" exit="exit" whileHover={{
                       scale: 1.2,
                       rotate: [0, 10, -10, 0],
                       transition: {
                         duration: 0.6
                       }
                     }}>
-                          <CurrentIcon size={48} strokeWidth={1.5} />
+                          <CurrentIcon size={36} strokeWidth={1.5} />
                         </motion.div>
                       </div>
                       
-                      <motion.p className="text-xl md:text-2xl text-gray-800 leading-relaxed text-center" dangerouslySetInnerHTML={{
+                      <motion.p className="text-lg md:text-xl text-gray-800 leading-relaxed text-center" dangerouslySetInnerHTML={{
                     __html: journeySentences[currentIndex]
                   }} variants={containerVariants} initial="hidden" animate="visible" exit="exit" />
                       
@@ -349,20 +388,20 @@ export function JourneySection() {
                       </motion.div>
                     </div> :
                 // Regular sentence display with enhanced animations and icon
-                <div className="space-y-8">
-                      <div className="flex justify-center mb-6">
-                        <motion.div className="text-[hsl(var(--brand-green))] flex items-center justify-center h-16 w-16" variants={iconVariants} initial="hidden" animate="visible" exit="exit" key={`icon-${currentIndex}`} whileHover={{
+                <div className="space-y-6">
+                      <div className="flex justify-center mb-4">
+                        <motion.div className="text-[hsl(var(--brand-green))] flex items-center justify-center h-12 w-12" variants={iconVariants} initial="hidden" animate="visible" exit="exit" key={`icon-${currentIndex}`} whileHover={{
                       scale: 1.2,
                       rotate: [0, 10, -10, 0],
                       transition: {
                         duration: 0.6
                       }
                     }}>
-                          <CurrentIcon size={48} strokeWidth={1.5} />
+                          <CurrentIcon size={36} strokeWidth={1.5} />
                         </motion.div>
                       </div>
                       
-                      <motion.p className="text-xl md:text-2xl text-gray-800 leading-relaxed text-center" dangerouslySetInnerHTML={{
+                      <motion.p className="text-lg md:text-xl text-gray-800 leading-relaxed text-center" dangerouslySetInnerHTML={{
                     __html: journeySentences[currentIndex]
                   }} variants={containerVariants} initial="hidden" animate="visible" exit="exit" key={`text-${currentIndex}`} />
                     </div>}
@@ -371,15 +410,27 @@ export function JourneySection() {
             </div>
           </div>
           
-          {/* Navigation and toggle control - positioned at the bottom of the section */}
-          <div ref={controlsRef} className="w-full max-w-3xl mx-auto flex flex-col items-center gap-4 mb-8">
-            <div className="flex items-center gap-6 mb-2 bg-white/10 backdrop-blur-sm shadow-lg rounded-full py-[7px] px-[20px]">
-              <Button variant="outline" size="icon" className="rounded-full hover:bg-brand-green/20 hover:border-brand-green/40 transition-colors" onClick={handlePrevious}>
-                <ChevronLeft className="h-5 w-5 text-gray-800" />
+          {/* Navigation and toggle control - positioned at the bottom of the section with REDUCED SIZE */}
+          <div ref={controlsRef} className="w-full max-w-2xl mx-auto flex flex-col items-center gap-3 mb-6">
+            {/* Timeline progress bar */}
+            <div className="w-full max-w-xs bg-white/20 h-[3px] rounded-full overflow-hidden mb-3">
+              {isAutoPlay && (
+                <motion.div 
+                  className="h-full bg-brand-green"
+                  initial={{ width: '100%' }}
+                  animate={{ width: `${timeProgress}%` }}
+                  transition={{ duration: 0.1, ease: "linear" }}
+                />
+              )}
+            </div>
+            
+            <div className="flex items-center gap-4 mb-1 bg-white/10 backdrop-blur-sm shadow-lg rounded-full py-[5px] px-[15px]">
+              <Button variant="outline" size="icon" className="h-7 w-7 rounded-full hover:bg-brand-green/20 hover:border-brand-green/40 transition-colors" onClick={handlePrevious}>
+                <ChevronLeft className="h-4 w-4 text-gray-800" />
               </Button>
               
-              <div className="flex gap-2">
-                {journeySentences.map((_, i) => <motion.div key={i} className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${currentIndex === i ? 'bg-brand-green scale-125 shadow-[0_0_15px_rgba(132,255,1,0.6)]' : 'bg-gray-300 hover:bg-gray-400'}`} whileHover={{
+              <div className="flex gap-1">
+                {journeySentences.map((_, i) => <motion.div key={i} className={`w-2 h-2 rounded-full cursor-pointer transition-all duration-300 ${currentIndex === i ? 'bg-brand-green scale-125 shadow-[0_0_15px_rgba(132,255,1,0.6)]' : 'bg-gray-300 hover:bg-gray-400'}`} whileHover={{
                 scale: 1.3
               }} onClick={() => {
                 setIsAutoPlay(false);
@@ -387,13 +438,13 @@ export function JourneySection() {
               }} />)}
               </div>
               
-              <Button variant="outline" size="icon" className="rounded-full hover:bg-brand-green/20 hover:border-brand-green/40 transition-colors" onClick={handleNext}>
-                <ChevronRight className="h-5 w-5 text-gray-800" />
+              <Button variant="outline" size="icon" className="h-7 w-7 rounded-full hover:bg-brand-green/20 hover:border-brand-green/40 transition-colors" onClick={handleNext}>
+                <ChevronRight className="h-4 w-4 text-gray-800" />
               </Button>
             </div>
             
             {/* Auto-play toggle button - MADE SMALLER */}
-            <Button variant="outline" size="sm" onClick={toggleAutoPlay} className={`mt-0 px-3 py-0.5 text-xs transition-all duration-300 rounded-full 
+            <Button variant="outline" size="sm" onClick={toggleAutoPlay} className={`h-6 mt-0 px-3 py-0.5 text-xs transition-all duration-300 rounded-full 
                 ${isAutoPlay ? 'bg-brand-green/20 text-gray-800 border-brand-green/50 hover:bg-brand-green/30' : 'bg-transparent text-gray-600 hover:bg-white/40 border-white/40'}`}>
               {isAutoPlay ? "Pause" : "Auto-Play"}
             </Button>

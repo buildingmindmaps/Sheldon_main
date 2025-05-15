@@ -1,18 +1,18 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookText, BarChart3, Users, Briefcase, ArrowUp, ArrowRight } from "lucide-react";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { FloatingElements } from "@/components/FloatingElements";
 import { AppScreens } from "@/components/AppScreens";
-import { InteractiveFeatures } from "@/components/InteractiveFeatures";
+import { InteractiveFeaturesWithProfiles } from "@/components/InteractiveFeaturesWithProfiles"; // Updated import
 import { TestimonialSection } from "@/components/TestimonialSection";
 import { HowItWorksSection } from "@/components/HowItWorksSection";
 import { FaqSection } from "@/components/FaqSection";
 import { Link } from "react-router-dom";
 import { useIsMobile } from '@/hooks/use-mobile';
-import { LogoBrand } from '@/components/LogoBrand';
-import { NavBar } from '@/components/NavBar';
 import { JourneySection } from '@/components/JourneySection';
+import { NavBar } from '@/components/NavBar';
 
 // Add custom border width style
 const customStyles = `
@@ -71,35 +71,7 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Rest of the page remains unchanged */}
-      {/* New Logo Section */}
-      <section className="relative z-10 py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="flex flex-wrap justify-center gap-8 md:gap-16">
-            {/* Placeholder logos - replace with actual consulting firm logos */}
-            <div className="w-24 h-16 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity">
-              <div className="w-full h-10 bg-gray-300 rounded flex items-center justify-center text-gray-500 font-semibold">Logo 1</div>
-            </div>
-            <div className="w-24 h-16 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity">
-              <div className="w-full h-10 bg-gray-300 rounded flex items-center justify-center text-gray-500 font-semibold">Logo 2</div>
-            </div>
-            <div className="w-24 h-16 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity">
-              <div className="w-full h-10 bg-gray-300 rounded flex items-center justify-center text-gray-500 font-semibold">Logo 3</div>
-            </div>
-            <div className="w-24 h-16 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity">
-              <div className="w-full h-10 bg-gray-300 rounded flex items-center justify-center text-gray-500 font-semibold">Logo 4</div>
-            </div>
-            <div className="w-24 h-16 flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity">
-              <div className="w-full h-10 bg-gray-300 rounded flex items-center justify-center text-gray-500 font-semibold">Logo 5</div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Logo Brand Section (keeping this as it might have other functionality) */}
-      <LogoBrand />
-      
-      {/* New Journey Section - added between LogoBrand and Features Section */}
+      {/* Journey Section */}
       <JourneySection />
       
       {/* Features Section */}
@@ -111,7 +83,7 @@ const Index = () => {
           </p>
         </div>
         
-        <InteractiveFeatures />
+        <InteractiveFeaturesWithProfiles />
       </section>
       
       {/* How It Works Section */}
