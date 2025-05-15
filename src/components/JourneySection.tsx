@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Circle, SquareStack, Sparkles, Brain, Rocket, Users, Target, Lightbulb, Trophy, Zap } from "lucide-react";
 import { WaitlistForm } from "@/components/WaitlistForm";
 
 // The journey sentences that will be displayed with animations
@@ -16,6 +16,19 @@ const journeySentences = [
   "Skill hardens into <strong className='text-[hsl(var(--brand-green))]'>purpose</strong>; grades blur, titles fade, yet the thrill of cracking problems no textbook dares to ask burns brighter.",
   "Purpose finds its <strong className='text-[hsl(var(--brand-green))]'>crew</strong> right here—thinkers who hate easy answers and builders who turn bright thoughts into real change.",
   "Step into this training ground where raw curiosity turns into real power—<strong className='text-[hsl(var(--brand-green))]'>train with us</strong>, master the mental models, and start claiming your edge."
+];
+
+// Icons to represent each step in the journey
+const journeyIcons = [
+  Circle,
+  Rocket,
+  Sparkles,
+  Lightbulb,
+  Users,
+  Brain,
+  Target,
+  SquareStack,
+  Zap
 ];
 
 export function JourneySection() {
@@ -93,12 +106,45 @@ export function JourneySection() {
     },
   };
 
+  // Animation variants for icons
+  const iconVariants = {
+    hidden: { 
+      scale: 0.5,
+      opacity: 0,
+      rotate: -45
+    },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      rotate: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+        delay: 0.2
+      }
+    },
+    exit: { 
+      scale: 0.5,
+      opacity: 0,
+      rotate: 45,
+      transition: { 
+        duration: 0.3, 
+        ease: "easeIn"
+      }
+    },
+  };
+
+  // Get current icon component
+  const CurrentIcon = journeyIcons[currentIndex];
+
   return (
     <section className="relative h-screen overflow-hidden">
-      {/* Main background - subtle gradient */}
-      <div className="absolute inset-0 -z-40 bg-gradient-to-br from-white via-brand-gray to-white" />
+      {/* Enhanced gradient background with more depth */}
+      <div className="absolute inset-0 -z-40">
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-brand-gray to-white opacity-70" />
+      </div>
       
-      {/* Animated gradient overlay */}
+      {/* Advanced animated gradient overlay */}
       <motion.div 
         className="absolute inset-0 -z-30"
         animate={{ 
@@ -110,13 +156,30 @@ export function JourneySection() {
           repeatType: "reverse"
         }}
         style={{
-          background: 'linear-gradient(135deg, rgba(132, 255, 1, 0.2) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(132, 255, 1, 0.2) 100%)',
+          background: 'linear-gradient(135deg, rgba(132, 255, 1, 0.15) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(132, 255, 1, 0.15) 100%)',
           backgroundSize: '400% 400%'
         }}
       />
       
+      {/* Secondary animated gradient for more depth */}
+      <motion.div 
+        className="absolute inset-0 -z-25"
+        animate={{ 
+          backgroundPosition: ['100% 0%', '0% 100%'] 
+        }}
+        transition={{ 
+          duration: 15,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }}
+        style={{
+          background: 'linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0%, rgba(132, 255, 1, 0.08) 50%, rgba(255, 255, 255, 0.08) 100%)',
+          backgroundSize: '300% 300%'
+        }}
+      />
+      
       {/* Enhanced true glassmorphism effect */}
-      <div className="absolute inset-0 -z-20 backdrop-blur-2xl bg-white/20 border-y border-white/40 shadow-[0_10px_50px_rgba(0,0,0,0.15)]"></div>
+      <div className="absolute inset-0 -z-20 backdrop-blur-2xl bg-transparent"></div>
       
       <div className="relative z-10 h-screen w-full flex flex-col items-center justify-center">
         <div className="w-full max-w-5xl mx-auto h-full flex flex-col">
@@ -125,17 +188,30 @@ export function JourneySection() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 drop-shadow-sm">The Evolution</h2>
           </div>
           
-          {/* Main content area with glass card */}
+          {/* Main content area with enhanced glass card */}
           <div className="flex-1 flex items-center justify-center px-4">
             <div className="w-full max-w-3xl mx-auto relative">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentIndex}
-                  className="p-10 rounded-3xl backdrop-blur-xl bg-white/40 border border-white/70 shadow-[0_15px_35px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all duration-300"
-                >
+              <motion.div
+                className="p-10 rounded-3xl backdrop-blur-xl bg-white/30 border border-white/50 shadow-[0_15px_35px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] transition-all duration-300"
+                initial={{ boxShadow: "0 15px 35px rgba(0,0,0,0.1)" }}
+                whileHover={{ boxShadow: "0 20px 40px rgba(0,0,0,0.15)" }}
+              >
+                <AnimatePresence mode="wait">
                   {currentIndex === journeySentences.length - 1 ? (
                     // Final sentence with waitlist form
                     <div className="space-y-8">
+                      <div className="flex justify-center mb-6">
+                        <motion.div
+                          className="text-[hsl(var(--brand-green))] flex items-center justify-center h-16 w-16"
+                          variants={iconVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                        >
+                          <CurrentIcon size={48} strokeWidth={1.5} />
+                        </motion.div>
+                      </div>
+                      
                       <motion.p 
                         className="text-xl md:text-2xl text-gray-800 leading-relaxed text-center"
                         dangerouslySetInnerHTML={{ __html: journeySentences[currentIndex] }}
@@ -154,18 +230,34 @@ export function JourneySection() {
                       </motion.div>
                     </div>
                   ) : (
-                    // Regular sentence display with enhanced animations
-                    <motion.p 
-                      className="text-xl md:text-2xl text-gray-800 leading-relaxed text-center"
-                      dangerouslySetInnerHTML={{ __html: journeySentences[currentIndex] }}
-                      variants={containerVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                    />
+                    // Regular sentence display with enhanced animations and icon
+                    <div className="space-y-8">
+                      <div className="flex justify-center mb-6">
+                        <motion.div
+                          className="text-[hsl(var(--brand-green))] flex items-center justify-center h-16 w-16"
+                          variants={iconVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          key={`icon-${currentIndex}`}
+                        >
+                          <CurrentIcon size={48} strokeWidth={1.5} />
+                        </motion.div>
+                      </div>
+                      
+                      <motion.p 
+                        className="text-xl md:text-2xl text-gray-800 leading-relaxed text-center"
+                        dangerouslySetInnerHTML={{ __html: journeySentences[currentIndex] }}
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        key={`text-${currentIndex}`}
+                      />
+                    </div>
                   )}
-                </motion.div>
-              </AnimatePresence>
+                </AnimatePresence>
+              </motion.div>
             </div>
           </div>
           
@@ -175,7 +267,7 @@ export function JourneySection() {
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="rounded-full backdrop-blur-xl bg-white/50 hover:bg-white/70 border border-white/60 shadow-md"
+                className="rounded-full backdrop-blur-xl bg-white/25 hover:bg-white/40 border border-white/40 shadow-md"
                 onClick={handlePrevious}
                 disabled={currentIndex === 0}
               >
@@ -202,7 +294,7 @@ export function JourneySection() {
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="rounded-full backdrop-blur-xl bg-white/50 hover:bg-white/70 border border-white/60 shadow-md"
+                className="rounded-full backdrop-blur-xl bg-white/25 hover:bg-white/40 border border-white/40 shadow-md"
                 onClick={handleNext}
                 disabled={currentIndex === journeySentences.length - 1}
               >
@@ -218,7 +310,7 @@ export function JourneySection() {
               className={`mt-2 px-4 py-1 text-sm transition-all duration-300 rounded-full 
                 ${isAutoPlay 
                   ? 'bg-brand-green/20 text-gray-800 border-brand-green/50 hover:bg-brand-green/30' 
-                  : 'bg-white/40 text-gray-600 hover:bg-white/60'
+                  : 'bg-white/25 text-gray-600 hover:bg-white/40 border-white/40'
                 }`}
             >
               {isAutoPlay ? "Pause" : "Auto-Play"}
