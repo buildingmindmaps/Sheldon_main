@@ -170,15 +170,21 @@ export function HowItWorksSection() {
                 borderColor: "rgba(132, 255, 1, 0.5)"
               }}
             >
-              <div className="h-32 mb-8 relative">
+              {/* Reduced height of visual container and spacing */}
+              <div className="h-24 mb-4 relative">
                 {step.visual}
               </div>
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-6 mx-auto" style={{ background: step.color }}>
-                {step.icon}
-              </div>
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center font-bold text-gray-700">
+              
+              {/* Step number - Made more prominent */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center font-bold text-gray-700 shadow-sm">
                 {index + 1}
               </div>
+              
+              {/* Icon circle - Moved closer to the visual */}
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 mx-auto" style={{ background: step.color }}>
+                {step.icon}
+              </div>
+              
               <h3 className="text-xl font-bold mb-3 text-center">{step.title}</h3>
               <p className="text-gray-600 text-center">{step.description}</p>
               <motion.div 
