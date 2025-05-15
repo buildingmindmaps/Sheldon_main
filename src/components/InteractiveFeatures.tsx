@@ -63,8 +63,13 @@ export function InteractiveFeatures() {
 
   // Calculate height styles based on device
   const previewHeight = isMobile 
-    ? "h-[96vh] sm:h-[380px]" // Mobile: 20% taller for smaller screens
-    : "h-[92vh] md:h-[380px]"; // Laptop: 15% taller
+    ? "h-[76.8vh] sm:h-[380px]" // Mobile: reduced by 20% from previous 96vh
+    : "h-[92vh] md:h-[380px]"; // Laptop: unchanged
+
+  // Calculate padding styles based on device
+  const previewPadding = isMobile
+    ? "px-[5px] py-[10px]" // Mobile: 5px left/right, 10px top/bottom
+    : "p-6"; // Laptop: unchanged at 25px all around (p-6 = 1.5rem = ~24px)
 
   return (
     <div className="relative">
@@ -74,12 +79,12 @@ export function InteractiveFeatures() {
         <div className="absolute w-64 h-64 bg-gradient-to-r from-blue-200 to-blue-400 opacity-20 rounded-full -bottom-20 -right-20 animate-pulse" style={{ animationDelay: "1s" }}></div>
       </div>
       
-      {/* Feature Visualization Preview - Moved to the top with adjusted padding and height */}
+      {/* Feature Visualization Preview - Adjusted height and padding */}
       <motion.div 
         className={cn(
           "mb-12 border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden",
           previewHeight,
-          isMobile ? "p-5" : "p-6"
+          previewPadding
         )}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
