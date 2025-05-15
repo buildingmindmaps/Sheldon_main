@@ -373,7 +373,7 @@ export function JourneySection() {
           
           {/* Navigation and toggle control - positioned at the bottom of the section */}
           <div ref={controlsRef} className="w-full max-w-3xl mx-auto flex flex-col items-center gap-4 mb-8">
-            <div className="flex items-center gap-6 mb-2 bg-white/10 backdrop-blur-sm py-3 px-6 rounded-full shadow-lg">
+            <div className="flex items-center gap-6 mb-2 bg-white/10 backdrop-blur-sm shadow-lg rounded-full py-[7px] px-[20px]">
               <Button variant="outline" size="icon" className="rounded-full hover:bg-brand-green/20 hover:border-brand-green/40 transition-colors" onClick={handlePrevious}>
                 <ChevronLeft className="h-5 w-5 text-gray-800" />
               </Button>
