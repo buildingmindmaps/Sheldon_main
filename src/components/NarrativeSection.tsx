@@ -18,8 +18,6 @@ const narrativeLines = [
 ];
 
 export function NarrativeSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
   return (
     <section className="relative overflow-hidden">
       {/* Dark canvas frames */}
