@@ -102,7 +102,6 @@ const interactiveElements = [
     color: i % 2 === 0 ? "rgba(132, 255, 1, 0.45)" : "rgba(255, 255, 255, 0.2)"
   }))
 }];
-
 export function JourneySection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
@@ -120,7 +119,7 @@ export function JourneySection() {
   });
   const [isHovering, setIsHovering] = useState(false);
   const [timeProgress, setTimeProgress] = useState(100);
-  
+
   // Get the current icon component based on the current index
   const CurrentIcon = journeyIcons[currentIndex];
 
@@ -132,19 +131,18 @@ export function JourneySection() {
     if (isAutoPlay) {
       // Reset progress to 100% when changing slides
       setTimeProgress(100);
-      
+
       // Start decreasing progress
       const progressInterval = setInterval(() => {
-        setTimeProgress((prev) => Math.max(prev - 2, 0));
+        setTimeProgress(prev => Math.max(prev - 2, 0));
       }, 100);
-      
       intervalRef.current = setInterval(() => {
         setCurrentIndex(prev => {
           // Loop back to the beginning when reaching the end
           return (prev + 1) % journeySentences.length;
         });
       }, 5000); // Changed to 5 seconds
-      
+
       return () => {
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
@@ -188,7 +186,6 @@ export function JourneySection() {
     setIsAutoPlay(false);
     setCurrentIndex(prev => (prev - 1 + journeySentences.length) % journeySentences.length);
   };
-  
   const handleNext = () => {
     setIsAutoPlay(false);
     setCurrentIndex(prev => (prev + 1) % journeySentences.length);
@@ -263,29 +260,19 @@ export function JourneySection() {
     opacity: isHovering ? 0.6 + Math.sin(cursorPosition.x * Math.PI) * 0.4 : 0.3,
     scale: isHovering ? 1 + Math.sin(cursorPosition.y * Math.PI) * 0.1 : 1
   };
-  
-  return <section 
-    ref={sectionRef} 
-    className="relative min-h-screen py-24" 
-    onMouseMove={handleMouseMove} 
-    onMouseEnter={handleMouseEnter} 
-    onMouseLeave={handleMouseLeave}
-    style={{
-      background: "linear-gradient(to bottom right, rgba(230, 255, 230, 0.7), rgba(210, 255, 210, 0.5))"
-    }}
-  >      
+  return <section ref={sectionRef} onMouseMove={handleMouseMove} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} style={{
+    background: "linear-gradient(to bottom right, rgba(230, 255, 230, 0.7), rgba(210, 255, 210, 0.5))"
+  }} className="relative min-h-screen py-24 bg-gray-50">      
       {/* Dynamic background particles based on cursor position */}
-      <motion.div 
-        className="absolute inset-0 overflow-hidden pointer-events-none z-0"
-        animate={{
-          backgroundPosition: isHovering ? `${cursorPosition.x * 10}% ${cursorPosition.y * 10}%` : '50% 50%'
-        }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
-        style={{
-          background: "radial-gradient(circle at 50% 50%, rgba(210, 255, 210, 0.8) 0%, rgba(230, 255, 230, 0.4) 50%, rgba(240, 255, 240, 0.2) 100%)",
-          backgroundSize: "120% 120%"
-        }}
-      >
+      <motion.div className="absolute inset-0 overflow-hidden pointer-events-none z-0" animate={{
+      backgroundPosition: isHovering ? `${cursorPosition.x * 10}% ${cursorPosition.y * 10}%` : '50% 50%'
+    }} transition={{
+      duration: 1.5,
+      ease: "easeOut"
+    }} style={{
+      background: "radial-gradient(circle at 50% 50%, rgba(210, 255, 210, 0.8) 0%, rgba(230, 255, 230, 0.4) 50%, rgba(240, 255, 240, 0.2) 100%)",
+      backgroundSize: "120% 120%"
+    }}>
         {Array.from({
         length: 20
       }).map((_, i) => {
@@ -414,14 +401,14 @@ export function JourneySection() {
           <div ref={controlsRef} className="w-full max-w-2xl mx-auto flex flex-col items-center gap-3 mb-6">
             {/* Timeline progress bar */}
             <div className="w-full max-w-xs bg-white/20 h-[3px] rounded-full overflow-hidden mb-3">
-              {isAutoPlay && (
-                <motion.div 
-                  className="h-full bg-brand-green"
-                  initial={{ width: '100%' }}
-                  animate={{ width: `${timeProgress}%` }}
-                  transition={{ duration: 0.1, ease: "linear" }}
-                />
-              )}
+              {isAutoPlay && <motion.div className="h-full bg-brand-green" initial={{
+              width: '100%'
+            }} animate={{
+              width: `${timeProgress}%`
+            }} transition={{
+              duration: 0.1,
+              ease: "linear"
+            }} />}
             </div>
             
             <div className="flex items-center gap-4 mb-1 bg-white/10 backdrop-blur-sm shadow-lg rounded-full py-[5px] px-[15px]">
