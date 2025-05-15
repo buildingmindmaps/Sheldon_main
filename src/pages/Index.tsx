@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LogoBrand } from '@/components/LogoBrand';
 import { NavBar } from '@/components/NavBar';
+import { JourneySection } from '@/components/JourneySection';
 
 // Add custom border width style
 const customStyles = `
@@ -98,6 +99,9 @@ const Index = () => {
       
       {/* Logo Brand Section (keeping this as it might have other functionality) */}
       <LogoBrand />
+      
+      {/* New Journey Section - added between LogoBrand and Features Section */}
+      <JourneySection />
       
       {/* Features Section */}
       <section className="relative z-10 py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
