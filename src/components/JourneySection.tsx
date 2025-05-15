@@ -7,7 +7,7 @@ import { WaitlistForm } from "@/components/WaitlistForm";
 
 // The journey sentences that will be displayed with animations
 const journeySentences = [
-  "It starts with a small itch—the moment you sense <strong>classroom answers</strong> can't handle tomorrow's questions.",
+  "It starts with a small itch—the moment you sense <strong>classroom answers</strong> can't handle tomorrow's <strong className='text-[hsl(var(--brand-green))]'>questions</strong>.",
   "That itch becomes a <strong className='text-[hsl(var(--brand-green))]'>drive</strong>, pushing you to pull problems apart the way <strong className='text-[hsl(var(--brand-green))]'>Musk</strong> takes a rocket down to its bolts.",
   "Drive turns into a <strong className='text-[hsl(var(--brand-green))]'>daily habit</strong>; each morning you sharpen questions like <strong className='text-[hsl(var(--brand-green))]'>Jobs</strong> polishing every product reveal.",
   "Habit sparks fresh <strong className='text-[hsl(var(--brand-green))]'>ideas</strong>, and you map the future the way <strong className='text-[hsl(var(--brand-green))]'>APJ Abdul Kalam</strong> sketched his rockets—big, clear, and bold.",
@@ -35,21 +35,17 @@ export function JourneySection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   // Handle auto-cycling through the sentences
   useEffect(() => {
-    if (isAutoPlay && currentIndex < journeySentences.length - 1) {
+    if (isAutoPlay) {
       intervalRef.current = setInterval(() => {
         setCurrentIndex(prev => {
-          // Stop at the last sentence
-          if (prev === journeySentences.length - 1) {
-            clearInterval(intervalRef.current!);
-            setIsAutoPlay(false);
-            return prev;
-          }
-          return prev + 1;
+          // Loop back to the beginning when reaching the end
+          return (prev + 1) % journeySentences.length;
         });
-      }, 3000); // Changed to 3 seconds as requested
+      }, 3000); // 3 seconds as requested
     }
 
     return () => {
@@ -62,16 +58,12 @@ export function JourneySection() {
   // Handle manual navigation
   const handlePrevious = () => {
     setIsAutoPlay(false);
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
+    setCurrentIndex(prev => (prev - 1 + journeySentences.length) % journeySentences.length);
   };
 
   const handleNext = () => {
     setIsAutoPlay(false);
-    if (currentIndex < journeySentences.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
+    setCurrentIndex(prev => (prev + 1) % journeySentences.length);
   };
 
   // Toggle auto-play
@@ -138,16 +130,16 @@ export function JourneySection() {
   const CurrentIcon = journeyIcons[currentIndex];
 
   return (
-    <section className="relative h-screen">      
-      <div className="relative z-10 h-screen w-full flex flex-col items-center justify-center">
-        <div className="w-full max-w-5xl mx-auto h-full flex flex-col">
+    <section ref={sectionRef} className="relative min-h-screen py-24">      
+      <div className="relative z-10 w-full flex flex-col items-center justify-center">
+        <div className="w-full max-w-5xl mx-auto flex flex-col">
           {/* Title with refined styling */}
-          <div className="text-center py-12 mt-8">
+          <div className="text-center py-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800">The Evolution</h2>
           </div>
           
           {/* Main content area with transparent background */}
-          <div className="flex-1 flex items-center justify-center px-4">
+          <div className="flex-1 flex items-center justify-center px-4 mb-16">
             <div className="w-full max-w-3xl mx-auto relative">
               <div className="p-10 rounded-3xl">
                 <AnimatePresence mode="wait">
@@ -215,15 +207,14 @@ export function JourneySection() {
             </div>
           </div>
           
-          {/* Navigation and toggle control */}
-          <div className="py-12 flex flex-col items-center gap-4">
-            <div className="flex items-center gap-6">
+          {/* Navigation and toggle control - fixed position at bottom */}
+          <div className="py-8 flex flex-col items-center gap-4 relative">
+            <div className="flex items-center gap-6 mb-2">
               <Button 
                 variant="outline" 
                 size="icon" 
                 className="rounded-full"
                 onClick={handlePrevious}
-                disabled={currentIndex === 0}
               >
                 <ChevronLeft className="h-5 w-5 text-gray-800" />
               </Button>
@@ -250,7 +241,6 @@ export function JourneySection() {
                 size="icon" 
                 className="rounded-full"
                 onClick={handleNext}
-                disabled={currentIndex === journeySentences.length - 1}
               >
                 <ChevronRight className="h-5 w-5 text-gray-800" />
               </Button>
@@ -261,7 +251,7 @@ export function JourneySection() {
               variant="outline"
               size="sm"
               onClick={toggleAutoPlay}
-              className={`mt-2 px-4 py-1 text-sm transition-all duration-300 rounded-full 
+              className={`mt-0 px-4 py-1 text-sm transition-all duration-300 rounded-full 
                 ${isAutoPlay 
                   ? 'bg-brand-green/20 text-gray-800 border-brand-green/50 hover:bg-brand-green/30' 
                   : 'bg-transparent text-gray-600 hover:bg-white/40 border-white/40'
