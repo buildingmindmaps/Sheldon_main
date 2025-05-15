@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Feature {
   id: string;
@@ -16,6 +17,7 @@ interface Feature {
 
 export function InteractiveFeatures() {
   const [activeFeature, setActiveFeature] = useState<string>("case-gym");
+  const isMobile = useIsMobile();
   
   const features: Feature[] = [
     {
@@ -59,6 +61,11 @@ export function InteractiveFeatures() {
     return () => clearInterval(interval);
   }, [activeFeature, features]);
 
+  // Calculate height styles based on device
+  const previewHeight = isMobile 
+    ? "h-[96vh] sm:h-[380px]" // Mobile: 20% taller for smaller screens
+    : "h-[92vh] md:h-[380px]"; // Laptop: 15% taller
+
   return (
     <div className="relative">
       {/* Interactive Background Element */}
@@ -67,9 +74,13 @@ export function InteractiveFeatures() {
         <div className="absolute w-64 h-64 bg-gradient-to-r from-blue-200 to-blue-400 opacity-20 rounded-full -bottom-20 -right-20 animate-pulse" style={{ animationDelay: "1s" }}></div>
       </div>
       
-      {/* Feature Visualization Preview - Moved to the top */}
+      {/* Feature Visualization Preview - Moved to the top with adjusted padding and height */}
       <motion.div 
-        className="mb-12 h-80 border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden"
+        className={cn(
+          "mb-12 border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden",
+          previewHeight,
+          isMobile ? "p-5" : "p-6"
+        )}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
