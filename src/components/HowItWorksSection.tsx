@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { BookText, BarChart3, Users } from "lucide-react";
@@ -138,24 +139,22 @@ export function HowItWorksSection() {
           boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)",
           borderColor: "rgba(132, 255, 1, 0.5)"
         }}>
-              {/* Added top margin to create space between number and graphic */}
-              <div className="h-20 mb-2 relative pt-3 mt-5">
+              {/* Step visual with reduced height and more appropriate margins */}
+              <div className="h-20 mb-4 relative mt-8">
                 {step.visual}
               </div>
               
-              {/* Increased z-index for better visibility and adjusted styling */}
-              <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white border-3 border-gray-300 flex items-center justify-center font-bold text-gray-900 shadow-lg text-lg z-20">
+              {/* Enhanced step number styling */}
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg z-30 number-badge">
                 {index + 1}
               </div>
               
-              {/* Reduced space between visual and icon */}
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 mx-auto" style={{
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 mx-auto" style={{
             background: step.color
           }}>
                 {step.icon}
               </div>
               
-              {/* Reduced space between icon and title */}
               <h3 className="text-xl font-bold mb-2 text-center">{step.title}</h3>
               <p className="text-gray-600 text-center">{step.description}</p>
               <motion.div className="absolute bottom-0 right-0 w-40 h-40 rounded-full" initial={{
@@ -202,5 +201,16 @@ export function HowItWorksSection() {
         </div>
         <div className="absolute -bottom-16 -right-16 w-64 h-64 bg-brand-green opacity-5 rounded-full"></div>
       </motion.div>
+
+      {/* Add custom styles for the step numbers to ensure they're clearly visible */}
+      <style jsx>{`
+        .number-badge {
+          background: #1A1F2C;
+          color: white;
+          box-shadow: 0 0 0 3px white, 0 4px 6px rgba(0, 0, 0, 0.2);
+          border: 2px solid #84FF01;
+          font-weight: 700;
+        }
+      `}</style>
     </section>;
 }
