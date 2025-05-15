@@ -37,9 +37,9 @@ export function NewsletterForm() {
       <Button 
         type="submit" 
         disabled={isLoading}
-        className="h-12 px-6 bg-black hover:bg-gray-800 text-white"
+        className="h-12 px-6 bg-[hsl(var(--brand-green))] hover:bg-brand-black hover:text-white text-black transition-colors duration-300"
       >
-        {isLoading ? "Submitting..." : "Get Notified"}
+        {isLoading ? "Submitting..." : "Join Waitlist"}
       </Button>
     </form>
   );

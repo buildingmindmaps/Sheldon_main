@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { motion, AnimatePresence } from "framer-motion";
 
 export function NavBar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -50,6 +51,24 @@ export function NavBar() {
     return () => window.removeEventListener('resize', handleResize);
   }, [isMobile, mobileMenuOpen]);
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (mobileMenuOpen && !target.closest('nav')) {
+        setMobileMenuOpen(false);
+      }
+    };
+    
+    if (mobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <header 
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -83,28 +102,84 @@ export function NavBar() {
             size="icon" 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            className="relative z-50 transition-all duration-300"
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            <div className="relative w-6 h-6">
+              <motion.span 
+                className="absolute h-0.5 bg-current rounded w-6 transform transition-all" 
+                animate={{ 
+                  top: mobileMenuOpen ? "50%" : "30%", 
+                  rotate: mobileMenuOpen ? "45deg" : "0deg"
+                }}
+                style={{ transformOrigin: "center" }}
+              />
+              <motion.span 
+                className="absolute h-0.5 bg-current rounded w-6 top-1/2 transform transition-all" 
+                animate={{ 
+                  opacity: mobileMenuOpen ? 0 : 1,
+                  width: mobileMenuOpen ? 0 : "100%"
+                }}
+              />
+              <motion.span 
+                className="absolute h-0.5 bg-current rounded w-6 transform transition-all" 
+                animate={{ 
+                  top: mobileMenuOpen ? "50%" : "70%", 
+                  rotate: mobileMenuOpen ? "-45deg" : "0deg"
+                }}
+                style={{ transformOrigin: "center" }}
+              />
+            </div>
           </Button>
         </div>
       </nav>
 
       {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t shadow-lg">
-          <div className="flex flex-col p-4 space-y-3">
-            <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-              <Link to="/">Home</Link>
-            </Button>
-            <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-              <Link to="/playbook">Playbook</Link>
-            </Button>
-            <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-              <Link to="/careers">Careers</Link>
-            </Button>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            className="md:hidden fixed inset-0 top-[72px] bg-white z-40 border-t shadow-lg"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <motion.div 
+              className="flex flex-col p-6 space-y-5 h-full"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, staggerChildren: 0.1 }}
+            >
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/">Home</Link>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: 0.1 }}
+              >
+                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/playbook">Playbook</Link>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: 0.2 }}
+              >
+                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/careers">Careers</Link>
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
