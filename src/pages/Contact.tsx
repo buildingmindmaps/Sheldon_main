@@ -4,6 +4,7 @@ import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 import { Linkedin, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { WaitlistForm } from '@/components/WaitlistForm';
 
 const Contact = () => {
   return (
@@ -72,14 +73,14 @@ const Contact = () => {
           </div>
         </div>
         
-        <div className="text-center">
+        <div className="text-center mb-10">
           <h3 className="text-xl font-semibold mb-4">Want to stay updated?</h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 mb-6">
             Join our waitlist to receive updates on our launch and exclusive tips for case interview preparation.
           </p>
-          <Link to="/" className="inline-flex items-center justify-center text-brand-green hover:underline">
-            Back to Home
-          </Link>
+          <div className="max-w-md mx-auto">
+            <WaitlistForm />
+          </div>
         </div>
       </div>
       
