@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Button } from "@/components/ui/button";
@@ -133,6 +132,8 @@ export function JourneySection() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const controlsRef = useRef(null);
   const animationControls = useAnimation();
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
 
   // Handle auto-cycling through the sentences
   useEffect(() => {
@@ -157,9 +158,13 @@ export function JourneySection() {
     if (!sectionRef.current) return;
     
     const rect = sectionRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
-      y: ((event.clientY - rect.top) / rect.height) * 2 - 1
+    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+    
+    setMousePosition({ x, y });
+    setCursorPosition({
+      x: (event.clientX - rect.left) / rect.width,
+      y: (event.clientY - rect.top) / rect.height
     });
     
     animationControls.start({
@@ -167,6 +172,9 @@ export function JourneySection() {
       transition: { duration: 0.5 }
     });
   };
+
+  const handleMouseEnter = () => setIsHovering(true);
+  const handleMouseLeave = () => setIsHovering(false);
 
   // Handle manual navigation
   const handlePrevious = () => {
@@ -245,12 +253,87 @@ export function JourneySection() {
   // Get current interactive elements
   const currentInteractiveElements = interactiveElements[currentIndex]?.elements || [];
 
+  // Dynamic wave effect based on cursor position
+  const waveEffect = {
+    y: isHovering ? Math.sin(cursorPosition.x * Math.PI * 4) * 10 : 0,
+    opacity: isHovering ? 0.6 + Math.sin(cursorPosition.x * Math.PI) * 0.4 : 0.3,
+    scale: isHovering ? 1 + Math.sin(cursorPosition.y * Math.PI) * 0.1 : 1,
+  };
+
   return (
     <section 
       ref={sectionRef} 
       className="relative min-h-screen py-24"
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >      
+      {/* Dynamic background particles based on cursor position */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 20 }).map((_, i) => {
+          const size = 2 + Math.random() * 8;
+          const initialX = Math.random() * 100;
+          const initialY = Math.random() * 100;
+          const speed = 0.5 + Math.random() * 2;
+          
+          return (
+            <motion.div
+              key={`particle-${i}`}
+              className="absolute rounded-full"
+              initial={{ 
+                left: `${initialX}%`, 
+                top: `${initialY}%`, 
+                width: size, 
+                height: size,
+                opacity: 0.3 + Math.random() * 0.4,
+                backgroundColor: i % 3 === 0 
+                  ? 'hsl(var(--brand-green))' 
+                  : 'rgba(255, 255, 255, 0.8)'
+              }}
+              animate={{
+                left: `${initialX + (isHovering ? cursorPosition.x * 20 - 10 : 0)}%`,
+                top: `${initialY + (isHovering ? cursorPosition.y * 20 - 10 : 0)}%`,
+                opacity: isHovering 
+                  ? 0.3 + Math.random() * 0.7 
+                  : 0.1 + Math.random() * 0.3,
+                scale: isHovering 
+                  ? [1, 1.1 + (Math.sin(Date.now() / (1000 * speed)) * 0.2), 1] 
+                  : 1
+              }}
+              transition={{
+                left: { duration: 1, ease: "easeOut" },
+                top: { duration: 1, ease: "easeOut" },
+                opacity: { duration: 0.8 },
+                scale: { 
+                  repeat: Infinity, 
+                  duration: 3 * speed, 
+                  ease: "easeInOut" 
+                }
+              }}
+            />
+          );
+        })}
+      </div>
+
+      {/* Light beam effect */}
+      {isHovering && (
+        <motion.div 
+          className="absolute pointer-events-none"
+          style={{
+            left: `${cursorPosition.x * 100}%`,
+            top: `${cursorPosition.y * 100}%`,
+            width: '300px',
+            height: '300px',
+            marginLeft: '-150px',
+            marginTop: '-150px',
+            background: 'radial-gradient(circle, rgba(132,255,1,0.15) 0%, rgba(132,255,1,0.05) 40%, rgba(0,0,0,0) 70%)',
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        />
+      )}
+      
       <div className="relative z-10 w-full flex flex-col items-center justify-center min-h-[70vh]">
         <div className="w-full max-w-5xl mx-auto flex flex-col">
           {/* Title with refined styling */}
@@ -310,7 +393,6 @@ export function JourneySection() {
                             rotate: [0, 10, -10, 0],
                             transition: { duration: 0.6 } 
                           }}
-                          animate={animationControls}
                         >
                           <CurrentIcon size={48} strokeWidth={1.5} />
                         </motion.div>
@@ -349,7 +431,6 @@ export function JourneySection() {
                             rotate: [0, 10, -10, 0],
                             transition: { duration: 0.6 } 
                           }}
-                          animate={animationControls}
                         >
                           <CurrentIcon size={48} strokeWidth={1.5} />
                         </motion.div>
