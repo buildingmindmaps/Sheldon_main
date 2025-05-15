@@ -74,7 +74,9 @@ export function NavBar() {
       className={`fixed w-full z-50 transition-all duration-300 ${
         isVisible ? 'translate-y-0' : '-translate-y-full'
       } ${
-        isScrolled ? 'bg-white/95 shadow-sm backdrop-blur-sm' : 'bg-transparent'
+        isScrolled 
+          ? 'backdrop-blur-md bg-white/70 shadow-sm border-b border-gray-100/50' 
+          : 'backdrop-blur-sm bg-white/20'
       }`}
     >
       <nav className="relative py-4 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto flex justify-between items-center">
@@ -137,14 +139,14 @@ export function NavBar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div 
-            className="md:hidden fixed inset-0 top-[72px] bg-white z-40 border-t shadow-lg"
+            className="md:hidden fixed inset-0 top-[72px] backdrop-blur-lg bg-white/90 z-40 border-t shadow-lg"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "100vh" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <motion.div 
-              className="flex flex-col p-6 space-y-5 h-full bg-white"
+              className="flex flex-col p-6 space-y-5 h-full"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, staggerChildren: 0.1 }}
