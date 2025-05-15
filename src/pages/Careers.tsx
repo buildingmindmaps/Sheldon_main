@@ -5,37 +5,44 @@ import { NavBar } from "@/components/NavBar";
 import { Calendar, MapPin, Briefcase, ArrowRight, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Footer } from "@/components/Footer";
 
 const Careers = () => {
   const jobListings = [
     {
-      title: "AI Research Engineer",
-      location: "Remote (US/EU)",
+      title: "Chief Technology Officer (Co-Founder)",
+      location: "Gurugram, India",
       type: "Full-time",
-      department: "Engineering",
-      postedDate: "May 10, 2025",
-      description: "We're looking for an experienced AI Research Engineer to help us build the next generation of case interview preparation tools. You'll work on developing and improving our AI models for analyzing responses and providing feedback.",
+      department: "Executive",
+      postedDate: "May 15, 2025",
+      description: "Join our founding team as a visionary CTO to lead our cutting-edge AI research and development. You'll architect our technology strategy and build advanced systems that power our case interview preparation platform. The ideal candidate will have deep expertise in AI and a passion for developing innovative learning technologies.",
       requirements: [
-        "5+ years of experience in machine learning or AI",
-        "Strong background in natural language processing",
-        "Experience with large language models",
-        "Proficiency in Python and ML frameworks",
-        "MS or PhD in Computer Science, AI, or related field"
+        "Proven experience building and scaling AI systems with multi-agent architectures",
+        "Expertise in large language model fine-tuning and modification (Hugging Face, OpenAI)",
+        "Experience with Unity for interactive simulation environments",
+        "Knowledge of workflow automation platforms like n8n for integrating ML systems",
+        "Strong background in prompt engineering and AI alignment techniques",
+        "Track record of leading technical teams and delivering complex projects",
+        "Experience with real-time feedback systems and conversational AI",
+        "Entrepreneurial mindset with ability to operate in fast-paced startup environment"
       ]
     },
     {
-      title: "Product Marketing Manager",
-      location: "San Francisco, CA",
+      title: "Chief Learning Officer (Co-Founder)",
+      location: "Gurugram, India",
       type: "Full-time",
-      department: "Marketing",
-      postedDate: "May 8, 2025",
-      description: "Join our team as a Product Marketing Manager to help us reach more business school students and professionals preparing for case interviews. You'll develop and execute marketing strategies to drive growth and engagement.",
+      department: "Executive",
+      postedDate: "May 15, 2025",
+      description: "We're seeking a pioneering Chief Learning Officer to join our founding team and revolutionize how professionals develop problem-solving skills. You'll design learning frameworks based on cognitive science and neuroscience principles to create engaging and effective case interview preparation experiences.",
       requirements: [
-        "3+ years of experience in product marketing",
-        "Experience marketing to MBA students or professionals",
-        "Strong analytical and communication skills",
-        "Background in SaaS product marketing preferred",
-        "MBA or related degree a plus"
+        "PhD or advanced degree in Neuroscience, Cognitive Science, or related field",
+        "Deep understanding of learning science and cognitive development theories",
+        "Experience applying neuroscience principles to educational technology",
+        "Background in designing learning experiences that leverage cognitive principles",
+        "Ability to translate complex cognitive science research into practical learning methodologies",
+        "Experience measuring and optimizing learning outcomes with data-driven approaches",
+        "Strong communication skills to collaborate with technical and business teams",
+        "Entrepreneurial drive and comfort with startup uncertainty and rapid iteration"
       ]
     }
   ];
@@ -134,26 +141,8 @@ const Careers = () => {
         </div>
       </section>
       
-      {/* Footer */}
-      <footer className="py-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto border-t border-gray-100">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <span className="font-bold text-xl">CaseAI</span>
-            <p className="text-gray-600 text-sm mt-1">© 2025 CaseAI. All rights reserved.</p>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-6 md:items-center">
-            <a href="#" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
-            <a href="#" className="text-gray-600 hover:text-gray-900">Terms of Service</a>
-            <Button variant="outline" size="sm" className="mt-4 md:mt-0" asChild>
-              <Link to="/">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </footer>
+      {/* Using global Footer component */}
+      <Footer />
     </div>
   );
 };
