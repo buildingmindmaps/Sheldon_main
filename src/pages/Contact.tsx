@@ -21,7 +21,7 @@ const Contact = () => {
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-6">Get in Touch</h2>
               <p className="text-gray-600 mb-4">
-                Have questions about CaseAI? We'd love to hear from you! While we're building our product, the best way to reach us is directly through our founder.
+                Have questions about SheldonAI? We'd love to hear from you! While we're building our product, the best way to reach us is directly through our founder.
               </p>
             </div>
             
@@ -59,7 +59,7 @@ const Contact = () => {
               <div className="mt-6 pt-6 border-t border-gray-100">
                 <h4 className="font-medium mb-2">A note from Darshit:</h4>
                 <p className="text-gray-600">
-                  I'm excited about what we're building at CaseAI and always open to connect with fellow enthusiasts, potential users, and partners. Whether you have questions about our platform, suggestions for improvement, or just want to discuss the future of case interview preparation, feel free to reach out via LinkedIn. I personally respond to all messages and look forward to hearing from you!
+                  I'm excited about what we're building at SheldonAI and always open to connect with fellow enthusiasts, potential users, and partners. Whether you have questions about our platform, suggestions for improvement, or just want to discuss the future of case interview preparation, feel free to reach out via LinkedIn. I personally respond to all messages and look forward to hearing from you!
                 </p>
               </div>
             </div>

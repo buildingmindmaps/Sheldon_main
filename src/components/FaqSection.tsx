@@ -51,23 +51,23 @@ export function FaqSection() {
   
   const faqItems = [
     {
-      question: "What makes CaseAI different from other case interview prep platforms?",
-      answer: "CaseAI provides a truly interactive experience with an AI interviewer that adapts to your responses in real-time. Unlike static case materials or recorded videos, our platform simulates the dynamic nature of actual case interviews, providing personalized feedback and guidance tailored to your specific approach."
+      question: "What makes SheldonAI different from other case interview prep platforms?",
+      answer: "SheldonAI provides a truly interactive experience with an AI interviewer that adapts to your responses in real-time. Unlike static case materials or recorded videos, our platform simulates the dynamic nature of actual case interviews, providing personalized feedback and guidance tailored to your specific approach."
     },
     {
-      question: "Is CaseAI suitable for beginners who have never done case interviews before?",
-      answer: "Absolutely! CaseAI is designed to support users at all levels, from complete beginners to experienced candidates. Our adaptive difficulty system ensures that the cases match your current skill level and gradually increase in complexity as you improve."
+      question: "Is SheldonAI suitable for beginners who have never done case interviews before?",
+      answer: "Absolutely! SheldonAI is designed to support users at all levels, from complete beginners to experienced candidates. Our adaptive difficulty system ensures that the cases match your current skill level and gradually increase in complexity as you improve."
     },
     {
       question: "How many practice cases do you offer?",
       answer: "Our library includes over 100 cases spanning multiple industries including technology, healthcare, retail, finance, and more. We regularly add new cases based on real consulting interviews and business scenarios."
     },
     {
-      question: "Can I use CaseAI to prepare for specific consulting firms?",
-      answer: "Yes, CaseAI includes firm-specific preparation modules tailored to the unique case interview styles of major consulting firms like McKinsey, BCG, Bain, and others."
+      question: "Can I use SheldonAI to prepare for specific consulting firms?",
+      answer: "Yes, SheldonAI includes firm-specific preparation modules tailored to the unique case interview styles of major consulting firms like McKinsey, BCG, Bain, and others."
     },
     {
-      question: "When will CaseAI be available?",
+      question: "When will SheldonAI be available?",
       answer: "We're currently in the final stages of development and plan to launch soon. Join our waitlist to be among the first to access the platform and receive exclusive early access benefits."
     }
   ];

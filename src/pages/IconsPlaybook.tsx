@@ -14,7 +14,7 @@ const IconsPlaybook = () => {
     title: "Think Like Elon Musk: First Principles Thinking",
     excerpt: "Explore how Elon Musk breaks down complex problems to their fundamental truths and builds up from there, with practical examples and exercises.",
     date: "May 10, 2025",
-    author: "CaseAI Team",
+    author: "SheldonAI Team",
     category: "Mental Models",
     image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1470&auto=format&fit=crop"
   };

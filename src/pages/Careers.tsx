@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { NavBar } from "@/components/NavBar";
-import { Calendar, MapPin, Briefcase, ArrowRight, ArrowLeft } from "lucide-react";
+import { Calendar, MapPin, Briefcase, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Footer } from "@/components/Footer";
