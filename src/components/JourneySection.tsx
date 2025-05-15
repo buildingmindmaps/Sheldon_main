@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Circle, SquareStack, Sparkles, Brain, Rocket, Users, Target, Lightbulb, Trophy, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, Circle, SquareStack, Sparkles, Brain, Rocket, Users, Target, Lightbulb, Trophy, Zap, PuzzlePiece, Logic } from "lucide-react";
 import { WaitlistForm } from "@/components/WaitlistForm";
 
 // The journey sentences that will be displayed with animations
@@ -124,6 +124,15 @@ const interactiveElements = [
   },
 ];
 
+// Puzzle pieces configuration for the interactive puzzle
+const puzzlePieces = [
+  { id: 1, color: "#33C3F0", initialX: 10, initialY: 0, size: 40, shape: "circle" },
+  { id: 2, color: "#9b87f5", initialX: 80, initialY: 0, size: 50, shape: "square" },
+  { id: 3, color: "#7E69AB", initialX: 160, initialY: 0, size: 45, shape: "triangle" },
+  { id: 4, color: "#F97316", initialX: 240, initialY: 0, size: 42, shape: "diamond" },
+  { id: 5, color: "#84FF01", initialX: 320, initialY: 0, size: 48, shape: "hexagon" },
+];
+
 export function JourneySection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
@@ -134,8 +143,10 @@ export function JourneySection() {
   const animationControls = useAnimation();
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [draggingPiece, setDraggingPiece] = useState<number | null>(null);
+  const [puzzleState, setPuzzleState] = useState(puzzlePieces);
 
-  // Handle auto-cycling through the sentences
+  // Handle auto-cycling through the sentences - Changed to 6 seconds
   useEffect(() => {
     if (isAutoPlay) {
       intervalRef.current = setInterval(() => {
@@ -143,7 +154,7 @@ export function JourneySection() {
           // Loop back to the beginning when reaching the end
           return (prev + 1) % journeySentences.length;
         });
-      }, 3000); // 3 seconds as requested
+      }, 6000); // Changed from 3000 to 6000 (6 seconds)
     }
 
     return () => {
@@ -171,10 +182,53 @@ export function JourneySection() {
       scale: [1, 1.05, 1],
       transition: { duration: 0.5 }
     });
+    
+    // Update puzzle pieces position when hovering but not dragging
+    if (isHovering && draggingPiece === null) {
+      setPuzzleState(prev => prev.map(piece => ({
+        ...piece,
+        hoverX: Math.sin((cursorPosition.x * Math.PI * 2) + piece.id * 0.5) * 15,
+        hoverY: Math.cos((cursorPosition.y * Math.PI * 2) + piece.id * 0.7) * 10,
+      })));
+    }
   };
 
   const handleMouseEnter = () => setIsHovering(true);
-  const handleMouseLeave = () => setIsHovering(false);
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    // Reset hover effects when mouse leaves
+    setPuzzleState(prev => prev.map(piece => ({
+      ...piece,
+      hoverX: 0,
+      hoverY: 0,
+    })));
+  };
+
+  // Puzzle piece drag handlers
+  const startDragging = (id: number) => {
+    setDraggingPiece(id);
+  };
+  
+  const stopDragging = () => {
+    setDraggingPiece(null);
+    // Apply gravity to bring pieces back to ground level
+    setPuzzleState(prev => prev.map(piece => ({
+      ...piece,
+      y: 0, // Reset to ground level
+      hoverX: 0,
+      hoverY: 0,
+    })));
+  };
+  
+  const handleDrag = (id: number, x: number, y: number) => {
+    setPuzzleState(prev => 
+      prev.map(piece => 
+        piece.id === id 
+          ? { ...piece, x, y } 
+          : piece
+      )
+    );
+  };
 
   // Handle manual navigation
   const handlePrevious = () => {
@@ -245,6 +299,134 @@ export function JourneySection() {
         ease: "easeIn"
       }
     },
+  };
+
+  // Render shapes for puzzle pieces
+  const renderPuzzlePiece = (piece: typeof puzzleState[0]) => {
+    const x = piece.initialX + (piece.x || 0) + (piece.hoverX || 0);
+    const y = piece.y || 0 + (piece.hoverY || 0);
+    
+    const commonProps = {
+      initial: { x: piece.initialX, y: 0 },
+      animate: { 
+        x,
+        y: -y, // Negative because we want to move up from the ground line
+        rotate: draggingPiece === piece.id ? 0 : [0, piece.id % 2 === 0 ? 5 : -5, 0],
+        scale: draggingPiece === piece.id ? 1.1 : 1
+      },
+      transition: { 
+        rotate: { repeat: Infinity, duration: 3 + piece.id * 0.5, ease: "easeInOut" },
+        scale: { duration: 0.2 }
+      },
+      style: { 
+        backgroundColor: piece.color,
+        cursor: 'grab',
+        position: 'absolute',
+        bottom: 0,
+        borderRadius: piece.shape === 'circle' ? '50%' : piece.shape === 'square' ? '4px' : '0',
+        width: piece.size,
+        height: piece.size,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        boxShadow: `0 ${draggingPiece === piece.id ? '8px' : '4px'} 12px rgba(0,0,0,0.1)`,
+        zIndex: draggingPiece === piece.id ? 10 : 1
+      },
+      onMouseDown: () => startDragging(piece.id),
+      onMouseUp: stopDragging,
+      drag: draggingPiece === piece.id,
+      dragConstraints: { left: 0, right: 400, top: -150, bottom: 0 },
+      onDrag: (_: any, info: { point: { x: number; y: number } }) => {
+        if (draggingPiece === piece.id) {
+          // Calculate position relative to the puzzle ground
+          const groundRect = document.getElementById('puzzle-ground')?.getBoundingClientRect();
+          if (groundRect) {
+            const relativeX = info.point.x - groundRect.left;
+            const relativeY = groundRect.bottom - info.point.y; // Calculate how high above the ground
+            handleDrag(piece.id, relativeX - piece.size/2, Math.max(0, relativeY));
+          }
+        }
+      }
+    };
+    
+    // Logic for different shapes
+    switch(piece.shape) {
+      case 'circle':
+        return (
+          <motion.div 
+            key={`puzzle-${piece.id}`}
+            {...commonProps}
+            style={{...commonProps.style, borderRadius: '50%'}}
+          >
+            {piece.id % 2 === 0 && <PuzzlePiece size={piece.size/2} stroke="rgba(255,255,255,0.5)" />}
+          </motion.div>
+        );
+      case 'square':
+        return (
+          <motion.div
+            key={`puzzle-${piece.id}`}
+            {...commonProps}
+            style={{...commonProps.style, borderRadius: '4px'}}
+          >
+            {piece.id % 2 === 1 && <Logic size={piece.size/2} stroke="rgba(255,255,255,0.5)" />}
+          </motion.div>
+        );
+      case 'triangle':
+        return (
+          <motion.div
+            key={`puzzle-${piece.id}`}
+            {...commonProps}
+            style={{
+              ...commonProps.style,
+              width: 0,
+              height: 0,
+              backgroundColor: 'transparent',
+              borderLeft: `${piece.size/2}px solid transparent`,
+              borderRight: `${piece.size/2}px solid transparent`,
+              borderBottom: `${piece.size}px solid ${piece.color}`,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+              paddingBottom: '5px'
+            }}
+          >
+            {piece.id % 2 === 0 && <Brain size={piece.size/3} stroke="rgba(255,255,255,0.5)" />}
+          </motion.div>
+        );
+      case 'diamond':
+        return (
+          <motion.div
+            key={`puzzle-${piece.id}`}
+            {...commonProps}
+            style={{
+              ...commonProps.style,
+              transform: 'rotate(45deg)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <div style={{transform: 'rotate(-45deg)'}}>
+              {piece.id % 2 === 1 && <PuzzlePiece size={piece.size/2} stroke="rgba(255,255,255,0.5)" />}
+            </div>
+          </motion.div>
+        );
+      case 'hexagon':
+        return (
+          <motion.div
+            key={`puzzle-${piece.id}`}
+            {...commonProps}
+            style={{
+              ...commonProps.style,
+              clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
+            }}
+          >
+            {piece.id % 2 === 0 && <Logic size={piece.size/2} stroke="rgba(255,255,255,0.5)" />}
+          </motion.div>
+        );
+      default:
+        return null;
+    }
   };
 
   // Get current icon component
@@ -452,10 +634,28 @@ export function JourneySection() {
             </div>
           </div>
           
-          {/* Navigation and toggle control - fixed position at bottom */}
+          {/* Puzzle interactive area above the controls */}
+          <div className="w-full max-w-3xl mx-auto relative bottom-0 mb-20">
+            {/* Ground line for puzzle pieces */}
+            <div 
+              id="puzzle-ground"
+              className="w-full h-1 bg-[#33C3F0] rounded-full mb-2 relative overflow-visible"
+              style={{boxShadow: '0 0 10px rgba(51, 195, 240, 0.5)'}}
+            >
+              {/* Puzzle pieces that can be dragged */}
+              {puzzleState.map(piece => renderPuzzlePiece(piece))}
+            </div>
+            
+            {/* Puzzle instruction */}
+            <div className="text-center text-sm text-gray-500 mb-4 italic">
+              Drag the shapes to interact with the puzzle
+            </div>
+          </div>
+          
+          {/* Navigation and toggle control - positioned at the bottom of the section */}
           <div 
             ref={controlsRef}
-            className="fixed bottom-8 left-0 right-0 z-20 flex flex-col items-center gap-4"
+            className="w-full max-w-3xl mx-auto flex flex-col items-center gap-4 mb-8"
           >
             <div className="flex items-center gap-6 mb-2 bg-white/10 backdrop-blur-sm py-3 px-6 rounded-full shadow-lg">
               <Button 
