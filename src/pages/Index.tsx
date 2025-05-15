@@ -11,6 +11,7 @@ import { FaqSection } from "@/components/FaqSection";
 import { Link } from "react-router-dom";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LogoBrand } from '@/components/LogoBrand';
+import { NavBar } from '@/components/NavBar';
 
 // Add custom border width style
 const customStyles = `
@@ -36,20 +37,11 @@ const Index = () => {
       
       <FloatingElements />
       
-      {/* Navbar */}
-      <nav className="relative z-10 py-6 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto flex justify-between items-center">
-        <div className="font-bold text-xl">CaseAI</div>
-        <div className="flex gap-4 items-center">
-          <Button variant="ghost" asChild>
-            <Link to="/icons-playbook">Icons Playbook</Link>
-          </Button>
-          <Button variant="outline" className="border-gray-300 hover:bg-gray-50">Login</Button>
-          <Button className="bg-black hover:bg-gray-800 text-white">Sign Up</Button>
-        </div>
-      </nav>
+      {/* Navbar - replaced with the new NavBar component */}
+      <NavBar />
       
-      {/* Hero Section - Equal 50/50 split */}
-      <section className="relative z-10 pt-12 md:pt-24 pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
+      {/* Hero Section - with spacing for fixed navbar */}
+      <section className="relative z-10 pt-24 md:pt-36 pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row items-center">
           {/* Text content - 50% width */}
           <div className="lg:w-1/2 lg:pr-8">
@@ -78,6 +70,7 @@ const Index = () => {
         </div>
       </section>
       
+      {/* Rest of the page remains unchanged */}
       {/* New Logo Section */}
       <section className="relative z-10 py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
@@ -139,8 +132,8 @@ const Index = () => {
               <NewsletterForm />
             </div>
             <div className="mt-8">
-              <Link to="/icons-playbook" className="inline-flex items-center text-brand-green font-medium hover:underline">
-                Check out our Icons Playbook <ArrowRight className="ml-1 h-4 w-4" />
+              <Link to="/playbook" className="inline-flex items-center text-brand-green font-medium hover:underline">
+                Check out our Playbook <ArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </div>
           </div>
@@ -158,6 +151,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row gap-6 md:items-center">
             <a href="#" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
             <a href="#" className="text-gray-600 hover:text-gray-900">Terms of Service</a>
+            <Link to="/careers" className="text-gray-600 hover:text-gray-900">Careers</Link>
             <Button variant="outline" size="sm" className="mt-4 md:mt-0" onClick={scrollToTop}>
               <ArrowUp className="h-4 w-4 mr-2" />
               Back to Top

@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, BookText, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { NavBar } from '@/components/NavBar';
 
 const IconsPlaybook = () => {
   const featuredPost = {
@@ -48,20 +48,11 @@ const IconsPlaybook = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navbar */}
-      <nav className="py-6 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto flex justify-between items-center border-b border-gray-100">
-        <Link to="/" className="font-bold text-xl">CaseAI</Link>
-        <div className="flex gap-4 items-center">
-          <Button variant="ghost" asChild>
-            <Link to="/">Home</Link>
-          </Button>
-          <Button variant="outline" className="border-gray-300 hover:bg-gray-50">Login</Button>
-          <Button className="bg-black hover:bg-gray-800 text-white">Sign Up</Button>
-        </div>
-      </nav>
+      {/* Navbar - replaced with the new NavBar component */}
+      <NavBar />
       
-      {/* Header */}
-      <header className="py-16 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
+      {/* Header - with spacing for fixed navbar */}
+      <header className="pt-24 pb-16 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="text-center">
           <motion.h1 
             className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight"
@@ -69,7 +60,7 @@ const IconsPlaybook = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Icons Playbook
+            Playbook
           </motion.h1>
           <motion.p 
             className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
@@ -82,6 +73,7 @@ const IconsPlaybook = () => {
         </div>
       </header>
       
+      {/* Rest of the page content - unchanged */}
       {/* Featured Post */}
       <section className="py-8 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <motion.div 
@@ -199,7 +191,7 @@ const IconsPlaybook = () => {
             <BookText className="w-10 h-10 text-brand-green mb-4" />
             <h2 className="text-3xl font-bold mb-4">Get weekly playbooks in your inbox</h2>
             <p className="text-gray-600 mb-6">
-              Subscribe to receive our Icons Playbook directly to your email every week, plus exclusive tips on structured problem-solving.
+              Subscribe to receive our Playbook directly to your email every week, plus exclusive tips on structured problem-solving.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <input 
@@ -226,6 +218,7 @@ const IconsPlaybook = () => {
           <div className="flex flex-col md:flex-row gap-6 md:items-center">
             <a href="#" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
             <a href="#" className="text-gray-600 hover:text-gray-900">Terms of Service</a>
+            <Link to="/careers" className="text-gray-600 hover:text-gray-900">Careers</Link>
             <Button variant="outline" size="sm" className="mt-4 md:mt-0" asChild>
               <Link to="/">
                 <ArrowLeft className="h-4 w-4 mr-2" />
