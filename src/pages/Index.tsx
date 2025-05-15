@@ -12,6 +12,13 @@ import { Link } from "react-router-dom";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LogoBrand } from '@/components/LogoBrand';
 
+// Add custom border width style
+const customStyles = `
+  .border-3 {
+    border-width: 3px;
+  }
+`;
+
 const Index = () => {
   const isMobile = useIsMobile();
 
@@ -24,6 +31,9 @@ const Index = () => {
   };
 
   return <div className="min-h-screen relative overflow-hidden bg-white">
+      {/* Custom styles for the site */}
+      <style>{customStyles}</style>
+      
       <FloatingElements />
       
       {/* Navbar */}

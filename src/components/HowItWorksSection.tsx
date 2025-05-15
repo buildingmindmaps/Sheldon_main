@@ -145,7 +145,7 @@ export function HowItWorksSection() {
         style={{ bottom: "10%", right: "5%" }}
       />
       
-      <div className="text-center mb-16 relative z-10">
+      <div className="text-center mb-12 relative z-10">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4">How It Works</h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Master case interviews in three simple steps with our AI-powered platform
@@ -170,22 +170,23 @@ export function HowItWorksSection() {
                 borderColor: "rgba(132, 255, 1, 0.5)"
               }}
             >
-              {/* Reduced height of visual container and spacing */}
-              <div className="h-24 mb-4 relative">
+              {/* Further reduced visual container height and padding */}
+              <div className="h-20 mb-2 relative pt-3">
                 {step.visual}
               </div>
               
-              {/* Step number - Made more prominent */}
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center font-bold text-gray-700 shadow-sm">
+              {/* Made step number even more prominent */}
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white border-3 border-gray-300 flex items-center justify-center font-bold text-gray-800 shadow-md text-lg">
                 {index + 1}
               </div>
               
-              {/* Icon circle - Moved closer to the visual */}
-              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 mx-auto" style={{ background: step.color }}>
+              {/* Reduced space between visual and icon */}
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 mx-auto" style={{ background: step.color }}>
                 {step.icon}
               </div>
               
-              <h3 className="text-xl font-bold mb-3 text-center">{step.title}</h3>
+              {/* Reduced space between icon and title */}
+              <h3 className="text-xl font-bold mb-2 text-center">{step.title}</h3>
               <p className="text-gray-600 text-center">{step.description}</p>
               <motion.div 
                 className="absolute bottom-0 right-0 w-40 h-40 rounded-full"
