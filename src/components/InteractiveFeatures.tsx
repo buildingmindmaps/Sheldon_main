@@ -20,26 +20,26 @@ export function InteractiveFeatures() {
   const isMobile = useIsMobile();
   const features: Feature[] = [{
     id: "case-gym",
-    title: "Case Gym Reps",
-    description: "Practice with written & video cases across industries, with timer, instant scoring, and highlighted insights.",
+    title: "Structured Thinking Practice",
+    description: "Transform how you approach problems with guided practice sessions and instant cognitive feedback.",
     icon: <BookText className="w-6 h-6" />,
     color: "from-green-400 to-emerald-500"
   }, {
     id: "adaptive",
     title: "Adaptive Difficulty",
-    description: "Our MECE Engine ramps complexity as you improve, preventing plateaus and keeping stretch consistent.",
+    description: "Your mental challenges evolve as you do-our system ensures you're always at the edge of your capabilities.",
     icon: <BarChart3 className="w-6 h-6" />,
     color: "from-blue-400 to-cyan-500"
   }, {
     id: "battles",
     title: "Live 1-v-1 Battles",
-    description: "Schedule head-to-head matches vs. peers with real-time scoring, public leaderboard, and post-match debrief.",
+    description: "Push your systems thinking beyond comfort zones with head-to-head challenges and immediate feedback.",
     icon: <Users className="w-6 h-6" />,
     color: "from-purple-400 to-indigo-500"
   }, {
     id: "playbooks",
     title: "Icon Playbooks",
-    description: "Weekly 'Think Like Elon/Jobs/Nadella' cases with step-by-step solution walkthroughs & mental-model breakdowns.",
+    description: "Master the mental models of visionaries with step-by-step breakdowns of their systems thinking approaches.",
     icon: <Briefcase className="w-6 h-6" />,
     color: "from-amber-400 to-orange-500"
   }];
@@ -422,8 +422,8 @@ export function InteractiveFeatures() {
               </div>
             </div>
             
-            <h3 className="text-xl font-bold mb-2 text-gray-900">{feature.title}</h3>
-            <p className="text-gray-600">{feature.description}</p>
+            <h3 className="text-xl font-bold mb-2 text-gray-900 feature-title" data-feature-id={`feature-${features.indexOf(feature) + 1}`}>{feature.title}</h3>
+            <p className="text-gray-600 feature-description" data-feature-id={`feature-${features.indexOf(feature) + 1}`}>{feature.description}</p>
             
             {/* Feature-specific interactive element that appears on hover */}
             <motion.div className={cn("absolute -bottom-2 -right-2 w-12 h-12 rounded-full flex items-center justify-center text-white", "bg-gradient-to-r", feature.id === "case-gym" ? "from-green-400 to-emerald-500" : feature.id === "adaptive" ? "from-blue-400 to-cyan-500" : feature.id === "battles" ? "from-purple-400 to-indigo-500" : "from-amber-400 to-orange-500")} initial={{
