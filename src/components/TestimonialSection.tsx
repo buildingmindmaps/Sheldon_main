@@ -6,21 +6,21 @@ export function TestimonialSection() {
   const testimonials = [
     {
       quote: "The mental challenges in SheldonAI's were just what I needed. This is a new way to grow your thinking.",
-      author: "Atithee Nandanwar",
-      role: "PGP, Masters' Union",
-      avatar: "/lovable-uploads/73fec0f3-ba1c-4afa-b501-f4125827ff90.png"
+      author: "Nirmit",
+      role: "Center Point, Nagpur",
+      avatar: "/lovable-uploads/f55d6022-d436-4d21-8025-971332e892b9.png" // New photo 1
     },
     {
       quote: "After a week with SheldonAI, my thinking got clearer and more organized. The feedback is just what I needed.",
-      author: "Sushant Raj Gupta",
-      role: "PGP, Masters' Union",
-      avatar: "/lovable-uploads/45b7e438-86e6-468b-b2ae-9cca21a80d02.png"
+      author: "Harshita",
+      role: "IEEE RGIPT",
+      avatar: "/lovable-uploads/44f417aa-6871-4078-9ec3-14f0f45a9809.png" // New photo 2
     },
     {
       quote: "Getting early access to Icon Playbooks showed me new ways to think like a leader. I'm excited for the full launch.",
-      author: "Srishti Kumari",
-      role: "PGP, Masters' Union",
-      avatar: "/lovable-uploads/2376b705-d592-40ec-8b5f-5a5139234008.png"
+      author: "Moksh Agrawal",
+      role: "SRM University",
+      avatar: "/lovable-uploads/aa79b967-a988-4fc9-bbb7-e8be07f6abbb.png" // New photo 3
     }
   ];
 
