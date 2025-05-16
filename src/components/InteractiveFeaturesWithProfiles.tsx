@@ -27,6 +27,35 @@ const injectCompetitorStyles = () => {
       background-size: cover;
       background-position: center;
     }
+    
+    /* Override feature titles and descriptions based on data attributes */
+    [data-feature-id="feature-1"] .feature-title {
+      content: "Structured Thinking Practice";
+    }
+    [data-feature-id="feature-1"] .feature-description {
+      content: "Transform how you approach problems with guided practice sessions and instant cognitive feedback.";
+    }
+    
+    [data-feature-id="feature-2"] .feature-title {
+      content: "Adaptive Difficulty";
+    }
+    [data-feature-id="feature-2"] .feature-description {
+      content: "Your mental challenges evolve as you do-our system ensures you're always at the edge of your capabilities.";
+    }
+    
+    [data-feature-id="feature-3"] .feature-title {
+      content: "Live 1-v-1 Battles";
+    }
+    [data-feature-id="feature-3"] .feature-description {
+      content: "Push your systems thinking beyond comfort zones with head-to-head challenges and immediate feedback.";
+    }
+    
+    [data-feature-id="feature-4"] .feature-title {
+      content: "Icon Playbooks";
+    }
+    [data-feature-id="feature-4"] .feature-description {
+      content: "Master the mental models of visionaries with step-by-step breakdowns of their systems thinking approaches.";
+    }
   `;
   
   // Append to head if it doesn't exist already

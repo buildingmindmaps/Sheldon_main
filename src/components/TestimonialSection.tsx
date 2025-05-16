@@ -5,19 +5,19 @@ import { motion } from "framer-motion";
 export function TestimonialSection() {
   const testimonials = [
     {
-      quote: "The beta version of SheldonAI impressed me with its realistic interview scenarios. I can already tell this will be a game-changer for case preparation.",
+      quote: "The mental challenges in SheldonAI's were just what I needed. This is a new way to grow your thinking.",
       author: "Atithee Nandanwar",
       role: "PGP, Masters' Union",
       avatar: "/lovable-uploads/73fec0f3-ba1c-4afa-b501-f4125827ff90.png"
     },
     {
-      quote: "After just a week of testing SheldonAI, I noticed a significant improvement in how I structure my thoughts. The instant feedback is exactly what I've been looking for.",
+      quote: "After a week with SheldonAI, my thinking got clearer and more organized. The feedback is just what I needed.",
       author: "Sushant Raj Gupta",
       role: "PGP, Masters' Union",
       avatar: "/lovable-uploads/45b7e438-86e6-468b-b2ae-9cca21a80d02.png"
     },
     {
-      quote: "The early access to the Icon Playbooks gave me invaluable insights into executive thinking. Can't wait for the full release of this powerful tool.",
+      quote: "Getting early access to Icon Playbooks showed me new ways to think like a leader. I'm excited for the full launch.",
       author: "Srishti Kumari",
       role: "PGP, Masters' Union",
       avatar: "/lovable-uploads/2376b705-d592-40ec-8b5f-5a5139234008.png"
@@ -34,7 +34,7 @@ export function TestimonialSection() {
       <div className="text-center mb-12">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4">Early Feedback</h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          What our beta testers are saying about SheldonAI's unique approach to case interview preparation
+          What our beta testers are saying about SheldonAI's unique approach of playground
         </p>
       </div>
       

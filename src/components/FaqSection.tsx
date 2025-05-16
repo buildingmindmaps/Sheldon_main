@@ -51,20 +51,16 @@ export function FaqSection() {
   
   const faqItems = [
     {
-      question: "What makes SheldonAI different from other case interview prep platforms?",
-      answer: "SheldonAI provides a truly interactive experience with an AI interviewer that adapts to your responses in real-time. Unlike static case materials or recorded videos, our platform simulates the dynamic nature of actual case interviews, providing personalized feedback and guidance tailored to your specific approach."
+      question: "What makes SheldonAI different from other platforms?",
+      answer: "SheldonAI adapts to how you think, giving personalized challenges and feedback in real time. Unlike static materials, it helps you build real problem-solving skills that grow with you, making learning active and tailored to your unique approach."
     },
     {
-      question: "Is SheldonAI suitable for beginners who have never done case interviews before?",
-      answer: "Absolutely! SheldonAI is designed to support users at all levels, from complete beginners to experienced candidates. Our adaptive difficulty system ensures that the cases match your current skill level and gradually increase in complexity as you improve."
+      question: "Is SheldonAI suitable for beginners?",
+      answer: "Absolutely! SheldonAI is designed for everyone, whether you're new or experienced. It starts with easy challenges and adapts as you improve, so you always feel supported and can grow your problem-solving skills step by step at your own pace."
     },
     {
-      question: "How many practice cases do you offer?",
-      answer: "Our library includes over 100 cases spanning multiple industries including technology, healthcare, retail, finance, and more. We regularly add new cases based on real consulting interviews and business scenarios."
-    },
-    {
-      question: "Can I use SheldonAI to prepare for specific consulting firms?",
-      answer: "Yes, SheldonAI includes firm-specific preparation modules tailored to the unique case interview styles of major consulting firms like McKinsey, BCG, Bain, and others."
+      question: "How many practice challenges do you offer?",
+      answer: "Our library includes over 100 challenges across industries like tech, healthcare, finance, and retail. We keep adding new, real-world problems regularly, so you always have fresh and relevant mental workouts to sharpen your thinking and problem-solving skills."
     },
     {
       question: "When will SheldonAI be available?",

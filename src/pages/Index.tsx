@@ -78,9 +78,9 @@ const Index = () => {
       {/* Features Section */}
       <section id="features" className="relative z-10 py-24 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Your Path to Structured Problem Solving</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Your Path to Smarter Thinking</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Our platform provides everything you need to master business case interviews
+            Unlock the tools, mindsets, and habits that set real problem-solvers apart.
           </p>
         </div>
         

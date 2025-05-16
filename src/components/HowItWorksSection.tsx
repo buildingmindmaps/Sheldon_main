@@ -1,3 +1,4 @@
+
 import React from "react";
 import { motion } from "framer-motion";
 import { BookText, BarChart3, Users } from "lucide-react";
@@ -16,7 +17,7 @@ export function HowItWorksSection() {
   const steps = [{
     icon: <BookText className="w-6 h-6 text-white" />,
     title: "Select a Case",
-    description: "Choose from our library of industry-specific cases or get a randomized challenge that matches your experience level.",
+    description: "Start with a scenario that challenges you to think beyond the obvious and find creative solutions.",
     color: "bg-gradient-to-r from-green-400 to-brand-green",
     visual: <div className="relative w-full h-full flex items-center justify-center">
           <div className="w-20 h-28 bg-white rounded-lg shadow-md border border-gray-200 transform rotate-[-5deg] absolute z-10">
@@ -38,8 +39,8 @@ export function HowItWorksSection() {
         </div>
   }, {
     icon: <BarChart3 className="w-6 h-6 text-white" />,
-    title: "Practice with AI",
-    description: "Engage in a realistic interview with our AI interviewer that adapts to your responses and pushes your thinking.",
+    title: "Practice",
+    description: "Dive into hands-on practice that adapts to your thinking and helps you grow with every step you take.",
     color: "bg-gradient-to-r from-blue-500 to-indigo-500",
     visual: <div className="relative w-full h-full flex items-center justify-center">
           <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center">
@@ -126,7 +127,7 @@ export function HowItWorksSection() {
       <div className="text-center mb-12 relative z-10">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4">How It Works</h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Master case interviews in three simple steps with our AI-powered platform
+          Start your journey from ordinary to original with three simple moves.
         </p>
       </div>
       
@@ -201,7 +202,7 @@ export function HowItWorksSection() {
     }}>
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-green via-blue-500 to-amber-500"></div>
         <p className="text-brand-green font-medium">Ready to elevate your case interview skills?</p>
-        <h3 className="text-2xl font-bold mt-2 mb-6">Join our waitlist today and be among the first to experience CaseAI</h3>
+        <h3 className="text-2xl font-bold mt-2 mb-6">Join our waitlist today and be among the first to experience SheldonAI</h3>
         <div className="max-w-md mx-auto">
           <WaitlistForm />
         </div>
