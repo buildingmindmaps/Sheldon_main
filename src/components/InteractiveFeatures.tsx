@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { BookText, BarChart3, Users, Briefcase, Timer, Award } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -55,11 +56,11 @@ export function InteractiveFeatures() {
 
   // Calculate height styles based on device
   const previewHeight = isMobile ? "h-[76.8vh] sm:h-[380px]" // Mobile: reduced by 20% from previous 96vh
-  : "h-[92vh] md:h-[380px]"; // Laptop: unchanged
+    : "h-[92vh] md:h-[380px]"; // Laptop: unchanged
 
   // Calculate padding styles based on device
   const previewPadding = isMobile ? "px-[5px] py-[10px]" // Mobile: 5px left/right, 10px top/bottom
-  : "p-6"; // Laptop: unchanged at 25px all around (p-6 = 1.5rem = ~24px)
+    : "p-6"; // Laptop: unchanged at 25px all around (p-6 = 1.5rem = ~24px)
 
   return <div className="relative bg-white">
       {/* Interactive Background Element */}
@@ -438,7 +439,7 @@ export function InteractiveFeatures() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </motion.div>
-          </motion.div>}
+          </motion.div>)}
       </div>
     </div>;
 }
