@@ -6,12 +6,6 @@ import { Linkedin, Mail, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { WaitlistForm } from '@/components/WaitlistForm';
 import { motion } from 'framer-motion';
-import { 
-  HoverCard, 
-  HoverCardTrigger, 
-  HoverCardContent 
-} from '@/components/ui/hover-card';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
@@ -106,8 +100,8 @@ const Contact = () => {
                     {/* Dark overlay with gradient */}
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/70"></div>
                     
-                    {/* LinkedIn button - always visible with increased opacity on hover */}
-                    <div className="absolute bottom-3 right-3 z-20 transition-opacity">
+                    {/* LinkedIn button - always visible */}
+                    <div className="absolute bottom-3 right-3 z-20">
                       <a 
                         href={member.linkedin} 
                         target="_blank" 
@@ -124,43 +118,6 @@ const Contact = () => {
                     <h3 className="font-bold text-lg">{member.name}</h3>
                     <p className="text-sm text-gray-500 mb-2">{member.position}</p>
                     <p className="text-sm text-gray-600">{member.bio}</p>
-                    
-                    <HoverCard>
-                      <HoverCardTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="mt-2 text-brand-green hover:text-brand-green hover:bg-brand-green/10 p-0"
-                        >
-                          Read more
-                        </Button>
-                      </HoverCardTrigger>
-                      <HoverCardContent className="w-80 p-4">
-                        <div className="flex justify-between space-x-4">
-                          <Avatar className="w-12 h-12 border-2 border-brand-green">
-                            <AvatarImage src={member.photo} />
-                            <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                          </Avatar>
-                          <a 
-                            href={member.linkedin} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="text-brand-green hover:text-green-700"
-                          >
-                            <Linkedin className="h-5 w-5" />
-                          </a>
-                        </div>
-                        <div className="mt-4">
-                          <h4 className="font-bold">{member.name}</h4>
-                          <p className="text-sm text-gray-500 mb-2">{member.position}</p>
-                          <p className="text-sm">{member.bio}</p>
-                          <p className="text-sm mt-2">
-                            {member.name} is dedicated to making SheldonAI a transformative platform 
-                            for professional skill development and AI-powered learning.
-                          </p>
-                        </div>
-                      </HoverCardContent>
-                    </HoverCard>
                   </CardContent>
                 </Card>
               </motion.div>
