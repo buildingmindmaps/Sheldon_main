@@ -87,7 +87,7 @@ export function Footer() {
               <span className="font-bold text-xl">SheldonAI</span>
             </Link>
             <p className="text-gray-600 mb-6">
-              Master business problem-solving with our structured AI practice platform. Get instant feedback and improve with every session.
+              Schools prepare you for tests, we prepare you for challenges no one solved yet!
             </p>
           </div>
 
