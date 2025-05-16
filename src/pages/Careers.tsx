@@ -2,11 +2,10 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { NavBar } from "@/components/NavBar";
-import { Calendar, MapPin, Briefcase, ArrowRight, Linkedin } from "lucide-react";
+import { Calendar, MapPin, Briefcase, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Footer } from "@/components/Footer";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Careers = () => {
   const jobListings = [
@@ -48,28 +47,6 @@ const Careers = () => {
     }
   ];
 
-  // Team members information
-  const teamMembers = [
-    {
-      name: "Darshit Patel",
-      position: "Founder & CEO",
-      photo: "/lovable-uploads/22ec87d2-9ea8-4d5d-8596-c9a96ad6da9e.png", // Photo 1
-      linkedin: "https://www.linkedin.com/in/darshitjpatel/",
-    },
-    {
-      name: "Sushant Raj Gupta",
-      position: "Product Manager",
-      photo: "/lovable-uploads/bc7bc379-94ed-42a3-b7c8-9a4c99988a10.png", // Photo 2
-      linkedin: "https://www.linkedin.com/in/sushantrajgupta/",
-    },
-    {
-      name: "Srishti Kumari",
-      position: "Co-Founder – Growth & Partnerships",
-      photo: "/lovable-uploads/2fa784fb-4d95-4df9-8426-5d946cd71672.png", // Photo 3
-      linkedin: "https://www.linkedin.com/in/srishti-kumari-/",
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-white">
       <NavBar />
@@ -95,54 +72,6 @@ const Careers = () => {
           </motion.p>
         </div>
       </header>
-
-      {/* Team section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto bg-gray-50 rounded-xl">
-        <h2 className="text-3xl font-bold mb-8 text-center">Meet Our Team</h2>
-        
-        <div className="grid md:grid-cols-3 gap-8">
-          {teamMembers.map((member, index) => (
-            <motion.div 
-              key={index}
-              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center text-center"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-            >
-              <Avatar className="w-32 h-32 mb-4">
-                <AvatarImage src={member.photo} alt={member.name} className="object-cover" />
-                <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-              </Avatar>
-              <h3 className="text-xl font-bold">{member.name}</h3>
-              <p className="text-gray-600 mb-4">{member.position}</p>
-              <a 
-                href={member.linkedin} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-brand-green hover:text-green-700 flex items-center gap-1"
-              >
-                <Linkedin className="h-4 w-4" />
-                LinkedIn
-              </a>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="mt-12 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-          <h3 className="text-2xl font-bold mb-4 text-center">A Note From SheldonAI</h3>
-          <p className="text-gray-600 mb-4 text-center">
-            At SheldonAI, we're on a mission to transform how professionals approach complex problem-solving. 
-            Our team is passionate about combining cutting-edge AI with cognitive science to create learning 
-            experiences that truly make a difference.
-          </p>
-          <p className="text-gray-600 text-center">
-            If you're excited about our vision and want to join us on this journey, 
-            we'd love to hear from you at <a href="mailto:connect@sheldonai.in" className="text-brand-green hover:underline">connect@sheldonai.in</a>
-          </p>
-        </div>
-      </section>
       
       {/* Job Listings */}
       <section className="py-12 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
