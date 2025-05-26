@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -104,6 +103,9 @@ export function NavBar() {
             <Link to="/playbook" onClick={scrollToTop}>Playbook</Link>
           </Button>
           <Button variant="ghost" asChild>
+            <Link to="/my-sprints" onClick={scrollToTop}>My Sprints</Link>
+          </Button>
+          <Button variant="ghost" asChild>
             <Link to="/careers" onClick={scrollToTop}>Careers</Link>
           </Button>
           <Button variant="ghost" asChild>
@@ -180,13 +182,22 @@ export function NavBar() {
                 transition={{ duration: 0.2, delay: 0.1 }}
               >
                 <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => {setMobileMenuOpen(false); scrollToTop();}}>
-                  <Link to="/careers">Careers</Link>
+                  <Link to="/my-sprints">My Sprints</Link>
                 </Button>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: 0.2 }}
+              >
+                <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => {setMobileMenuOpen(false); scrollToTop();}}>
+                  <Link to="/careers">Careers</Link>
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: 0.3 }}
               >
                 <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => {setMobileMenuOpen(false); scrollToTop();}}>
                   <Link to="/contact">Contact Us</Link>
