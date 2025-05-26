@@ -135,7 +135,7 @@ export default function MySprints() {
     setTimeout(() => {
       setSelectedCourse((prev) => (prev > 0 ? prev - 1 : courses.length - 1));
       setIsTransitioning(false);
-    }, 150);
+    }, 500);
   };
 
   const handleNext = () => {
@@ -143,7 +143,7 @@ export default function MySprints() {
     setTimeout(() => {
       setSelectedCourse((prev) => (prev < courses.length - 1 ? prev + 1 : 0));
       setIsTransitioning(false);
-    }, 150);
+    }, 500);
   };
 
   const handleStartSprint = () => {
