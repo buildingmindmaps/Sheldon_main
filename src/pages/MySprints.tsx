@@ -40,19 +40,43 @@ export default function MySprints() {
         },
         {
           title: "Lesson 2: Course Structure",
-          sections: []
+          sections: [
+            "Concept Introduction",
+            "Real-World Example", 
+            "Interactive Drill / Activity",
+            "Mini-Case Sprint",
+            "Reflection & Summary"
+          ]
         },
         {
           title: "Lesson 3: Course Tools & Resources", 
-          sections: []
+          sections: [
+            "Concept Introduction",
+            "Real-World Example", 
+            "Interactive Drill / Activity",
+            "Mini-Case Sprint",
+            "Reflection & Summary"
+          ]
         },
         {
           title: "Lesson 4: Sample Case Preview",
-          sections: []
+          sections: [
+            "Concept Introduction",
+            "Real-World Example", 
+            "Interactive Drill / Activity",
+            "Mini-Case Sprint",
+            "Reflection & Summary"
+          ]
         },
         {
           title: "Lesson 5: Reviews & Success Stories",
-          sections: []
+          sections: [
+            "Concept Introduction",
+            "Real-World Example", 
+            "Interactive Drill / Activity",
+            "Mini-Case Sprint",
+            "Reflection & Summary"
+          ]
         }
       ]
     },
