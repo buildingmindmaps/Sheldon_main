@@ -62,19 +62,19 @@ export default function MySprints() {
           {/* Header */}
           <div className="mb-8 flex justify-between items-start">
             <div>
-              <h1 className="text-4xl font-medium text-gray-900 mb-2">
+              <h1 className="text-4xl font-normal text-black mb-2">
                 Level Up Your Thinking, One Sprint at a Time.
               </h1>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-gray-600 font-normal">
                 Daily case drills and expert playbooks to build elite consulting skills.
               </p>
             </div>
             <div className="flex gap-3">
-              <Button variant="outline" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-50">
+              <Button variant="outline" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-50 px-4 py-2">
                 <span className="mr-2">⚡</span>
                 1
               </Button>
-              <Button className="rounded-lg bg-green-400 hover:bg-green-500 text-black font-medium px-6">
+              <Button className="rounded-lg bg-green-400 hover:bg-green-500 text-black font-medium px-6 py-2">
                 Start Free Trial
               </Button>
             </div>
@@ -85,7 +85,7 @@ export default function MySprints() {
             {/* Left Sidebar - Course List */}
             <div className="lg:col-span-2">
               <div className="mb-6">
-                <Button variant="outline" className="w-fit">
+                <Button variant="outline" className="w-fit px-4 py-2 text-sm border-gray-300">
                   All Courses
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
@@ -100,12 +100,12 @@ export default function MySprints() {
                     }`}
                     onClick={() => setSelectedCourse(index)}
                   >
-                    <CardHeader className="pb-3">
+                    <CardHeader className="pb-3 pt-4 px-4">
                       <div className="flex items-start justify-between mb-2">
                         <div className="text-2xl">{course.icon}</div>
                         <Badge 
                           variant={course.badge === 'Popular' ? 'secondary' : 'default'}
-                          className={`text-xs ${
+                          className={`text-xs font-medium px-2 py-1 ${
                             course.badge === 'Popular' 
                               ? 'bg-blue-100 text-blue-700 hover:bg-blue-100' 
                               : 'bg-green-100 text-green-700 hover:bg-green-100'
@@ -114,14 +114,14 @@ export default function MySprints() {
                           {course.badge}
                         </Badge>
                       </div>
-                      <CardTitle className="text-lg font-medium text-gray-900">
+                      <CardTitle className="text-lg font-medium text-black leading-tight">
                         {course.title}
                       </CardTitle>
-                      <CardDescription className="text-gray-600">
+                      <CardDescription className="text-gray-600 text-sm">
                         {course.description}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="pt-0">
+                    <CardContent className="pt-0 px-4 pb-4">
                       <div className="flex items-center gap-4 text-sm text-gray-500">
                         <span>{course.level}</span>
                         <span>•</span>
@@ -136,44 +136,44 @@ export default function MySprints() {
             {/* Right Content - Course Details */}
             <div className="lg:col-span-3">
               <Card className="h-fit bg-green-50 border-green-200">
-                <CardHeader className="text-center pb-6">
+                <CardHeader className="text-center pb-4 pt-6">
                   <div className="flex justify-end mb-4">
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1">
                       Popular
                     </Badge>
                   </div>
                   <div className="text-6xl mb-4">{selectedCourseDetails.icon}</div>
-                  <CardTitle className="text-2xl font-medium text-gray-900 mb-3">
+                  <CardTitle className="text-2xl font-medium text-black mb-3">
                     {selectedCourseDetails.title}
                   </CardTitle>
-                  <CardDescription className="text-lg text-gray-700 mb-4">
+                  <CardDescription className="text-lg text-gray-700 mb-4 font-normal">
                     {selectedCourseDetails.description}
                   </CardDescription>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-600 mb-6 text-sm">
                     {selectedCourseDetails.detailedDescription}
                   </p>
                   
                   <div className="flex justify-center mb-6">
                     <Button className="rounded-full bg-green-400 hover:bg-green-500 text-black font-medium px-8 py-3">
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
                 </CardHeader>
                 
-                <CardContent className="text-center">
+                <CardContent className="text-center px-6 pb-6">
                   <div className="grid grid-cols-3 gap-6 text-sm text-gray-600 mb-6">
                     <div>
-                      <div className="font-medium">{selectedCourseDetails.chapters}</div>
+                      <div className="font-medium text-black">{selectedCourseDetails.chapters}</div>
                     </div>
                     <div>
-                      <div className="font-medium">{selectedCourseDetails.level}</div>
+                      <div className="font-medium text-black">{selectedCourseDetails.level}</div>
                     </div>
                     <div>
-                      <div className="font-medium">{selectedCourseDetails.cases}</div>
+                      <div className="font-medium text-black">{selectedCourseDetails.cases}</div>
                     </div>
                   </div>
                   
-                  <p className="text-gray-600 mb-8">
+                  <p className="text-gray-600 mb-8 text-sm">
                     {selectedCourseDetails.features}
                   </p>
                   
