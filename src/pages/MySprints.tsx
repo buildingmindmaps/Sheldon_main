@@ -1,57 +1,56 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Users, Star } from 'lucide-react';
+import { ChevronDown, ArrowRight } from 'lucide-react';
 
 export default function MySprints() {
+  const [selectedCourse, setSelectedCourse] = useState(0);
+
   const courses = [
     {
       id: 1,
-      title: "Product Management Sprint",
-      description: "Learn the fundamentals of product management through hands-on exercises and real-world case studies.",
-      duration: "4 weeks",
-      participants: 156,
-      rating: 4.8,
+      title: "Case Sprint: Market Entry",
+      description: "Learn to break down market entry decisions.",
       level: "Beginner",
-      image: "/lovable-uploads/365f4f40-afd0-40d0-8588-0b97fe4b4699.png",
-      status: "Available"
+      hours: "5 hours",
+      badge: "Popular",
+      icon: "🎯",
+      isNew: false
     },
     {
       id: 2,
-      title: "UX Design Fundamentals",
-      description: "Master user experience design principles with practical projects and expert feedback.",
-      duration: "6 weeks",
-      participants: 203,
-      rating: 4.9,
-      level: "Intermediate",
-      image: "/lovable-uploads/365f4f40-afd0-40d0-8588-0b97fe4b4699.png",
-      status: "Available"
+      title: "Financial Modeling Fundamentals",
+      description: "Master the numbers behind every good deal.",
+      level: "Beginner",
+      hours: "5 hours",
+      badge: "New",
+      icon: "📊",
+      isNew: true
     },
     {
       id: 3,
-      title: "Data Analytics Bootcamp",
-      description: "Transform raw data into actionable insights using modern analytics tools and techniques.",
-      duration: "8 weeks",
-      participants: 89,
-      rating: 4.7,
-      level: "Advanced",
-      image: "/lovable-uploads/365f4f40-afd0-40d0-8588-0b97fe4b4699.png",
-      status: "Starting Soon"
+      title: "Think Like a McKinsey Partner",
+      description: "Learn to break down market entry decisions.",
+      level: "Beginner",
+      hours: "5 hours",
+      badge: "Popular",
+      icon: "💡",
+      isNew: false
     }
   ];
 
-  const featuredCourse = {
-    title: "Strategic Thinking Masterclass",
-    description: "Develop strategic thinking skills used by top executives at Fortune 500 companies. Learn frameworks for decision-making, problem-solving, and long-term planning.",
-    duration: "12 weeks",
-    participants: 324,
-    rating: 4.9,
-    level: "Expert",
-    image: "/lovable-uploads/365f4f40-afd0-40d0-8588-0b97fe4b4699.png",
-    features: ["Live mentorship sessions", "Case study analysis", "Peer collaboration", "Certificate upon completion"]
+  const selectedCourseDetails = {
+    title: "Case Sprint: Market Entry",
+    description: "Learn to break down market entry decisions.",
+    detailedDescription: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies.",
+    chapters: "5 chapters",
+    level: "Beginner to Advanced",
+    cases: "20+ interactive cases",
+    features: "Framework walkthroughs, real-time scoring, bonus sector deep-dives",
+    icon: "💼"
   };
 
   return (
@@ -61,135 +60,130 @@ export default function MySprints() {
       <main className="pt-20 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">My Sprints</h1>
-            <p className="text-lg text-gray-600">Accelerate your learning with intensive, focused learning experiences</p>
+          <div className="mb-8 flex justify-between items-start">
+            <div>
+              <h1 className="text-4xl font-medium text-gray-900 mb-2">
+                Level Up Your Thinking, One Sprint at a Time.
+              </h1>
+              <p className="text-lg text-gray-600">
+                Daily case drills and expert playbooks to build elite consulting skills.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-50">
+                <span className="mr-2">⚡</span>
+                1
+              </Button>
+              <Button className="rounded-lg bg-green-400 hover:bg-green-500 text-black font-medium px-6">
+                Start Free Trial
+              </Button>
+            </div>
           </div>
 
-          {/* Featured Course */}
-          <section className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Featured Sprint</h2>
-            <Card className="overflow-hidden border-2 border-brand-green/20 bg-gradient-to-r from-white to-brand-green/5">
-              <div className="grid md:grid-cols-2 gap-0">
-                <div className="p-8">
-                  <CardHeader className="p-0 mb-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary" className="bg-brand-green/10 text-brand-green border-brand-green/20">
-                        {featuredCourse.level}
-                      </Badge>
-                      <Badge variant="outline">Featured</Badge>
-                    </div>
-                    <CardTitle className="text-2xl mb-2">{featuredCourse.title}</CardTitle>
-                    <CardDescription className="text-base">{featuredCourse.description}</CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent className="p-0 mb-6">
-                    <div className="flex items-center gap-6 text-sm text-gray-600 mb-4">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {featuredCourse.duration}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {featuredCourse.participants} enrolled
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        {featuredCourse.rating}
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-gray-900">What you'll get:</h4>
-                      <ul className="grid grid-cols-2 gap-1">
-                        {featuredCourse.features.map((feature, index) => (
-                          <li key={index} className="text-sm text-gray-600 flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-brand-green rounded-full"></div>
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </CardContent>
-                  
-                  <CardFooter className="p-0">
-                    <Button className="bg-brand-green hover:bg-brand-green/90 text-white px-8">
-                      Enroll Now
-                    </Button>
-                  </CardFooter>
-                </div>
-                
-                <div className="relative bg-gray-100">
-                  <img 
-                    src={featuredCourse.image} 
-                    alt={featuredCourse.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            {/* Left Sidebar - Course List */}
+            <div className="lg:col-span-2">
+              <div className="mb-6">
+                <Button variant="outline" className="w-fit">
+                  All Courses
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
               </div>
-            </Card>
-          </section>
 
-          {/* Course Grid */}
-          <section>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Available Sprints</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courses.map((course) => (
-                <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-video bg-gray-100">
-                    <img 
-                      src={course.image} 
-                      alt={course.title}
-                      className="w-full h-full object-cover"
-                    />
+              <div className="space-y-4">
+                {courses.map((course, index) => (
+                  <Card 
+                    key={course.id} 
+                    className={`cursor-pointer transition-all hover:shadow-md relative ${
+                      selectedCourse === index ? 'ring-2 ring-green-400 bg-green-50/30' : 'bg-white'
+                    }`}
+                    onClick={() => setSelectedCourse(index)}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="text-2xl">{course.icon}</div>
+                        <Badge 
+                          variant={course.badge === 'Popular' ? 'secondary' : 'default'}
+                          className={`text-xs ${
+                            course.badge === 'Popular' 
+                              ? 'bg-blue-100 text-blue-700 hover:bg-blue-100' 
+                              : 'bg-green-100 text-green-700 hover:bg-green-100'
+                          }`}
+                        >
+                          {course.badge}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-lg font-medium text-gray-900">
+                        {course.title}
+                      </CardTitle>
+                      <CardDescription className="text-gray-600">
+                        {course.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <span>{course.level}</span>
+                        <span>•</span>
+                        <span>{course.hours}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Content - Course Details */}
+            <div className="lg:col-span-3">
+              <Card className="h-fit bg-green-50 border-green-200">
+                <CardHeader className="text-center pb-6">
+                  <div className="flex justify-end mb-4">
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                      Popular
+                    </Badge>
+                  </div>
+                  <div className="text-6xl mb-4">{selectedCourseDetails.icon}</div>
+                  <CardTitle className="text-2xl font-medium text-gray-900 mb-3">
+                    {selectedCourseDetails.title}
+                  </CardTitle>
+                  <CardDescription className="text-lg text-gray-700 mb-4">
+                    {selectedCourseDetails.description}
+                  </CardDescription>
+                  <p className="text-gray-600 mb-6">
+                    {selectedCourseDetails.detailedDescription}
+                  </p>
+                  
+                  <div className="flex justify-center mb-6">
+                    <Button className="rounded-full bg-green-400 hover:bg-green-500 text-black font-medium px-8 py-3">
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="text-center">
+                  <div className="grid grid-cols-3 gap-6 text-sm text-gray-600 mb-6">
+                    <div>
+                      <div className="font-medium">{selectedCourseDetails.chapters}</div>
+                    </div>
+                    <div>
+                      <div className="font-medium">{selectedCourseDetails.level}</div>
+                    </div>
+                    <div>
+                      <div className="font-medium">{selectedCourseDetails.cases}</div>
+                    </div>
                   </div>
                   
-                  <CardHeader>
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant={course.level === 'Beginner' ? 'secondary' : course.level === 'Intermediate' ? 'default' : 'destructive'}>
-                        {course.level}
-                      </Badge>
-                      <Badge 
-                        variant={course.status === 'Available' ? 'default' : 'secondary'}
-                        className={course.status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}
-                      >
-                        {course.status}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-lg">{course.title}</CardTitle>
-                    <CardDescription>{course.description}</CardDescription>
-                  </CardHeader>
+                  <p className="text-gray-600 mb-8">
+                    {selectedCourseDetails.features}
+                  </p>
                   
-                  <CardContent>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {course.duration}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {course.participants}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        {course.rating}
-                      </div>
-                    </div>
-                  </CardContent>
-                  
-                  <CardFooter>
-                    <Button 
-                      variant={course.status === 'Available' ? 'default' : 'secondary'}
-                      className="w-full"
-                      disabled={course.status !== 'Available'}
-                    >
-                      {course.status === 'Available' ? 'Start Sprint' : 'Coming Soon'}
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+                  <Button className="w-full bg-green-400 hover:bg-green-500 text-black font-medium py-3 rounded-lg">
+                    Start Sprint
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
-          </section>
+          </div>
         </div>
       </main>
     </div>
