@@ -7,9 +7,23 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ArrowLeft, ArrowRight } from 'lucide-react';
 
 export default function MySprints() {
-  const [selectedCourse, setSelectedCourse] = useState(1);
+  const [selectedCourse, setSelectedCourse] = useState(0);
 
   const courses = [
+    {
+      id: 0,
+      title: "Case Sprint: Market Entry",
+      description: "Learn to break down market entry decisions.",
+      level: "Beginner",
+      hours: "5 hours",
+      badge: "Popular",
+      icon: "🎯",
+      detailedDescription: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies.",
+      chapters: "5 Chapters",
+      levelDetail: "Beginner to Advanced",
+      cases: "20+ interactive cases",
+      features: "Framework walkthroughs, real-time scoring, bonus sector deep-dives"
+    },
     {
       id: 1,
       title: "Financial Modeling Fundamentals",
@@ -18,7 +32,11 @@ export default function MySprints() {
       hours: "5 hours",
       badge: "New",
       icon: "📊",
-      isNew: true
+      detailedDescription: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies.",
+      chapters: "5 Chapters",
+      levelDetail: "Beginner to Advanced",
+      cases: "20+ interactive cases",
+      features: "Framework walkthroughs, real-time scoring, bonus sector deep-dives"
     },
     {
       id: 2,
@@ -28,20 +46,23 @@ export default function MySprints() {
       hours: "5 hours",
       badge: "Popular",
       icon: "💡",
-      isNew: false
+      detailedDescription: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies.",
+      chapters: "5 Chapters",
+      levelDetail: "Beginner to Advanced",
+      cases: "20+ interactive cases",
+      features: "Framework walkthroughs, real-time scoring, bonus sector deep-dives"
     }
   ];
 
-  const selectedCourseDetails = {
-    title: "Think Like a McKinsey Partner",
-    description: "Learn to break down market entry decisions.",
-    detailedDescription: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies.",
-    chapters: "5 Chapters",
-    level: "Beginner to Advanced",
-    cases: "20+ interactive cases",
-    features: "Framework walkthroughs, real-time scoring, bonus sector deep-dives",
-    icon: "💡"
+  const handlePrevious = () => {
+    setSelectedCourse((prev) => (prev > 0 ? prev - 1 : courses.length - 1));
   };
+
+  const handleNext = () => {
+    setSelectedCourse((prev) => (prev < courses.length - 1 ? prev + 1 : 0));
+  };
+
+  const selectedCourseData = courses[selectedCourse];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -128,26 +149,40 @@ export default function MySprints() {
               <Card className="h-fit bg-green-50 border-green-200 relative">
                 <CardHeader className="text-center pb-6 pt-8 px-8">
                   <div className="flex justify-end mb-6">
-                    <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs font-medium px-3 py-1">
-                      Popular
+                    <Badge 
+                      variant="secondary" 
+                      className={`text-xs font-medium px-3 py-1 ${
+                        selectedCourseData.badge === 'Popular' 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-blue-100 text-blue-700'
+                      }`}
+                    >
+                      {selectedCourseData.badge}
                     </Badge>
                   </div>
-                  <div className="text-7xl mb-6">{selectedCourseDetails.icon}</div>
+                  <div className="text-7xl mb-6">{selectedCourseData.icon}</div>
                   <CardTitle className="text-3xl font-medium text-gray-800 mb-4">
-                    {selectedCourseDetails.title}
+                    {selectedCourseData.title}
                   </CardTitle>
                   <CardDescription className="text-xl text-gray-700 mb-6 font-normal">
-                    {selectedCourseDetails.description}
+                    {selectedCourseData.description}
                   </CardDescription>
                   <p className="text-gray-600 mb-8 text-base leading-relaxed">
-                    {selectedCourseDetails.detailedDescription}
+                    {selectedCourseData.detailedDescription}
                   </p>
                   
                   <div className="flex justify-between items-center mb-8">
-                    <Button variant="outline" className="rounded-full border-2 border-green-500 bg-white hover:bg-green-50 p-3">
+                    <Button 
+                      variant="outline" 
+                      className="rounded-full border-2 border-green-500 bg-white hover:bg-green-50 p-3"
+                      onClick={handlePrevious}
+                    >
                       <ArrowLeft className="h-5 w-5 text-green-600" />
                     </Button>
-                    <Button className="rounded-full bg-green-400 hover:bg-green-500 text-black font-medium p-3">
+                    <Button 
+                      className="rounded-full bg-green-400 hover:bg-green-500 text-black font-medium p-3"
+                      onClick={handleNext}
+                    >
                       <ArrowRight className="h-5 w-5" />
                     </Button>
                   </div>
@@ -156,18 +191,18 @@ export default function MySprints() {
                 <CardContent className="text-center px-8 pb-8">
                   <div className="grid grid-cols-3 gap-8 text-base text-gray-700 mb-8">
                     <div>
-                      <div className="font-medium text-gray-800">{selectedCourseDetails.chapters}</div>
+                      <div className="font-medium text-gray-800">{selectedCourseData.chapters}</div>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-800">{selectedCourseDetails.level}</div>
+                      <div className="font-medium text-gray-800">{selectedCourseData.levelDetail}</div>
                     </div>
                     <div>
-                      <div className="font-medium text-gray-800">{selectedCourseDetails.cases}</div>
+                      <div className="font-medium text-gray-800">{selectedCourseData.cases}</div>
                     </div>
                   </div>
                   
                   <p className="text-gray-600 mb-10 text-base leading-relaxed">
-                    {selectedCourseDetails.features}
+                    {selectedCourseData.features}
                   </p>
                   
                   <Button className="w-full bg-green-400 hover:bg-green-500 text-black font-medium py-4 rounded-lg text-lg">
