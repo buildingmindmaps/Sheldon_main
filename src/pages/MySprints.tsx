@@ -130,6 +130,10 @@ export default function MySprints() {
     }
   ];
 
+const CourseSlider = ({ courses }) => {
+  const [selectedCourse, setSelectedCourse] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
   const handlePrevious = () => {
     setIsTransitioning(true);
     setTimeout(() => {
@@ -145,6 +149,49 @@ export default function MySprints() {
       setIsTransitioning(false);
     }, 500);
   };
+
+  return (
+    <div className="relative overflow-hidden w-full h-full">
+      <div
+        className="flex transition-transform duration-500 ease-in-out"
+        style={{
+          transform: `translateX(-${selectedCourse * 100}%)`,
+          width: `${courses.length * 100}%`,
+        }}
+      >
+        {courses.map((course, index) => (
+          <div key={index} className="w-full flex-shrink-0">
+            {/* Course content */}
+            <div className="p-4 bg-white rounded-lg shadow-md h-full">
+              <h2 className="text-xl font-bold">{course.title}</h2>
+              <p>{course.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="absolute top-1/2 left-2 transform -translate-y-1/2 z-10">
+        <button
+          onClick={handlePrevious}
+          className="bg-gray-200 px-3 py-2 rounded-full shadow"
+        >
+          ◀
+        </button>
+      </div>
+      <div className="absolute top-1/2 right-2 transform -translate-y-1/2 z-10">
+        <button
+          onClick={handleNext}
+          className="bg-gray-200 px-3 py-2 rounded-full shadow"
+        >
+          ▶
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default CourseSlider;
+
 
   const handleStartSprint = () => {
     if (currentPage === 'main') {
