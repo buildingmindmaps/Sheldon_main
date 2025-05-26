@@ -62,19 +62,19 @@ export default function MySprints() {
           {/* Header */}
           <div className="mb-8 flex justify-between items-start">
             <div>
-              <h1 className="text-4xl font-normal text-black mb-2">
+              <h1 className="text-4xl font-light text-gray-700 mb-2 tracking-wide">
                 Level Up Your Thinking, One Sprint at a Time.
               </h1>
-              <p className="text-lg text-gray-600 font-normal">
+              <p className="text-lg text-gray-500 font-light">
                 Daily case drills and expert playbooks to build elite consulting skills.
               </p>
             </div>
-            <div className="flex gap-3">
-              <Button variant="outline" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-50 px-4 py-2">
-                <span className="mr-2">⚡</span>
+            <div className="flex gap-3 items-center">
+              <Button variant="outline" className="rounded-full border-2 border-gray-400 text-gray-600 hover:bg-gray-50 px-4 py-2 bg-white">
+                <span className="mr-2 text-yellow-500">⚡</span>
                 1
               </Button>
-              <Button className="rounded-lg bg-green-400 hover:bg-green-500 text-black font-medium px-6 py-2">
+              <Button className="rounded-lg bg-gray-400 hover:bg-gray-500 text-white font-medium px-6 py-2 border-2 border-gray-400">
                 Start Free Trial
               </Button>
             </div>
