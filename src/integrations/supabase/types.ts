@@ -9,27 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      waitlist: {
+      Conversations: {
         Row: {
+          agent_id: string | null
+          conversation_id: string
           created_at: string
-          education: string
-          email: string
           id: string
-          name: string
+          message: string | null
+          speaker: string | null
+          turn_number: number
         }
         Insert: {
+          agent_id?: string | null
+          conversation_id: string
           created_at?: string
-          education: string
-          email: string
           id?: string
-          name: string
+          message?: string | null
+          speaker?: string | null
+          turn_number: number
         }
         Update: {
+          agent_id?: string | null
+          conversation_id?: string
           created_at?: string
-          education?: string
-          email?: string
           id?: string
-          name?: string
+          message?: string | null
+          speaker?: string | null
+          turn_number?: number
+        }
+        Relationships: []
+      }
+      n8n_chat_histories: {
+        Row: {
+          id: number
+          message: Json
+          session_id: string
+        }
+        Insert: {
+          id?: number
+          message: Json
+          session_id: string
+        }
+        Update: {
+          id?: number
+          message?: Json
+          session_id?: string
         }
         Relationships: []
       }
