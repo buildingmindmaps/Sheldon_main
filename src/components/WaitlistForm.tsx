@@ -33,11 +33,13 @@ export function WaitlistForm() {
   });
 
   const onSubmit = async (data: WaitlistFormData) => {
+    console.log("Form submission started with data:", data);
     setIsLoading(true);
     
     try {
       // Insert data into Supabase
-      const { error } = await supabase
+      console.log("Attempting to insert into Supabase...");
+      const { data: insertedData, error } = await supabase
         .from('waitlist')
         .insert([
           {
@@ -45,9 +47,15 @@ export function WaitlistForm() {
             education: data.education,
             email: data.email
           }
-        ]);
+        ])
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+
+      console.log("Successfully inserted data:", insertedData);
 
       toast({
         title: "Success!",

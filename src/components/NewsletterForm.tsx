@@ -3,25 +3,67 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
+
+// Define form validation schema
+const newsletterSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" })
+});
+
+type NewsletterFormData = z.infer<typeof newsletterSchema>;
 
 export function NewsletterForm() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate email
+    const validation = newsletterSchema.safeParse({ email });
+    if (!validation.success) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
     
-    // Simulate submission
-    setTimeout(() => {
+    try {
+      // Insert data into Supabase waitlist table
+      const { error } = await supabase
+        .from('waitlist')
+        .insert([
+          {
+            name: 'Newsletter Subscriber', // Default name for newsletter signups
+            education: 'Not specified', // Default education for newsletter signups
+            email: email
+          }
+        ]);
+
+      if (error) throw error;
+
       toast({
         title: "You're on the list!",
         description: "We'll notify you when we launch.",
       });
+      
       setEmail('');
+    } catch (error) {
+      console.error("Error submitting to newsletter:", error);
+      toast({
+        title: "Something went wrong",
+        description: "We couldn't add you to the newsletter. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
