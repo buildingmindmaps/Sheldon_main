@@ -26,7 +26,7 @@ interface ApiPayload {
   };
 }
 
-type AppPhase = 'clarifying' | 'framework_input' | 'framework_submitted';
+type AppPhase = 'clarifying' | 'framework_input' | 'framework_submitted' | 'case_ended';
 
 // Icon Components
 const LightningIcon: React.FC = () => (
@@ -74,7 +74,6 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
             startOnLoad: false,
             theme: 'default',
             securityLevel: 'loose',
-            suppressErrors: true,
           });
           setMermaidAPI(mermaidInstance);
           console.log("Mermaid API loaded and initialized successfully.");
@@ -121,6 +120,14 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
 
   useEffect(() => {
     const aiResponses = chatHistory.filter(msg => msg.role === 'model').length;
+    const userQuestions = chatHistory.filter(msg => msg.role === 'user' && msg.type !== 'framework').length;
+    
+    // Check if user has asked 10 clarifying questions
+    if (userQuestions >= 10 && appPhase === 'clarifying') {
+      setAppPhase('case_ended');
+      return;
+    }
+    
     if (aiResponses >= 2 && appPhase === 'clarifying') {
       setShowFrameworkButton(true);
     } else {
@@ -361,8 +368,8 @@ flowchart TD
         }]);
 
         if (isFrameworkSubmission) {
-          setAppPhase('framework_submitted');
           await generateMermaidDiagram(frameworkText);
+          setAppPhase('case_ended');
         }
       } else {
         throw new Error('Could not retrieve valid response from Coach API.');
@@ -410,6 +417,8 @@ flowchart TD
         return <p key={`p-${lineIndex}`} className={`my-1 ${isBold ? 'font-semibold' : ''}`}>{lineContent}</p>;
       });
   };
+
+  const userQuestions = chatHistory.filter(msg => msg.role === 'user' && msg.type !== 'framework').length;
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
@@ -528,7 +537,7 @@ flowchart TD
 
       <main className="container mx-auto px-4 py-8 flex flex-col items-center w-full max-w-3xl">
         <h1 className="text-4xl font-bold text-gray-800 mb-3 text-center tracking-tight">
-          Profitability Analysis for an Indian Water Purifier Manufacturer
+          Case Sprint: Water Purifier
         </h1>
         <p className="text-gray-600 mb-10 text-center text-lg">
           Hone your consulting skills with AI-driven scenarios.
@@ -587,6 +596,9 @@ flowchart TD
 
         {appPhase === 'clarifying' && (
           <div className="w-full mt-auto pt-4 sticky bottom-0 bg-gray-50 pb-6 z-10">
+            <div className="mb-2 text-center text-sm text-gray-600">
+              Questions asked: {userQuestions}/10
+            </div>
             {showFrameworkButton && (
               <button
                 onClick={handleProceedToFramework}
@@ -644,40 +656,61 @@ flowchart TD
           </div>
         )}
 
-        {appPhase === 'framework_submitted' && (
+        {appPhase === 'case_ended' && (
             <div className="w-full mt-auto pt-4 sticky bottom-0 bg-gray-50 pb-6 z-10">
-                <div className="w-full my-4 mermaid-diagram-container">
-                    <h3 className="text-xl font-semibold text-gray-700 mb-3">Framework Visualization:</h3>
-                    {isDiagramLoading && <p className="text-gray-500 text-center py-4">Generating diagram...</p>}
-                    {!isDiagramLoading && diagramError && 
-                        <div className="text-red-600 p-3 bg-red-50 border border-red-200 rounded-md">
-                            <strong>Diagram Error:</strong> {diagramError}
+                <div className="w-full bg-white p-6 rounded-lg shadow-lg border border-gray-200 mb-4">
+                    <h3 className="text-2xl font-semibold text-gray-800 mb-4 text-center">🎉 Case Interview Complete!</h3>
+                    <p className="text-gray-600 text-center mb-4">
+                        {frameworkText ? 
+                            "Great job! You've completed the case by submitting your framework. Review your performance and consider practicing more cases to further improve your consulting skills." :
+                            "You've completed the maximum number of clarifying questions (10). Time to develop and submit a framework for this case!"
+                        }
+                    </p>
+                    
+                    {mermaidDiagramCode && (
+                        <div className="w-full my-4 mermaid-diagram-container">
+                            <h4 className="text-lg font-semibold text-gray-700 mb-3">Your Framework Visualization:</h4>
+                            {isDiagramLoading && <p className="text-gray-500 text-center py-4">Generating diagram...</p>}
+                            {!isDiagramLoading && diagramError && 
+                                <div className="text-red-600 p-3 bg-red-50 border border-red-200 rounded-md">
+                                    <strong>Diagram Error:</strong> {diagramError}
+                                </div>
+                            }
+                            <div ref={mermaidDivRef} className="mermaid">
+                                {/* Content injected by useEffect */}
+                            </div>
+                            {!isDiagramLoading && !diagramError && !mermaidDiagramCode && mermaidAPI &&
+                             <p className="text-gray-500 text-sm text-center py-4">No diagram generated or framework was not suitable for visualization.</p>
+                            }
+                            {!mermaidAPI && !isDiagramLoading && 
+                                <p className="text-red-500 text-sm text-center py-4">Mermaid library could not be loaded. Diagrams are unavailable.</p>
+                            }
                         </div>
-                    }
-                    <div ref={mermaidDivRef} className="mermaid">
-                        {/* Content injected by useEffect */}
-                    </div>
-                    {!isDiagramLoading && !diagramError && !mermaidDiagramCode && mermaidAPI &&
-                     <p className="text-gray-500 text-sm text-center py-4">No diagram generated or framework was not suitable for visualization.</p>
-                    }
-                    {!mermaidAPI && !isDiagramLoading && 
-                        <p className="text-red-500 text-sm text-center py-4">Mermaid library could not be loaded. Diagrams are unavailable.</p>
-                    }
+                    )}
                 </div>
 
-                <p className="text-center text-gray-600 mb-4">Framework submitted and evaluated. You can ask more clarifying questions or start a new case.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={onBack}
+                    className="flex-1 py-2.5 px-4 chat-input-button"
+                  >
+                    Back to Sprints
+                  </button>
                   <button
                     onClick={() => {
+                        setChatHistory([]);
                         setAppPhase('clarifying');
                         setFrameworkText('');
                         setMermaidDiagramCode('');
                         setDiagramError('');
                         setError(''); 
+                        setCurrentQuestion('');
                     }}
-                    className="w-full py-2.5 px-4 chat-input-button"
-                >
-                    Ask More Questions
-                </button>
+                    className="flex-1 py-2.5 px-4 rounded-lg font-semibold text-sm text-gray-600 hover:bg-gray-200 transition-colors duration-150 shadow-sm border border-gray-300"
+                  >
+                    Start New Case
+                  </button>
+                </div>
             </div>
         )}
       </main>

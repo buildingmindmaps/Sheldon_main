@@ -16,13 +16,13 @@ export default function MySprints() {
   const courses = [
     {
       id: 0,
-      title: "Case Sprint: Market Entry",
-      description: "Learn to break down market entry decisions.",
+      title: "Case Sprint: Water Purifier",
+      description: "Learn to break down water purifier business decisions.",
       level: "Beginner",
       hours: "5 hours",
       badge: "Popular",
       icon: "📊",
-      detailedDescription: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies.",
+      detailedDescription: "Analyze opportunities, barriers, and go-to-market strategies for water purifier manufacturers across different market segments.",
       chapters: "5 Chapters",
       levelDetail: "Beginner to Advanced",
       cases: "20+ interactive cases",
