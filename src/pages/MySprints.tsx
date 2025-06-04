@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
@@ -6,10 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ArrowLeft, ArrowRight, Clock, X, ChevronUp, Mic, Video, Camera } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { CaseInterview } from '@/components/CaseInterview';
 
 export default function MySprints() {
   const [selectedCourse, setSelectedCourse] = useState(0);
-  const [currentPage, setCurrentPage] = useState('main'); // 'main', 'course-detail', 'interview'
+  const [currentPage, setCurrentPage] = useState('main'); // 'main', 'course-detail', 'interview', 'case-interview'
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [openLessons, setOpenLessons] = useState<{ [key: number]: boolean }>({ 0: true });
 
@@ -150,7 +150,7 @@ export default function MySprints() {
     if (currentPage === 'main') {
       setCurrentPage('course-detail');
     } else if (currentPage === 'course-detail') {
-      setCurrentPage('interview');
+      setCurrentPage('case-interview');
     }
   };
 
@@ -166,6 +166,10 @@ export default function MySprints() {
   };
 
   const selectedCourseData = courses[selectedCourse];
+
+  if (currentPage === 'case-interview') {
+    return <CaseInterview onBack={() => setCurrentPage('course-detail')} />;
+  }
 
   if (currentPage === 'interview') {
     return (
