@@ -479,7 +479,7 @@ flowchart TD
           margin-top: 1.5rem;
           background-color: white;
           box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-          min-height: 150px;
+          max-height: 400px;
           overflow: auto;
           font-family: var(--font-family);
         }
