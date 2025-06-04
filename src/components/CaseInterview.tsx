@@ -67,15 +67,20 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
     const initMermaid = async (): Promise<void> => {
       try {
         const mermaidModule = await import('mermaid');
-        const api = mermaidModule.default || mermaidModule;
-        api.initialize({
-          startOnLoad: false,
-          theme: 'default',
-          securityLevel: 'loose',
-          suppressErrors: true,
-        });
-        setMermaidAPI(api);
-        console.log("Mermaid API loaded and initialized successfully.");
+        const mermaidInstance = mermaidModule.default;
+        
+        if (mermaidInstance && typeof mermaidInstance.initialize === 'function') {
+          mermaidInstance.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose',
+            suppressErrors: true,
+          });
+          setMermaidAPI(mermaidInstance);
+          console.log("Mermaid API loaded and initialized successfully.");
+        } else {
+          throw new Error("Mermaid initialize method not found");
+        }
       } catch (err) {
         console.error("Failed to dynamically load or initialize Mermaid:", err);
         setDiagramError("Failed to load Mermaid library. Diagramming disabled.");
@@ -96,7 +101,10 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
         if (existingSvg) {
           existingSvg.remove();
         }
-        mermaidAPI.run({ nodes: [mermaidDivRef.current] });
+        
+        if (mermaidAPI.run) {
+          mermaidAPI.run({ nodes: [mermaidDivRef.current] });
+        }
         console.log("Mermaid diagram rendered.");
       } catch (e: any) {
         console.error("Mermaid rendering error:", e);
