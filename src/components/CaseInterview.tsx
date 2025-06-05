@@ -3,14 +3,19 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
 interface CaseInterviewProps {
   onBack: () => void;
 }
 
 export function CaseInterview({ onBack }: CaseInterviewProps) {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     {
-      role: "assistant" as const,
+      role: "assistant",
       content: "Hello! I'm your AI consultant. Let's work through this case together. What's your initial understanding of the water purifier market?"
     }
   ]);
@@ -35,7 +40,7 @@ export function CaseInterview({ onBack }: CaseInterviewProps) {
     setIsLoading(true);
 
     // Add user message
-    setMessages(prev => [...prev, { role: "user" as const, content: userMessage }]);
+    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
 
     try {
       // Simulate AI response for demo
@@ -48,13 +53,13 @@ export function CaseInterview({ onBack }: CaseInterviewProps) {
         ];
         
         const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        setMessages(prev => [...prev, { role: "assistant" as const, content: randomResponse }]);
+        setMessages(prev => [...prev, { role: "assistant", content: randomResponse }]);
         setIsLoading(false);
       }, 1500);
     } catch (error) {
       console.error('Error generating response:', error);
       setMessages(prev => [...prev, { 
-        role: "assistant" as const, 
+        role: "assistant", 
         content: "I apologize, but I'm having trouble processing your request right now. Please try again." 
       }]);
       setIsLoading(false);
