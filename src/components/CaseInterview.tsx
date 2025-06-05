@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -122,7 +121,6 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
     const aiResponses = chatHistory.filter(msg => msg.role === 'model').length;
     const userQuestions = chatHistory.filter(msg => msg.role === 'user' && msg.type !== 'framework').length;
     
-    // Check if user has asked 10 clarifying questions
     if (userQuestions >= 10 && appPhase === 'clarifying') {
       setAppPhase('case_ended');
       return;
@@ -570,7 +568,7 @@ flowchart TD
                     <button
                       onClick={() => toggleFeedbackVisibility(index)}
                       className="text-xs font-semibold flex items-center hover:opacity-80 transition-opacity group"
-                      style={{ color: msg.role === 'user' ? 'rgba(255,255,255,0.85)' : 'var(--gradient-blue-start)'}}
+                      style={{ color: 'var(--gradient-blue-start)'}}
                     >
                       {msg.isFrameworkResponse ? "Detailed Suggestions" : `Feedback on Question ${msg.questionNumber || ''}`}
                       <ChevronDown className={`ml-1.5 h-4 w-4 transform transition-transform duration-200 ${msg.feedbackVisible ? 'rotate-180' : ''}`} />
