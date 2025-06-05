@@ -8,20 +8,25 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("signin");
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [successMessage, setSuccessMessage] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     full_name: '',
     education: '',
     phone_number: ''
   });
   
-  const { signUp, signIn, signInWithGoogle, user } = useAuth();
+  const { signUp, signIn, signInWithGoogle, resetPassword, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -32,29 +37,117 @@ export function AuthPage() {
     }
   }, [user, navigate]);
 
+  // Clear errors when switching tabs
+  useEffect(() => {
+    setErrors({});
+    setSuccessMessage('');
+    setFormData({
+      email: '',
+      password: '',
+      confirmPassword: '',
+      full_name: '',
+      education: '',
+      phone_number: ''
+    });
+  }, [activeTab]);
+
+  const validateForm = (isSignUp: boolean = false) => {
+    const newErrors: {[key: string]: string} = {};
+
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    if (isSignUp) {
+      if (!formData.full_name) {
+        newErrors.full_name = 'Full name is required';
+      }
+      if (!formData.education) {
+        newErrors.education = 'Education is required';
+      }
+      if (!formData.phone_number) {
+        newErrors.phone_number = 'Phone number is required';
+      } else if (!/^\+?[\d\s-()]+$/.test(formData.phone_number)) {
+        newErrors.phone_number = 'Please enter a valid phone number';
+      }
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
+    
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
+    setSuccessMessage('');
 
-    const { error } = await signIn(formData.email, formData.password);
+    try {
+      const { error } = await signIn(formData.email, formData.password);
 
-    if (error) {
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          toast({
+            title: "Sign in failed",
+            description: "Invalid email or password. Please check your credentials and try again.",
+            variant: "destructive"
+          });
+        } else if (error.message.includes('Email not confirmed')) {
+          toast({
+            title: "Email not verified",
+            description: "Please check your email and click the verification link before signing in.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Sign in failed",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+      } else {
+        toast({
+          title: "Welcome back!",
+          description: "You've been signed in successfully."
+        });
+      }
+    } catch (error) {
       toast({
         title: "Sign in failed",
-        description: error.message,
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive"
-      });
-    } else {
-      toast({
-        title: "Welcome back!",
-        description: "You've been signed in successfully."
       });
     }
 
@@ -63,24 +156,100 @@ export function AuthPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm(true)) {
+      return;
+    }
+
     setIsLoading(true);
+    setSuccessMessage('');
 
-    const { error } = await signUp(formData.email, formData.password, {
-      full_name: formData.full_name,
-      education: formData.education,
-      phone_number: formData.phone_number
-    });
+    try {
+      const { error } = await signUp(formData.email, formData.password, {
+        full_name: formData.full_name,
+        education: formData.education,
+        phone_number: formData.phone_number
+      });
 
-    if (error) {
+      if (error) {
+        if (error.message.includes('User already registered')) {
+          toast({
+            title: "Account already exists",
+            description: "An account with this email already exists. Please sign in instead or use a different email.",
+            variant: "destructive"
+          });
+        } else if (error.message.includes('Password should be at least 6 characters')) {
+          setErrors({ password: 'Password must be at least 6 characters long' });
+        } else {
+          toast({
+            title: "Sign up failed",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+      } else {
+        setSuccessMessage('Check your email! We\'ve sent you a confirmation link to complete your registration.');
+        setFormData({
+          email: '',
+          password: '',
+          confirmPassword: '',
+          full_name: '',
+          education: '',
+          phone_number: ''
+        });
+        toast({
+          title: "Check your email!",
+          description: "We've sent you a confirmation link to complete your registration."
+        });
+      }
+    } catch (error) {
       toast({
         title: "Sign up failed",
-        description: error.message,
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
-    } else {
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.email) {
+      setErrors({ email: 'Email is required for password reset' });
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setErrors({ email: 'Please enter a valid email address' });
+      return;
+    }
+
+    setIsLoading(true);
+    setSuccessMessage('');
+
+    try {
+      const { error } = await resetPassword(formData.email);
+      
+      if (error) {
+        toast({
+          title: "Password reset failed",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        setSuccessMessage('Password reset link sent! Check your email for instructions to reset your password.');
+        toast({
+          title: "Password reset sent",
+          description: "Check your email for instructions to reset your password."
+        });
+      }
+    } catch (error) {
       toast({
-        title: "Check your email!",
-        description: "We've sent you a confirmation link to complete your registration."
+        title: "Password reset failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
       });
     }
 
@@ -90,12 +259,28 @@ export function AuthPage() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     
-    const { error } = await signInWithGoogle();
-    
-    if (error) {
+    try {
+      const { error } = await signInWithGoogle();
+      
+      if (error) {
+        if (error.message.includes('provider is not enabled')) {
+          toast({
+            title: "Google sign in not available",
+            description: "Google authentication is not currently enabled. Please use email and password to sign in.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Google sign in failed",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+      }
+    } catch (error) {
       toast({
         title: "Google sign in failed",
-        description: error.message,
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive"
       });
     }
@@ -116,10 +301,18 @@ export function AuthPage() {
         </CardHeader>
         
         <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+          {successMessage && (
+            <Alert className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{successMessage}</AlertDescription>
+            </Alert>
+          )}
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="reset">Reset</TabsTrigger>
             </TabsList>
             
             <TabsContent value="signin">
@@ -133,8 +326,10 @@ export function AuthPage() {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleInputChange}
+                    className={errors.email ? "border-red-500" : ""}
                     required
                   />
+                  {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
                 
                 <div className="space-y-2">
@@ -147,6 +342,7 @@ export function AuthPage() {
                       placeholder="Enter your password"
                       value={formData.password}
                       onChange={handleInputChange}
+                      className={errors.password ? "border-red-500" : ""}
                       required
                     />
                     <Button
@@ -163,6 +359,7 @@ export function AuthPage() {
                       )}
                     </Button>
                   </div>
+                  {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
                 </div>
                 
                 <Button 
@@ -186,8 +383,10 @@ export function AuthPage() {
                     placeholder="Enter your full name"
                     value={formData.full_name}
                     onChange={handleInputChange}
+                    className={errors.full_name ? "border-red-500" : ""}
                     required
                   />
+                  {errors.full_name && <p className="text-sm text-red-500">{errors.full_name}</p>}
                 </div>
                 
                 <div className="space-y-2">
@@ -199,8 +398,10 @@ export function AuthPage() {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleInputChange}
+                    className={errors.email ? "border-red-500" : ""}
                     required
                   />
+                  {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
                 
                 <div className="space-y-2">
@@ -212,8 +413,10 @@ export function AuthPage() {
                     placeholder="e.g., MBA, Bachelor's in Business"
                     value={formData.education}
                     onChange={handleInputChange}
+                    className={errors.education ? "border-red-500" : ""}
                     required
                   />
+                  {errors.education && <p className="text-sm text-red-500">{errors.education}</p>}
                 </div>
                 
                 <div className="space-y-2">
@@ -225,8 +428,10 @@ export function AuthPage() {
                     placeholder="Enter your phone number"
                     value={formData.phone_number}
                     onChange={handleInputChange}
+                    className={errors.phone_number ? "border-red-500" : ""}
                     required
                   />
+                  {errors.phone_number && <p className="text-sm text-red-500">{errors.phone_number}</p>}
                 </div>
                 
                 <div className="space-y-2">
@@ -236,9 +441,10 @@ export function AuthPage() {
                       id="signup-password"
                       name="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Create a password"
+                      placeholder="Create a password (min 6 characters)"
                       value={formData.password}
                       onChange={handleInputChange}
+                      className={errors.password ? "border-red-500" : ""}
                       required
                     />
                     <Button
@@ -255,6 +461,22 @@ export function AuthPage() {
                       )}
                     </Button>
                   </div>
+                  {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Input
+                    id="confirm-password"
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className={errors.confirmPassword ? "border-red-500" : ""}
+                    required
+                  />
+                  {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword}</p>}
                 </div>
                 
                 <Button 
@@ -264,6 +486,44 @@ export function AuthPage() {
                 >
                   {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="reset">
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="reset-email">Email</Label>
+                  <Input
+                    id="reset-email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={errors.email ? "border-red-500" : ""}
+                    required
+                  />
+                  {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  className="w-full bg-[#a3e635] hover:bg-[#84cc16] text-black"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Sending reset link..." : "Send Reset Link"}
+                </Button>
+                
+                <p className="text-sm text-gray-600 text-center">
+                  Remember your password?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('signin')}
+                    className="text-[#a3e635] hover:underline"
+                  >
+                    Sign in
+                  </button>
+                </p>
               </form>
             </TabsContent>
           </Tabs>
