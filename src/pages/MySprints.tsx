@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ArrowLeft, ArrowRight, Clock, X, ChevronUp, Mic, Video, Camera, User, LogOut } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ChevronDown, ArrowLeft, ArrowRight, Clock, X, ChevronUp, Mic, Video, Camera, User, LogOut, Star } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { CaseInterview } from '@/components/CaseInterview';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,17 +25,37 @@ export default function MySprints() {
   const courses = [
     {
       id: 0,
-      title: "Case Sprint: Water Purifier",
-      description: "Learn to break down water purifier business decisions.",
+      title: "Case Sprint: Market Entry",
+      description: "Learn to break down market entry decisions.",
       level: "Beginner",
       hours: "5 hours",
       badge: "Popular",
       icon: "📊",
-      detailedDescription: "Analyze opportunities, barriers, and go-to-market strategies for water purifier manufacturers across different market segments.",
+      detailedDescription: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies.",
       chapters: "5 Chapters",
       levelDetail: "Beginner to Advanced",
       cases: "20+ interactive cases",
-      features: "Framework walkthroughs, real-time scoring, bonus sector deep-dives",
+      features: ["5 Chapters", "Beginner to Advanced", "20+ interactive cases", "Real-time scoring", "Bonus sector deep-dives"],
+      reviews: [
+        {
+          name: "Jane Cooper",
+          avatar: "JC",
+          rating: 5,
+          text: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies."
+        },
+        {
+          name: "Jane Cooper", 
+          avatar: "JC",
+          rating: 5,
+          text: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies."
+        },
+        {
+          name: "Jane Cooper",
+          avatar: "JC", 
+          rating: 5,
+          text: "Analyze opportunities, barriers, and go-to-market strategies across industries and geographies."
+        }
+      ],
       lessons: [
         {
           title: "Lesson 1: What You'll Learn",
@@ -99,7 +121,15 @@ export default function MySprints() {
       chapters: "6 Chapters",
       levelDetail: "Beginner to Intermediate",
       cases: "15+ modeling exercises",
-      features: "Excel templates, video tutorials, peer collaboration",
+      features: ["6 Chapters", "Beginner to Intermediate", "15+ modeling exercises", "Excel templates", "Video tutorials"],
+      reviews: [
+        {
+          name: "John Smith",
+          avatar: "JS",
+          rating: 4,
+          text: "Great course for understanding financial modeling fundamentals in consulting context."
+        }
+      ],
       lessons: [
         {
           title: "Lesson 1: Financial Foundations",
@@ -123,7 +153,15 @@ export default function MySprints() {
       chapters: "7 Chapters",
       levelDetail: "Advanced",
       cases: "10+ partner-level cases",
-      features: "Partner interviews, case walkthroughs, strategy templates",
+      features: ["7 Chapters", "Advanced", "10+ partner-level cases", "Partner interviews", "Strategy templates"],
+      reviews: [
+        {
+          name: "Sarah Johnson",
+          avatar: "SJ",
+          rating: 5,
+          text: "Incredible insights into partner-level thinking and decision making."
+        }
+      ],
       lessons: [
         {
           title: "Lesson 1: Partner Mindset",
@@ -134,6 +172,63 @@ export default function MySprints() {
           ]
         }
       ]
+    }
+  ];
+
+  const similarCourses = [
+    {
+      id: 3,
+      title: "Case Sprint: Market Entry",
+      description: "Learn to break down market entry decisions.",
+      level: "Beginner",
+      hours: "5 hours",
+      badge: "Popular",
+      icon: "📊"
+    },
+    {
+      id: 4,
+      title: "Case Sprint: Market Entry",
+      description: "Learn to break down market entry decisions.",
+      level: "Beginner", 
+      hours: "5 hours",
+      badge: "Popular",
+      icon: "📊"
+    },
+    {
+      id: 5,
+      title: "Case Sprint: Market Entry",
+      description: "Learn to break down market entry decisions.",
+      level: "Beginner",
+      hours: "5 hours", 
+      badge: "Popular",
+      icon: "📊"
+    },
+    {
+      id: 6,
+      title: "Case Sprint: Market Entry",
+      description: "Learn to break down market entry decisions.",
+      level: "Beginner",
+      hours: "5 hours",
+      badge: "Popular", 
+      icon: "📊"
+    },
+    {
+      id: 7,
+      title: "Case Sprint: Market Entry",
+      description: "Learn to break down market entry decisions.",
+      level: "Beginner",
+      hours: "5 hours",
+      badge: "Popular",
+      icon: "📊"
+    },
+    {
+      id: 8,
+      title: "Case Sprint: Market Entry", 
+      description: "Learn to break down market entry decisions.",
+      level: "Beginner",
+      hours: "5 hours",
+      badge: "Popular",
+      icon: "📊"
     }
   ];
 
@@ -152,22 +247,6 @@ export default function MySprints() {
         variant: "destructive"
       });
     }
-  };
-
-  const handlePrevious = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setSelectedCourse((prev) => (prev > 0 ? prev - 1 : courses.length - 1));
-      setIsTransitioning(false);
-    }, 300);
-  };
-
-  const handleNext = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setSelectedCourse((prev) => (prev < courses.length - 1 ? prev + 1 : 0));
-      setIsTransitioning(false);
-    }, 300);
   };
 
   const handleStartSprint = () => {
@@ -314,192 +393,148 @@ export default function MySprints() {
   if (currentPage === 'course-detail') {
     return (
       <div className="min-h-screen bg-gray-50">
-        <NavBar />
-        
-        <main className="pt-20 pb-12">
+        {/* Navigation */}
+        <div className="bg-white border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="mb-12 flex justify-between items-start">
-              <div>
-                <h1 className="text-4xl font-normal text-[#a3e635] mb-3">
-                  Level Up Your Thinking, One Sprint at a Time.
-                </h1>
-                <p className="text-lg text-gray-600 font-normal">
-                  Daily case drills and expert playbooks to build elite consulting skills.
-                </p>
+            <div className="flex justify-between items-center py-4">
+              {/* Logo */}
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-white font-bold text-sm">S</span>
+                </div>
+                <span className="text-xl font-semibold text-gray-900">Sheldon</span>
               </div>
-              <div className="flex gap-3 items-center">
+
+              {/* Navigation Links */}
+              <div className="hidden md:flex items-center space-x-8">
+                <a href="#" className="text-gray-600 hover:text-gray-900">Dashboard</a>
+                <a href="#" className="text-gray-600 hover:text-gray-900">Practice Cases</a>
+                <a href="#" className="text-gray-900 font-medium">My Sprints</a>
+                <a href="#" className="text-gray-600 hover:text-gray-900">Leaderboard</a>
                 <div className="flex items-center gap-3">
-                  {profile && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <User className="h-4 w-4" />
-                      <span>{profile.full_name}</span>
-                    </div>
-                  )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSignOut}
-                    className="border-gray-300"
-                  >
-                    <LogOut className="h-4 w-4 mr-1" />
-                    Sign Out
+                  <Button variant="outline" className="rounded-full border-2 border-[#a3e635] text-black hover:bg-[#a3e635]/10 px-4 py-2 bg-white font-medium">
+                    <span className="mr-2 text-yellow-500 text-lg">⚡</span>
+                    1
+                  </Button>
+                  <Button className="rounded-lg bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium px-6 py-2">
+                    Start Free Trial
                   </Button>
                 </div>
-                <Button variant="outline" className="rounded-full border-2 border-[#a3e635] text-black hover:bg-[#a3e635]/10 px-5 py-2 bg-white font-medium">
-                  <span className="mr-2 text-yellow-500 text-lg">⚡</span>
-                  1
-                </Button>
-                <Button className="rounded-lg bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium px-8 py-2 border-2 border-[#a3e635]">
-                  Start Free Trial
-                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <main className="pt-8 pb-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-normal text-[#a3e635] mb-2">
+                Level Up Your Thinking, One Sprint at a Time.
+              </h1>
+              <p className="text-gray-600">
+                Daily case drills and expert playbooks to build business problem solving.
+              </p>
+            </div>
+
+            {/* Main Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left Side - Case Details */}
+              <div className="lg:col-span-2">
+                <div className="bg-white rounded-lg p-8">
+                  <div className="flex items-start gap-6 mb-8">
+                    <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                      📊
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                        {selectedCourseData.title}
+                      </h2>
+                      <p className="text-gray-600 mb-6">
+                        {selectedCourseData.description}
+                      </p>
+                      <p className="text-gray-600 text-sm mb-6">
+                        {selectedCourseData.detailedDescription}
+                      </p>
+                      <Button 
+                        className="w-full bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 rounded-lg mb-6"
+                        onClick={handleStartSprint}
+                      >
+                        Start Sprint
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Key Features */}
+                  <div className="flex flex-wrap gap-4 mb-8">
+                    {selectedCourseData.features.map((feature, index) => (
+                      <span key={index} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm">
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Side - Reviews */}
+              <div className="space-y-4">
+                {selectedCourseData.reviews.map((review, index) => (
+                  <Card key={index} className="bg-white p-4">
+                    <div className="flex items-start gap-3 mb-3">
+                      <Avatar className="w-10 h-10">
+                        <AvatarFallback className="bg-gray-200 text-gray-700 text-sm">
+                          {review.avatar}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm">{review.name}</h4>
+                        <div className="flex gap-1 mt-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i} 
+                              className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-gray-600 text-sm">{review.text}</p>
+                  </Card>
+                ))}
               </div>
             </div>
 
-            {/* Course Detail Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Left Side - Course Info */}
-              <div>
-                <Card className="border-2 border-[#a3e635] bg-white mb-6">
-                  <CardHeader className="pb-4 pt-6 px-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="text-3xl">{selectedCourseData.icon}</div>
-                      <Badge className="bg-[#a3e635]/20 text-[#65a30d] hover:bg-[#a3e635]/30">
-                        {selectedCourseData.badge}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-xl font-medium text-gray-800 leading-tight mb-3">
-                      {selectedCourseData.title}
-                    </CardTitle>
-                    <CardDescription className="text-gray-600 text-base mb-4">
-                      {selectedCourseData.description}
-                    </CardDescription>
-                    <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                      {selectedCourseData.detailedDescription}
-                    </p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
-                      <span>{selectedCourseData.level}</span>
-                      <span>•</span>
-                      <span>{selectedCourseData.hours}</span>
-                    </div>
-                  </CardHeader>
-                </Card>
-
-                {/* Lessons Section */}
-                <div className="space-y-2">
-                  {selectedCourseData.lessons.map((lesson, index) => (
-                    <Collapsible 
-                      key={index} 
-                      open={openLessons[index]} 
-                      onOpenChange={() => toggleLesson(index)}
-                    >
-                      <Card className="bg-white border border-gray-200">
-                        <CollapsibleTrigger asChild>
-                          <CardHeader className="pb-4 cursor-pointer hover:bg-gray-50">
-                            <div className="flex items-center justify-between">
-                              <CardTitle className="text-lg font-medium">{lesson.title}</CardTitle>
-                              {openLessons[index] ? (
-                                <ChevronUp className="h-5 w-5 text-gray-400" />
-                              ) : (
-                                <ChevronDown className="h-5 w-5 text-gray-400" />
-                              )}
-                            </div>
-                          </CardHeader>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          {lesson.sections.length > 0 && (
-                            <div className="px-6 pb-4 space-y-2">
-                              {lesson.sections.map((section, sectionIndex) => (
-                                <p key={sectionIndex} className="text-gray-600 text-sm pl-4">
-                                  {section}
-                                </p>
-                              ))}
-                            </div>
-                          )}
-                        </CollapsibleContent>
-                      </Card>
-                    </Collapsible>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right Side - Learning Path Visual */}
-              <div className="flex flex-col items-center justify-center">
-                <div className="text-right mb-8">
-                  <h3 className="text-lg font-medium text-gray-700 mb-2">Lesson 1:</h3>
-                  <p className="text-gray-600">What You'll Learn</p>
-                </div>
-
-                {/* Visual Learning Steps */}
-                <div className="relative flex flex-col items-center space-y-6 mb-8">
-                  {/* Step 1 */}
-                  <div className="relative">
-                    <div className="w-16 h-8 bg-gradient-to-r from-[#a3e635] to-[#84cc16] rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold">✓</span>
-                    </div>
-                    <div className="absolute -right-20 top-1/2 transform -translate-y-1/2 w-12 h-6 bg-[#a3e635] rounded-full flex items-center justify-center shadow-md">
-                      <span className="text-white font-bold text-sm">✓</span>
-                    </div>
-                  </div>
-                  
-                  {/* Step 2 */}
-                  <div className="relative">
-                    <div className="w-16 h-8 bg-gradient-to-r from-[#a3e635] to-[#84cc16] rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold">✓</span>
-                    </div>
-                    <div className="absolute -right-16 top-1/2 transform -translate-y-1/2 w-10 h-5 bg-[#a3e635] rounded-full flex items-center justify-center shadow-md">
-                      <span className="text-white font-bold text-xs">✓</span>
-                    </div>
-                  </div>
-
-                  {/* Step 3 - Current */}
-                  <div className="relative">
-                    <div className="w-20 h-12 bg-gradient-to-r from-[#a3e635] to-[#84cc16] rounded-full flex items-center justify-center shadow-lg border-4 border-white">
-                      <span className="text-black font-bold text-2xl">3</span>
-                    </div>
-                    <div className="absolute -right-24 top-1/2 transform -translate-y-1/2 w-16 h-8 bg-gradient-to-r from-[#a3e635] to-[#84cc16] rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-black font-bold">3</span>
-                    </div>
-                  </div>
-
-                  {/* Step 4 */}
-                  <div className="relative">
-                    <div className="w-16 h-8 bg-gradient-to-r from-[#a3e635] to-[#84cc16] rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-black font-bold text-xl">4</span>
-                    </div>
-                    <div className="absolute -right-16 top-1/2 transform -translate-y-1/2 w-10 h-5 bg-[#a3e635] rounded-full flex items-center justify-center shadow-md">
-                      <span className="text-black font-bold text-xs">4</span>
-                    </div>
-                  </div>
-
-                  {/* Step 5 */}
-                  <div className="relative">
-                    <div className="w-12 h-6 bg-gradient-to-r from-[#a3e635] to-[#84cc16] rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-black font-bold text-sm">5</span>
-                    </div>
-                  </div>
-
-                  {/* Arrow down */}
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    className="rounded-full border-2 border-[#a3e635] bg-white hover:bg-[#a3e635]/10 p-3"
-                  >
-                    <ArrowLeft className="h-5 w-5 text-[#a3e635] rotate-90" />
-                  </Button>
-                </div>
-
-                <Card className="bg-[#a3e635]/10 border-[#a3e635]/30 p-6 w-full max-w-sm text-center">
-                  <h4 className="font-medium text-gray-800 mb-2">Interactive Drill / Activity</h4>
-                  <p className="text-gray-600 text-sm mb-6">Reinforce learning through engagement</p>
-                  <Button 
-                    className="w-full bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 rounded-lg"
-                    onClick={handleStartSprint}
-                  >
-                    Start Sprint
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Card>
+            {/* Similar Courses */}
+            <div className="mt-12">
+              <h3 className="text-xl font-medium text-gray-900 mb-6">Similar Courses</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {similarCourses.map((course) => (
+                  <Card key={course.id} className="bg-white hover:shadow-md transition-shadow cursor-pointer">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white text-lg">
+                          {course.icon}
+                        </div>
+                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-xs">
+                          {course.badge}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-lg font-medium text-gray-900 leading-tight">
+                        {course.title}
+                      </CardTitle>
+                      <CardDescription className="text-gray-600 text-sm">
+                        {course.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="flex items-center gap-3 text-sm text-gray-500">
+                        <span>{course.level}</span>
+                        <span>•</span>
+                        <span>{course.hours}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </div>
           </div>
