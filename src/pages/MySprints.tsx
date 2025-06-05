@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
@@ -259,6 +258,22 @@ export default function MySprints() {
 
   const handleBackToMain = () => {
     setCurrentPage('main');
+  };
+
+  const handlePrevious = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSelectedCourse(prev => prev === 0 ? courses.length - 1 : prev - 1);
+      setIsTransitioning(false);
+    }, 150);
+  };
+
+  const handleNext = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSelectedCourse(prev => prev === courses.length - 1 ? 0 : prev + 1);
+      setIsTransitioning(false);
+    }, 150);
   };
 
   const toggleLesson = (lessonIndex: number) => {
@@ -698,7 +713,7 @@ export default function MySprints() {
                   </div>
                   
                   <p className="text-gray-600 mb-10 text-base leading-relaxed">
-                    {selectedCourseData.features}
+                    {selectedCourseData.features.join(', ')}
                   </p>
                   
                   <Button 
