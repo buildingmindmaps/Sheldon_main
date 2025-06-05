@@ -3,15 +3,22 @@ import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ArrowLeft, ArrowRight, Clock, X, ChevronUp, Mic, Video, Camera } from 'lucide-react';
+import { ChevronDown, ArrowLeft, ArrowRight, Clock, X, ChevronUp, Mic, Video, Camera, User, LogOut } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { CaseInterview } from '@/components/CaseInterview';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function MySprints() {
   const [selectedCourse, setSelectedCourse] = useState(0);
   const [currentPage, setCurrentPage] = useState('main'); // 'main', 'course-detail', 'interview', 'case-interview'
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [openLessons, setOpenLessons] = useState<{ [key: number]: boolean }>({ 0: true });
+  
+  const { user, profile, signOut } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const courses = [
     {
@@ -129,6 +136,23 @@ export default function MySprints() {
       ]
     }
   ];
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed out successfully",
+        description: "You've been logged out of your account."
+      });
+      navigate('/');
+    } catch (error) {
+      toast({
+        title: "Error signing out",
+        description: "Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const handlePrevious = () => {
     setIsTransitioning(true);
@@ -305,6 +329,23 @@ export default function MySprints() {
                 </p>
               </div>
               <div className="flex gap-3 items-center">
+                <div className="flex items-center gap-3">
+                  {profile && (
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <User className="h-4 w-4" />
+                      <span>{profile.full_name}</span>
+                    </div>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSignOut}
+                    className="border-gray-300"
+                  >
+                    <LogOut className="h-4 w-4 mr-1" />
+                    Sign Out
+                  </Button>
+                </div>
                 <Button variant="outline" className="rounded-full border-2 border-[#a3e635] text-black hover:bg-[#a3e635]/10 px-5 py-2 bg-white font-medium">
                   <span className="mr-2 text-yellow-500 text-lg">⚡</span>
                   1
@@ -484,6 +525,23 @@ export default function MySprints() {
               </p>
             </div>
             <div className="flex gap-3 items-center">
+              <div className="flex items-center gap-3">
+                {profile && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <User className="h-4 w-4" />
+                    <span>{profile.full_name}</span>
+                  </div>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="border-gray-300"
+                >
+                  <LogOut className="h-4 w-4 mr-1" />
+                  Sign Out
+                </Button>
+              </div>
               <Button variant="outline" className="rounded-full border-2 border-[#a3e635] text-black hover:bg-[#a3e635]/10 px-5 py-2 bg-white font-medium">
                 <span className="mr-2 text-yellow-500 text-lg">⚡</span>
                 1
