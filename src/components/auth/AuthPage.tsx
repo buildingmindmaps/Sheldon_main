@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -17,6 +16,7 @@ export function AuthPage() {
   const [activeTab, setActiveTab] = useState("signin");
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [successMessage, setSuccessMessage] = useState('');
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -29,6 +29,15 @@ export function AuthPage() {
   const { signUp, signIn, signInWithGoogle, resetPassword, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Check for recovery type in URL
+  useEffect(() => {
+    const type = searchParams.get('type');
+    if (type === 'recovery') {
+      setActiveTab('reset');
+      setSuccessMessage('You can now reset your password below.');
+    }
+  }, [searchParams]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -118,7 +127,8 @@ export function AuthPage() {
       const { error } = await signIn(formData.email, formData.password);
 
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
+        console.error('Sign in error:', error);
+        if (error.message.includes('Invalid login credentials') || error.message.includes('invalid_credentials')) {
           toast({
             title: "Sign in failed",
             description: "Invalid email or password. Please check your credentials and try again.",
@@ -133,7 +143,7 @@ export function AuthPage() {
         } else {
           toast({
             title: "Sign in failed",
-            description: error.message,
+            description: error.message || "An unexpected error occurred. Please try again.",
             variant: "destructive"
           });
         }
@@ -143,7 +153,8 @@ export function AuthPage() {
           description: "You've been signed in successfully."
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Unexpected sign in error:', error);
       toast({
         title: "Sign in failed",
         description: "An unexpected error occurred. Please try again.",
@@ -172,23 +183,25 @@ export function AuthPage() {
       });
 
       if (error) {
-        if (error.message.includes('User already registered')) {
+        console.error('Sign up error:', error);
+        if (error.message.includes('User already registered') || error.message.includes('already registered')) {
           toast({
             title: "Account already exists",
             description: "An account with this email already exists. Please sign in instead or use a different email.",
             variant: "destructive"
           });
+          setActiveTab('signin'); // Switch to sign in tab
         } else if (error.message.includes('Password should be at least 6 characters')) {
           setErrors({ password: 'Password must be at least 6 characters long' });
         } else {
           toast({
             title: "Sign up failed",
-            description: error.message,
+            description: error.message || "An unexpected error occurred. Please try again.",
             variant: "destructive"
           });
         }
       } else {
-        setSuccessMessage('Check your email! We\'ve sent you a confirmation link to complete your registration.');
+        setSuccessMessage('Success! Please check your email and click the verification link to complete your registration.');
         setFormData({
           email: '',
           password: '',
@@ -199,10 +212,11 @@ export function AuthPage() {
         });
         toast({
           title: "Check your email!",
-          description: "We've sent you a confirmation link to complete your registration."
+          description: "We've sent you a verification link to complete your registration."
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Unexpected sign up error:', error);
       toast({
         title: "Sign up failed",
         description: "An unexpected error occurred. Please try again.",
@@ -233,9 +247,10 @@ export function AuthPage() {
       const { error } = await resetPassword(formData.email);
       
       if (error) {
+        console.error('Password reset error:', error);
         toast({
           title: "Password reset failed",
-          description: error.message,
+          description: error.message || "Failed to send password reset email. Please try again.",
           variant: "destructive"
         });
       } else {
@@ -245,7 +260,8 @@ export function AuthPage() {
           description: "Check your email for instructions to reset your password."
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Unexpected password reset error:', error);
       toast({
         title: "Password reset failed",
         description: "An unexpected error occurred. Please try again.",
@@ -263,21 +279,24 @@ export function AuthPage() {
       const { error } = await signInWithGoogle();
       
       if (error) {
-        if (error.message.includes('provider is not enabled')) {
+        console.error('Google sign in error:', error);
+        if (error.message.includes('provider is not enabled') || error.message.includes('Unsupported provider')) {
           toast({
             title: "Google sign in not available",
-            description: "Google authentication is not currently enabled. Please use email and password to sign in.",
+            description: "Google authentication is not currently enabled. Please contact support or use email/password to sign in.",
             variant: "destructive"
           });
         } else {
           toast({
             title: "Google sign in failed",
-            description: error.message,
+            description: error.message || "Failed to sign in with Google. Please try again.",
             variant: "destructive"
           });
         }
       }
-    } catch (error) {
+      // Note: If successful, the auth state change will handle the redirect
+    } catch (error: any) {
+      console.error('Unexpected Google sign in error:', error);
       toast({
         title: "Google sign in failed",
         description: "An unexpected error occurred. Please try again.",
@@ -314,6 +333,8 @@ export function AuthPage() {
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
               <TabsTrigger value="reset">Reset</TabsTrigger>
             </TabsList>
+            
+            
             
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">

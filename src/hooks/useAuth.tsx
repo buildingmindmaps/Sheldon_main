@@ -90,8 +90,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, userData: { full_name: string; education: string; phone_number: string }) => {
-    // Use the current domain for redirect URL
-    const redirectUrl = `${window.location.origin}/my-sprints`;
+    // Use the actual current domain instead of localhost
+    const currentDomain = window.location.origin;
+    const redirectUrl = currentDomain.includes('localhost') ? 
+      `${currentDomain}/my-sprints` : 
+      `${currentDomain}/my-sprints`;
+    
+    console.log('Sign up redirect URL:', redirectUrl);
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -119,10 +124,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
+    // Use the actual current domain for Google OAuth redirect
+    const currentDomain = window.location.origin;
+    const redirectUrl = currentDomain.includes('localhost') ? 
+      `${currentDomain}/my-sprints` : 
+      `${currentDomain}/my-sprints`;
+    
+    console.log('Google OAuth redirect URL:', redirectUrl);
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/my-sprints`
+        redirectTo: redirectUrl
       }
     });
     
@@ -134,8 +147,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resetPassword = async (email: string) => {
+    // Use the actual current domain for password reset
+    const currentDomain = window.location.origin;
+    const redirectUrl = currentDomain.includes('localhost') ? 
+      `${currentDomain}/auth?type=recovery` : 
+      `${currentDomain}/auth?type=recovery`;
+    
+    console.log('Password reset redirect URL:', redirectUrl);
+    
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth?type=recovery`
+      redirectTo: redirectUrl
     });
     
     return { error };
