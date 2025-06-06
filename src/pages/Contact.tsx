@@ -22,17 +22,31 @@ const Contact = () => {
     },
     {
       name: "Sushant Raj Gupta",
-      position: "Product Manager",
+      position: "Product Manager (Initial founders)",
       photo: "/lovable-uploads/60b0993c-41fa-4263-85aa-bea3483ddf1c.png",
       linkedin: "https://www.linkedin.com/in/sushantrajgupta/",
       bio: "Building exceptional user experiences and shaping our product roadmap"
     },
     {
       name: "Srishti Kumari",
-      position: "Co-Founder – Growth & Partnerships",
+      position: "Growth & Partnerships (Initial founders",
       photo: "/lovable-uploads/414d0a97-7737-4e53-8dd2-1c146b3f3b02.png", 
       linkedin: "https://www.linkedin.com/in/srishti-kumari-/",
       bio: "Driving growth initiatives and building strategic partnerships for SheldonAI"
+    },
+    {
+      name: "Harshita Sharma",
+      position: "Engineer",
+      photo: "/lovable-uploads/Harshita.jpeg", 
+      linkedin: "https://www.linkedin.com/in/harshita-sharma-627446279/",
+      bio: "Building robust systems and contributing to impactful tech development at SheldonAI."
+    },
+    {
+      name: "Anshita Singh",
+      position: "Engineer",
+      photo: "/lovable-uploads/Anshita.jpeg", 
+      linkedin: "https://www.linkedin.com/in/anshita-singh-089522283/",
+      bio: "Creating strong system foundations while advancing impactful technology at SheldonAI."
     }
   ];
 
