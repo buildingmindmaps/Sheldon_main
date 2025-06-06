@@ -715,3 +715,4 @@ flowchart TD
     </div>
   );
 };
+export default CaseInterview;
