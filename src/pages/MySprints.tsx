@@ -243,7 +243,7 @@ const handleStartSprint = () => {
                                 </CardContent>
                             </Card>
                             
-                            <h2 className="text-xl font-bold mb-4">Business Courses</h2>
+                            <h2 className="text-xl font-bold mb-4">Modules</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {courseOptionsData.map((item) => (
                                     <Card 

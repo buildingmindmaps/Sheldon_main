@@ -343,7 +343,7 @@ flowchart TD
           result.candidates[0].content.parts.length > 0) {
 
         const fullResponseText = result.candidates[0].content.parts[0].text;
-        let finalAnswerToShow = "Sorry, the AI response could not be understood.";
+        let finalAnswerToShow = "Sorry, the Sheldon response could not be understood.";
         let feedbackForDropdown = "No specific feedback was parsed.";
 
         if (isFrameworkSubmission) {
@@ -399,7 +399,7 @@ flowchart TD
           setAppPhase('case_ended');
         }
       } else {
-        throw new Error('Could not retrieve valid response from Coach API.');
+        throw new Error('Could not retrieve valid response from Sheldon.');
       }
     } catch (err: any) {
       console.error("Error in handleSubmit (Coach API):", err);
@@ -729,7 +729,7 @@ flowchart TD
               {msg.role === 'model' && (
                 <div className="w-full mb-4">
                   <p className="text-sm font-semibold mb-1.5 text-gray-700">
-                    {msg.isFrameworkResponse ? 'AI Coach (Framework Evaluation):' : `AI Coach Response ${msg.questionNumber || ''}:`}
+                    {msg.isFrameworkResponse ? 'Sheldon (Framework Evaluation):' : `Sheldon Response ${msg.questionNumber || ''}:`}
                   </p>
                   <div className="w-full p-3.5 rounded-xl shadow-md bg-gray-100 text-gray-800 border border-gray-200">
                     <div className="prose prose-sm max-w-none text-current leading-relaxed">
