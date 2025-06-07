@@ -13,7 +13,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Contact from "./pages/Contact";
 import ArticlePage from "./pages/ArticlePage";
-import MySprints, { CaseStudiesPage, CoursesPage } from "./pages/MySprints";
+import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
 import { CaseInterview } from "./components/CaseInterview";
 import {SWOTApp} from "./components/Interactive SWOT Analysis App"; // UPDATED: Import SWOTApp
 
@@ -27,7 +27,7 @@ const PlaceholderNavBar = () => (
         <div className="font-bold text-xl">Sheldon</div>
         <div className="flex items-center gap-4">
             <a href="#" className="text-gray-600 hover:text-gray-900">Dashboard</a>
-            <a href="/my-sprints" className="text-gray-600 hover:text-gray-900">My Sprints</a>
+            <a href="/all-courses" className="text-gray-600 hover:text-gray-900">All Courses</a>
             <a href="#" className="text-gray-600 hover:text-gray-900">Settings</a>
         </div>
     </div>
@@ -41,7 +41,7 @@ const PlaceholderNavBar = () => (
 const CaseInterviewWrapper = () => {
   const navigate = useNavigate();
   const handleBack = () => {
-    navigate('/my-sprints/case-studies');
+    navigate('/all-courses/case-practice');
   };
   return <CaseInterview onBack={handleBack} />;
 };
@@ -50,7 +50,7 @@ const CaseInterviewWrapper = () => {
 const SWOTAppWrapper = () => {
   const navigate = useNavigate();
   const handleBack = () => {
-    navigate('/my-sprints/courses');
+    navigate('/all-courses/business-frameworks');
   };
   return <SWOTApp onBack={handleBack} />;
 };
@@ -74,14 +74,14 @@ const App = () => (
           <Route path="/article" element={<ArticlePage />} />
 
           {/* Main Sprints and Sub-pages */}
-          <Route path="/my-sprints" element={<MySprints />} />
-          <Route path="/my-sprints/case-studies" element={<CaseStudiesPage />} />
-          <Route path="/my-sprints/courses" element={<CoursesPage />} />
+          <Route path="/all-courses" element={<AllCourses />} />
+          <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
+          <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
           
           {/* Sprint-specific Apps */}
-          <Route path="/my-sprints/case-interview" element={<CaseInterviewWrapper />} />
+          <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
           {/* UPDATED: Added a clean route for the SWOT Analysis App */}
-          <Route path="/my-sprints/courses/swot-analysis" element={<SWOTAppWrapper />} />
+          <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

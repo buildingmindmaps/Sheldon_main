@@ -103,7 +103,7 @@ export function NavBar() {
             <Link to="/playbook" onClick={scrollToTop}>Playbook</Link>
           </Button>
           <Button variant="ghost" asChild>
-            <Link to="/my-sprints" onClick={scrollToTop}>My Sprints</Link>
+            <Link to="/all-courses" onClick={scrollToTop}>All Courses</Link>
           </Button>
           <Button variant="ghost" asChild>
             <Link to="/careers" onClick={scrollToTop}>Careers</Link>
@@ -182,7 +182,7 @@ export function NavBar() {
                 transition={{ duration: 0.2, delay: 0.1 }}
               >
                 <Button variant="ghost" asChild className="w-full justify-start text-lg py-3" onClick={() => {setMobileMenuOpen(false); scrollToTop();}}>
-                  <Link to="/my-sprints">My Sprints</Link>
+                  <Link to="/all-courses">All Courses</Link>
                 </Button>
               </motion.div>
               <motion.div

@@ -125,20 +125,23 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
   }, [mermaidAPI, mermaidDiagramCode]);
 
   useEffect(() => {
-    const aiResponses = chatHistory.filter(msg => msg.role === 'model').length;
-    const userQuestions = chatHistory.filter(msg => msg.role === 'user' && msg.type !== 'framework').length;
+  const aiResponses = chatHistory.filter(msg => msg.role === 'model').length;
+  const userQuestions = chatHistory.filter(msg => msg.role === 'user' && msg.type !== 'framework').length;
 
-    if (userQuestions >= 10 && appPhase === 'clarifying') {
-      setAppPhase('case_ended');
-      return;
-    }
+  // After 10 clarifying questions, force framework popup
+  if (userQuestions >= 10 && appPhase === 'clarifying') {
+    setAppPhase('framework_input');
+    setShowFrameworkPopup(true); // Show the framework popup
+    return;
+  }
 
-    if (aiResponses >= 2 && appPhase === 'clarifying') {
-      setShowFrameworkButton(true);
-    } else {
-      setShowFrameworkButton(false);
-    }
-  }, [chatHistory, appPhase]);
+  if (aiResponses >= 2 && appPhase === 'clarifying') {
+    setShowFrameworkButton(true);
+  } else {
+    setShowFrameworkButton(false);
+  }
+}, [chatHistory, appPhase]);
+
 
   const toggleFeedbackVisibility = (index: number): void => {
     setChatHistory(prevChatHistory =>
@@ -466,6 +469,8 @@ flowchart TD
           --gradient-purple-end: #6567f2;
           --gradient-orange-start: #fbbd23;
           --gradient-orange-end: #f9771a;
+          --gradient-yellow-start:#cff19c;
+          --gradient-yellow-end:#e1ffb3;
           --grey-1: #f9fafb;
           --grey-2: #f1f2f3;
           --background: #fcfcfc;
@@ -572,7 +577,7 @@ flowchart TD
 
         .case-statement-box {
           background-color: white;
-          border: 2px solid var(--gradient-blue-start);
+          border: 2px solid #a3e635;
           border-radius: var(--radius-md);
           padding: 1.25rem;
           box-shadow: var(--shadow-lg);
@@ -581,7 +586,7 @@ flowchart TD
         }
 
         .case-statement-box h2 {
-          color: var(--gradient-blue-end);
+          color: #a3e635;
           display: flex;
           align-items: center;
           gap: 0.5rem;
@@ -635,33 +640,27 @@ flowchart TD
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span className="responsive-button-text">Back to Sprints</span>
+            <span className="responsive-button-text">Back to Case Practice</span>
           </Button>
-          <h1 className="text-lg sm:text-xl font-semibold">Case Interview Practice</h1>
+          <h1 className="text-lg sm:text-xl font-semibold">Water Purifier Manufacturer Case</h1>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
           <Button variant="outline" className="rounded-full border-2 border-[#a3e635] text-black hover:bg-[#a3e635]/10 px-4 sm:px-5 py-1 sm:py-2 bg-white font-medium">
             <LightningIcon />
             <span className="ml-1.5">1</span>
           </Button>
-          <Button className="rounded-lg bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium px-4 sm:px-8 py-1 sm:py-2 border-2 border-[#a3e635]">
+          <Button className="rounded-lg bg-[#a3e635] hover:bg-[#d8fca3] text-black font-medium px-4 sm:px-8 py-1 sm:py-2 border-2 border-[#a3e635]">
             Start Free Trial
           </Button>
         </div>
       </div>
 
       <main className="container mx-auto responsive-container py-6 sm:py-8 flex flex-col items-center w-full max-w-3xl">
-        <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-3 text-center tracking-tight responsive-heading">
-          Case Sprint: Water Purifier
-        </h1>
-        <p className="text-gray-600 mb-4 text-center text-base sm:text-lg">
-          Hone your consulting skills with AI-driven scenarios.
-        </p>
+       
 
         {/* Progress Indicator */}
         <div className="w-full mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">Your Progress</span>
             <span className="text-sm font-medium text-gray-700">
               {appPhase === 'case_ended' ? 'Complete!' : appPhase === 'framework_input' ? 'Framework Stage' : `${userQuestions}/10 Questions`}
             </span>
@@ -681,7 +680,7 @@ flowchart TD
         </div>
 
         <div className="w-full mb-6 case-statement-box">
-          <h2 className="text-xl font-semibold mb-3">
+          <h2 className="text-l font-semibold mb-3">
             Case Statement:
             <span className="tooltip ml-2 text-gray-500 cursor-help">
               <InfoIcon />
@@ -710,14 +709,10 @@ flowchart TD
               {/* User message - full width */}
               {msg.role === 'user' && (
                 <div className="w-full mb-4">
-                  <p className="text-sm font-semibold mb-1.5 text-gray-700">
-                    {msg.type === 'framework' ? 'Your Framework:' : `Your Question ${
-                      chatHistory.filter((m, i) =>
-                        i < index && m.role === 'user' && m.type !== 'framework'
-                      ).length + 1
-                    }:`}
+                  <p className="text-sm font-semibold mb-1.5 text-gray-700 text-right">
+                    {msg.type === 'framework' ? 'Your Framework:' : `You:`}
                   </p>
-                  <div className="w-full p-3.5 rounded-xl shadow-md bg-gradient-to-br from-[var(--gradient-blue-start)] to-[var(--gradient-blue-end)] text-white">
+                  <div className="w-full p-3.5 rounded-xl shadow-md bg-gradient-to-br from-[var(--gradient-yellow-start)] to-[var(--gradient-yellow-end)] text-black">
                     <div className="prose prose-sm max-w-none text-current leading-relaxed">
                       {renderFormattedText(msg.parts[0].text)}
                     </div>
@@ -729,7 +724,7 @@ flowchart TD
               {msg.role === 'model' && (
                 <div className="w-full mb-4">
                   <p className="text-sm font-semibold mb-1.5 text-gray-700">
-                    {msg.isFrameworkResponse ? 'Sheldon (Framework Evaluation):' : `Sheldon Response ${msg.questionNumber || ''}:`}
+                    {msg.isFrameworkResponse ? 'Sheldon (Framework Evaluation):' : `Sheldon:`}
                   </p>
                   <div className="w-full p-3.5 rounded-xl shadow-md bg-gray-100 text-gray-800 border border-gray-200">
                     <div className="prose prose-sm max-w-none text-current leading-relaxed">
@@ -761,10 +756,10 @@ flowchart TD
                       <div className="mt-2.5 pt-2.5 border-t border-gray-300/60">
                         <button
                           onClick={() => toggleFeedbackVisibility(index)}
-                          className="text-xs font-semibold flex items-center hover:opacity-80 transition-opacity group"
-                          style={{ color: 'var(--gradient-blue-start)'}}
+                          className="text-s font-semibold flex items-center hover:opacity-80 transition-opacity group"
+                          style={{ color: 'var(--gradient-green-start)'}}
                         >
-                          {msg.isFrameworkResponse ? "Detailed Suggestions" : `Feedback on Question ${msg.questionNumber || ''}`}
+                          {msg.isFrameworkResponse ? "Detailed Suggestions" : `Feedback`}
                           <ChevronDown className={`ml-1.5 h-4 w-4 transform transition-transform duration-200 ${msg.feedbackVisible ? 'rotate-180' : ''}`} />
                         </button>
 
@@ -783,7 +778,7 @@ flowchart TD
                               <button
                                 onClick={() => toggleFeedbackVisibility(index)}
                                 className="text-xs font-semibold mt-2 hover:opacity-80 transition-opacity block"
-                                style={{ color: 'var(--gradient-blue-start)'}}
+                                style={{ color: 'var(--gradient-green-start)'}}
                               >
                                 Show more
                               </button>
@@ -808,13 +803,10 @@ flowchart TD
 
         {appPhase === 'clarifying' && (
           <div className="w-full mt-auto pt-4 sticky bottom-0 bg-gray-50 pb-6 z-10">
-            <div className="mb-2 text-center text-sm text-gray-600">
-              Questions asked: {userQuestions}/10
-            </div>
             {showFrameworkButton && (
               <button
                 onClick={handleProceedToFramework}
-                className="w-full mb-3 py-2.5 px-4 chat-input-button"
+                className="bg-[#a3e635] w-full mb-3 py-2.5 px-4 chat-input-button"
               >
                 Proceed to Framework
               </button>
@@ -829,13 +821,40 @@ flowchart TD
                 className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--highlight-color)] focus:border-[var(--highlight-color)] outline-none text-gray-700 placeholder-gray-500 shadow-sm"
                 disabled={isLoading}
               />
-              <button
-                onClick={() => handleSubmit(false)}
-                disabled={isLoading || !currentQuestion.trim()}
-                className="chat-input-button"
-              >
-                {isLoading ? 'Sending...' : 'Send'}
-              </button>
+             <button
+  onClick={() => handleSubmit(false)}
+  disabled={isLoading || !currentQuestion.trim()}
+  className="chat-input-button flex items-center justify-center"
+>
+  {isLoading ? (
+    <>
+      <svg
+        className="animate-spin h-5 w-5 mr-2 text-gray-600"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+        ></path>
+      </svg>
+      Sending...
+    </>
+  ) : (
+    "Send"
+  )}
+</button>
+
             </div>
           </div>
         )}

@@ -1,5 +1,24 @@
 import React, { useState, useEffect, FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
 // In a real project, import these from 'lucide-react'
 // import { Search, Settings, UserCircle, XCircle, ArrowLeft } from 'lucide-react';
 
@@ -60,7 +79,12 @@ interface HotspotTextInteractionProps { text: string; hotspots: { term: string; 
 interface TOWSMatrixVisualizationProps { customStyles?: { [key: string]: string }; }
 interface HighlightDifficultWordsProps { html: string; }
 //</editor-fold>
-
+// Icon Components
+const LightningIcon: React.FC = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5Z"/>
+  </svg>
+);
 //<editor-fold desc="Theme and Data">
 const theme: AppTheme = {
   colors: {
@@ -157,6 +181,7 @@ const TOWSMatrixVisualization: FC<TOWSMatrixVisualizationProps> = ({ customStyle
     { type: 'WT Strategies', heading: 'Weaknesses-Threats', description: 'Defensive strategies to minimize weaknesses and avoid threats', examples: ['Cost reduction', 'Market focus', 'Business model redesign'] }
   ];
 
+  
   return (
     <div className={`my-6 rounded-lg shadow-sm overflow-hidden ${styles.backgroundColor} border ${styles.borderColor}`}>
       <div className={`p-4 border-b ${styles.borderColor}`}>
@@ -187,7 +212,47 @@ const TOWSMatrixVisualization: FC<TOWSMatrixVisualizationProps> = ({ customStyle
 };
 
 
+// Define the props for the individual sortable item
+interface SortableItemProps {
+    id: string;
+    index: number;
+    isAnswered: boolean;
+    isCorrect: boolean;
+}
 
+// SortableItem Component: Represents each draggable item in the list
+const SortableItem: FC<SortableItemProps> = ({ id, index, isAnswered, isCorrect }) => {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+
+    // Determine background and border colors based on answer state
+    const answeredCorrectClass = isAnswered && isCorrect ? 'bg-green-100 border-green-500' : '';
+    const answeredIncorrectClass = isAnswered && !isCorrect ? 'bg-red-100 border-red-500' : '';
+    const cursorClass = isAnswered ? 'cursor-not-allowed' : 'cursor-grab';
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+            className={`p-3 bg-white border border-gray-300 rounded-md flex items-center justify-between ${answeredCorrectClass} ${answeredIncorrectClass} ${cursorClass}`}
+        >
+            <span>{index + 1}. {id}</span>
+            {!isAnswered && <span className="text-gray-400">☰</span>}
+        </div>
+    );
+};
 //</editor-fold>
 
 //<editor-fold desc="Interaction Components">
@@ -378,22 +443,28 @@ const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({ question
     const [feedback, setFeedback] = useState('');
     const [isAnswered, setIsAnswered] = useState(false);
 
-    const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
-        e.dataTransfer.setData('itemIndex', index.toString());
+    // Setup sensors for pointer (mouse, touch) and keyboard interactions
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    // Handles the logic when a drag operation ends
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (over && active.id !== over.id) {
+            setCurrentOrder((prevOrder) => {
+                const oldIndex = prevOrder.indexOf(active.id as string);
+                const newIndex = prevOrder.indexOf(over.id as string);
+                return arrayMove(prevOrder, oldIndex, newIndex);
+            });
+        }
     };
 
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-    };
-
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
-        const dragIndex = parseInt(e.dataTransfer.getData('itemIndex'), 10);
-        const newOrder = [...currentOrder];
-        const [draggedItem] = newOrder.splice(dragIndex, 1);
-        newOrder.splice(dropIndex, 0, draggedItem);
-        setCurrentOrder(newOrder);
-    };
-
+    // Handles the submission and checks if the order is correct
     const handleSubmit = () => {
         setIsAnswered(true);
         const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(correctOrder);
@@ -407,26 +478,28 @@ const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({ question
     };
 
     return (
-        <div className="p-6 rounded-lg my-6 border border-blue-200" style={{ backgroundColor: theme.colors.lightBlue }}>
+        <div className="p-6 rounded-lg my-6 border border-blue-200 bg-blue-50">
             <p className="font-semibold text-lg mb-4">{question}</p>
-            <div className="space-y-2">
-                {currentOrder.map((item, index) => (
-                    <div
-                        key={item}
-                        draggable={!isAnswered}
-                        onDragStart={(e) => handleDragStart(e, index)}
-                        onDragOver={handleDragOver}
-                        onDrop={(e) => handleDrop(e, index)}
-                        className={`p-3 bg-white border border-gray-300 rounded-md flex items-center justify-between cursor-grab
-                            ${isAnswered && item === correctOrder[index] ? 'bg-green-100 border-green-500' : ''}
-                            ${isAnswered && item !== correctOrder[index] ? 'bg-red-100 border-red-500' : ''}
-                            ${isAnswered ? 'cursor-not-allowed' : ''}`}
-                    >
-                        <span>{index + 1}. {item}</span>
-                        {!isAnswered && <span className="text-gray-400">☰</span>}
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+            >
+                <SortableContext items={currentOrder} strategy={verticalListSortingStrategy}>
+                    <div className="space-y-2">
+                        {currentOrder.map((item, index) => (
+                            <SortableItem
+                                key={item}
+                                id={item}
+                                index={index}
+                                isAnswered={isAnswered}
+                                isCorrect={item === correctOrder[index]}
+                            />
+                        ))}
                     </div>
-                ))}
-            </div>
+                </SortableContext>
+            </DndContext>
+
             {!isAnswered && (
                 <button
                     onClick={handleSubmit}
@@ -435,6 +508,7 @@ const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({ question
                     Check Order
                 </button>
             )}
+
             {feedback && (
                 <motion.p
                     initial={{ opacity: 0, y: 10 }}
@@ -447,6 +521,8 @@ const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({ question
         </div>
     );
 };
+
+export default DragAndDropOrderingInteraction;
 
 const ScenarioDecisionMakingInteraction: FC<ScenarioDecisionMakingProps> = ({ scenario, choices, correctChoice, onCorrect, onIncorrect }) => {
     const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
@@ -550,10 +626,10 @@ const MatchingTermToDefinitionInteraction: FC<MatchingTermToDefinitionProps> = (
   };
 
   return (
-    <div className="p-6 rounded-lg my-6 border border-blue-200" style={{ backgroundColor: theme.colors.lightBlue }}>
-      <p className="font-semibold text-lg mb-4">{question}</p>
-      <div className={`grid ${columnClass} gap-4`}>
-        <div className="space-y-2">
+    <div className="p-4 sm:p-6 rounded-lg my-4 sm:my-6 border border-blue-200" style={{ backgroundColor: theme.colors.lightBlue }}>
+      <p className="font-semibold text-base sm:text-lg mb-3 sm:mb-4">{question}</p>
+      <div className={`grid grid-cols-1 md:${columnClass} gap-3 sm:gap-4`}>
+        <div className="space-y-1 sm:space-y-2">
           {leftColumn.map((term) => (
             <motion.button
               key={term}
@@ -797,10 +873,11 @@ const ModulePart: FC<ModulePartProps> = ({ part, onCompletePart }) => {
   const handleInteractionCorrect = () => {
     onCompletePart();
   };
-
-  const handleInteractionIncorrect = () => {
-    // Optionally handle incorrect answers, e.g., for analytics
+   const handleInteractionIncorrect = () => {
+    // This now also marks the part as complete, allowing the user to continue.
+    onCompletePart();
   };
+
 
   const renderInteraction = () => {
     switch (part.interactionType) {
@@ -851,16 +928,17 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
 
     const moduleContent: ModulePartType[] = [
         // Your module content array goes here. Omitted for brevity.
-        { title: 'Introduction to SWOT Analysis', content: "<p><strong>SWOT analysis</strong> is a strategic planning framework used to identify and analyze an organization's internal <strong>Strengths</strong> and <strong>Weaknesses</strong>, as well as external <strong>Opportunities</strong> and <strong>Threats</strong>.</p> <p>Imagine you're the CEO of a growing tech startup. To navigate the competitive landscape, you need a clear understanding of where your company excels and where it's vulnerable. That's where SWOT comes in.</p> <p>It is typically visualized in a simple 2x2 grid, allowing for a clear overview of factors that impact decision-making.</p>", interactionType: 'image', imageSrc: '', imageAlt: '' },
+        { title: 'Introduction to SWOT Analysis', content: "<p ><strong>SWOT analysis</strong> is a strategic planning framework used to identify and analyze an organization's internal <strong>Strengths</strong> and <strong>Weaknesses</strong>, as well as external <strong>Opportunities</strong> and <strong>Threats</strong>.</p><br><p>Imagine you're the CEO of a growing tech startup. To navigate the competitive landscape, you need a clear understanding of where your company excels and where it's vulnerable. That's where SWOT comes in.</p><br> <p>It is typically visualized in a simple 2x2 grid, allowing for a clear overview of factors that impact decision-making.</p>", interactionType: 'image', imageSrc: '', imageAlt: '' },
         { title: 'Why SWOT Analysis Is Important', content: `
-        <p>Understanding the importance of SWOT analysis goes beyond just listing factors. It serves as a vital compass for organizations:</p>
+        <p>Understanding the importance of SWOT analysis goes beyond just listing factors. It serves as a vital compass for organizations:</p><br>
         <ul>
-          <li><strong>Strategic Planning:</strong> Enables organizations to systematically evaluate their current position and develop informed strategies.</li>
-          <li><strong>Risk Management:</strong> Highlights potential threats before they escalate, allowing for proactive mitigation.</li>
-          <li><strong>Opportunity Identification:</strong> Uncovers new market or operational opportunities that may have been overlooked.</li>
-          <li><strong>Competitive Advantage:</strong> Helps businesses leverage their strengths to outperform competitors.</li>
-          <li><strong>Objective Assessment:</strong> Encourages realistic understanding of both internal capabilities and external environment.</li>
-          <li><strong>Versatility:</strong> Applicable to businesses, nonprofits, projects, products, and even personal career planning.</li>
+          <li>&bull; <strong>Strategic Planning:</strong> Enables organizations to systematically evaluate their current position and develop informed strategies.</li>
+          <li>&bull; <strong>Risk Management:</strong> Highlights potential threats before they escalate, allowing for proactive mitigation.</li>
+          <li>&bull; <strong>Risk Management:</strong> Highlights potential threats before they escalate, allowing for proactive mitigation.</li>
+          <li>&bull; <strong>Opportunity Identification:</strong> Uncovers new market or operational opportunities that may have been overlooked.</li>
+          <li>&bull; <strong>Competitive Advantage:</strong> Helps businesses leverage their strengths to outperform competitors.</li>
+          <li>&bull; <strong>Objective Assessment:</strong> Encourages realistic understanding of both internal capabilities and external environment.</li>
+          <li>&bull; <strong>Versatility:</strong> Applicable to businesses, nonprofits, projects, products, and even personal career planning.</li><br>
         </ul>
         <p>The insights gained from a thorough SWOT analysis are invaluable for effective decision-making across various organizational levels.</p>
       `,
@@ -943,34 +1021,35 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
       explanation: "New technology is an external opportunity that a business can leverage, making it an external factor.",
     },
     {
-      title: 'Things to Remember When Conducting SWOT Analysis',
-      content: `
-        <p>To ensure your SWOT analysis is effective and yields actionable insights, keep these critical points in mind:</p>
-        <ul>
-          <li><strong>Be Specific:</strong> Use concrete, data-driven statements rather than vague generalities.</li>
-          <li><strong>Stay Objective:</strong> Avoid personal biases or groupthink; involve diverse stakeholders and external inputs if needed.</li>
-          <li><strong>Focus on Both Internal and External Factors:</strong> Strengths/weaknesses are internal; opportunities/threats are external.</li>
-          <li><strong>Integrate Findings:</strong> Use the insights to develop actionable strategies, not just a list.</li>
-          <li><strong>Update Regularly:</strong> The business environment evolves, so revisit and revise the analysis periodically.</li>
-          <li><strong>Use Real Data:</strong> Base assessments on factual information, not assumptions.</li>
-        </ul>
-        <p class="mt-4">Adhering to these guidelines will significantly enhance the quality and utility of your SWOT analysis.</p>
-      `,
-      interactionType: 'drag_and_drop_ordering',
-      question: "Arrange the following steps in the ideal order for conducting an effective SWOT analysis:",
-      items: [
-        "Integrate Findings into strategies",
-        "Be Specific with statements",
-        "Update Regularly as the environment evolves",
-        "Stay Objective and avoid biases",
-      ],
-      correctOrder: [
-        "Be Specific with statements",
-        "Stay Objective and avoid biases",
-        "Integrate Findings into strategies",
-        "Update Regularly as the environment evolves",
-      ],
-    },
+  title: 'Things to Remember When Conducting SWOT Analysis',
+  content: `
+    <p>To ensure your SWOT analysis is effective and yields actionable insights, keep these critical points in mind:</p><br>
+    <ul>
+      <li>&bull; <strong>Be Specific:</strong> Use concrete, data-driven statements rather than vague generalities.</li>
+      <li>&bull; <strong>Stay Objective:</strong> Avoid personal biases or groupthink; involve diverse stakeholders and external inputs if needed.</li>
+      <li>&bull; <strong>Focus on Both Internal and External Factors:</strong> Strengths/weaknesses are internal; opportunities/threats are external.</li>
+      <li>&bull; <strong>Integrate Findings:</strong> Use the insights to develop actionable strategies, not just a list.</li>
+      <li>&bull; <strong>Update Regularly:</strong> The business environment evolves, so revisit and revise the analysis periodically.</li>
+      <li>&bull; <strong>Use Real Data:</strong> Base assessments on factual information, not assumptions.</li>
+    </ul><br>
+    <p style="color: #2563eb; font-weight: 400; margin-top: 12px;font-size: 0.875rem; font-style: italic;">
+      Instructions: Drag and drop the steps below to arrange them in the correct order. Click "Check Order" when done.
+    </p> `,
+  interactionType: 'drag_and_drop_ordering',
+  question: "Arrange the following steps in the ideal order for conducting an effective SWOT analysis:",
+  items: [
+    "Integrate Findings into strategies",
+    "Be Specific with statements",
+    "Update Regularly as the environment evolves",
+    "Stay Objective and avoid biases",
+  ],
+  correctOrder: [
+    "Be Specific with statements",
+    "Stay Objective and avoid biases",
+    "Integrate Findings into strategies",
+    "Update Regularly as the environment evolves",
+  ],
+},
     {
       title: 'Common Mistakes in SWOT Analysis',
       content: `
@@ -1186,10 +1265,39 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
     window.scrollTo(0, 0);
   }, [currentPartIndex]);
 
+  // Logic to disable the continue button
+  const currentPart = moduleContent[currentPartIndex];
+  const nonInteractiveTypes = ['image', 'custom_tows_visualization', 'hotspot_text_interaction'];
+  const isInteractivePart = !nonInteractiveTypes.includes(currentPart.interactionType);
+  const isContinueDisabled = isInteractivePart && !completedParts.has(currentPartIndex);
+
+  
   return (
     <div className="min-h-screen font-sans antialiased" style={{ backgroundColor: theme.colors.background }}>
-      <Header courseTitle="SWOT Analysis: Comprehensive Notes" onBack={onBack} />
+      {/* Header */}
 
+            <div className="bg-white border-b px-4 py-3 flex flex-col sm:flex-row items-center justify-between">
+              <div className="flex items-center gap-4 w-full sm:w-auto mb-2 sm:mb-0">
+                <Button
+                  variant="outline"
+                  onClick={onBack}
+                  className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="responsive-button-text">Back to Modules</span>
+                </Button>
+                <h1 className="text-lg sm:text-xl font-semibold">SWOT Analysis</h1>
+              </div>
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                <Button variant="outline" className="rounded-full border-2 border-[#a3e635] text-black hover:bg-[#a3e635]/10 px-4 sm:px-5 py-1 sm:py-2 bg-white font-medium">
+                  <LightningIcon />
+                  <span className="ml-1.5">1</span>
+                </Button>
+                <Button className="rounded-lg bg-[#a3e635] hover:bg-[#d8fca3] text-black font-medium px-4 sm:px-8 py-1 sm:py-2 border-2 border-[#a3e635]">
+                  Start Free Trial
+                </Button>
+              </div>
+            </div>
+      
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <ProgressBar currentPart={completedParts.size} totalParts={totalParts} />
 
@@ -1211,7 +1319,20 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
                     <button onClick={handlePreviousPart} disabled={currentPartIndex === 0} className={`px-8 py-3 rounded-lg font-semibold text-base transition-all duration-300 ${currentPartIndex === 0 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                         Previous
                     </button>
-                    <button onClick={handleNextPart} style={{ backgroundColor: isLastPart ? 'transparent' : theme.colors.primary, color: theme.colors.buttonText, backgroundImage: isLastPart ? `linear-gradient(to right, ${theme.colors.gradients.purple.start}, ${theme.colors.gradients.purple.end})` : 'none' }} className={`px-8 py-3 rounded-lg font-semibold text-base transition-all duration-300 hover:bg-black hover:text-white`}>
+                    <button 
+                        onClick={handleNextPart} 
+                        disabled={isContinueDisabled}
+                        style={isContinueDisabled ? {} : { // Clear inline styles when disabled for classes to take over
+                            backgroundColor: isLastPart ? 'transparent' : theme.colors.primary, 
+                            color: theme.colors.buttonText, 
+                            backgroundImage: isLastPart ? `linear-gradient(to right, ${theme.colors.gradients.purple.start}, ${theme.colors.gradients.purple.end})` : 'none' 
+                        }} 
+                        className={`px-8 py-3 rounded-lg font-semibold text-base transition-all duration-300 
+                            ${isContinueDisabled 
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                : 'hover:bg-black hover:text-white'
+                            }`
+                        }>
                         {isLastPart ? 'Finish Module' : 'Continue'}
                     </button>
                 </div>

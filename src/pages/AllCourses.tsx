@@ -10,8 +10,8 @@ import { Clock, Star, ArrowLeft } from 'lucide-react';
 const coursesData = [
     {
         id: 0,
-        title: "Case Studies",
-        route: "/my-sprints/case-studies",
+        title: "Profitability: Case Practice",
+        route: "/all-courses/case-practice",
         description: "Learn to break down business problems with a structured approach that balances opportunity and risk.",
         badge: "Popular",
         icon: "📊",
@@ -24,8 +24,8 @@ const coursesData = [
     },
     {
         id: 1,
-        title: "Courses",
-        route: "/my-sprints/courses",
+        title: "100 Business Frameworks",
+        route: "/all-courses/business-frameworks",
         description: "Master the Theory Knowledge for Business Case Studies.",
         badge: "New",
         icon: "💰",
@@ -38,16 +38,20 @@ const coursesData = [
 ];
 
 const caseStudiesData = [
-    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "6 hours", badge: "", icon: "💧" },
-    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "4 hours", badge: "Popular", icon: "🚪" },
-    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "7 hours", badge: "New", icon: "🧩" }
+    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: "💧" },
+    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: "🚪" },
+    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: "🧩" }
 ];
 
 const courseOptionsData = [
-    { id: 6, title: "SWOT Analysis", description: "Map your strengths, weaknesses, opportunities, and threats in a simple 2x2 grid.", level: "Intermediate", hours: "5 hours", badge: "Popular", icon: "🔄" },
-    { id: 7, title: "Porter's Five Forces", description: "Check if your industry is a battlefield or a goldmine by analyzing five competitive pressures.", level: "Beginner", hours: "4 hours", badge: "", icon: "⚙️" },
-    { id: 8, title: "BCG Matrix", description: " Categorize your products as Stars, Cash Cows, Question Marks, or Dogs to decide where to invest. ", level: "Advanced", hours: "8 hours", badge: "New", icon: "💹" },
-    { id: 9, title: "Ansoff Matrix", description: "Four growth paths - sell more to current customers, find new customers, create new products, or do something completely different.", level: "Intermediate", hours: "6 hours", badge: "", icon: "🧮" }
+    { id: 6, title: "SWOT Analysis", description: "Map your strengths, weaknesses, opportunities, and threats in a simple 2x2 grid.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🔄" },
+    { id: 7, title: "Porter's Five Forces", description: "Check if your industry is a battlefield or a goldmine by analyzing five competitive pressures.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "", icon: "⚙️" },
+    { id: 8, title: "BCG Matrix", description: " Categorize your products as Stars, Cash Cows, Question Marks, or Dogs to decide where to invest. ", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "New", icon: "💹" },
+    { id: 9, title: "Ansoff Matrix", description: "Four growth paths - sell more to current customers, find new customers, create new products, or do something completely different.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
+    { id: 10, title: "Lean Six Sigma", description: "Eliminate waste (Lean) and reduce variation (Six Sigma) to improve processes.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
+    { id: 11, title: "Theory of Constraints", description: " Find the bottleneck that limits your entire system's performance", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
+    { id: 12, title: "5S Methodology", description: " Sort, Set in order, Shine, Standardize, Sustain for organized, efficient workspaces.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
+    { id: 13, title: "Kaizen", description: " Continuous small improvements add up to dramatic results over time.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
 ];
 
 // Helper function to render stars
@@ -57,8 +61,8 @@ const renderStars = (rating: number) => (
     ))
 );
 
-// Main "/my-sprints" page
-export default function MySprints() {
+// Main "/all-courses" page
+export default function AllCourses() {
     const navigate = useNavigate();
     const [featuredSprint, setFeaturedSprint] = useState(0);
 
@@ -68,8 +72,8 @@ export default function MySprints() {
             <main className="pt-20 pb-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="mb-12">
-                        <h1 className="text-3xl font-bold text-gray-800 mb-2">My Case Sprints</h1>
-                        <p className="text-gray-600">Master consulting frameworks with interactive case challenges</p>
+                        <h1 className="text-3xl font-bold text-gray-800 mb-2">All Courses</h1>
+                        <p className="text-gray-600">Develop business acumen with bite - size lessons & hands-on exercises that make skills stick for everyone.</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {coursesData.map((course) => (
@@ -101,8 +105,8 @@ export default function MySprints() {
     );
 }
 
-// Case Studies Page
-export const CaseStudiesPage = ({}) => {
+// Case Practice Page
+export const CasePracticePage = ({}) => {
     const navigate = useNavigate();
     const sprintData = coursesData[0]; 
     const [selectedCase, setSelectedCase] = useState(caseStudiesData[0]);
@@ -112,10 +116,12 @@ export const CaseStudiesPage = ({}) => {
             <NavBar />
             <main className="pt-20 pb-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <Button variant="outline" onClick={() => navigate('/my-sprints')} className="mb-4">
+                    <Button variant="outline" onClick={() => navigate('/all-courses')} className="mb-4">
                         <ArrowLeft className="h-4 w-4 mr-2" />
-                        Back to Sprints
+                        Back to All Courses
                     </Button>
+                    {/* Added heading for page identification */}
+                    <h1 className="text-3xl font-bold text-gray-900 mb-8">Case Practice</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
                             <Card className="bg-white border mb-8">
@@ -135,14 +141,14 @@ export const CaseStudiesPage = ({}) => {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex justify-center my-4">
-                                        <Button className="bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 px-8 rounded-lg" onClick={() => navigate('/my-sprints/case-interview')}>
+                                        <Button className="bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 px-8 rounded-lg" onClick={() => navigate('/all-courses/case-interview')}>
                                             Start Sprint
                                         </Button>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            <h2 className="text-xl font-bold mb-4">Case Studies</h2>
+                            <h2 className="text-xl font-bold mb-4">Profitability: Case Practice</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {caseStudiesData.map((item) => (
                                     <Card 
@@ -193,8 +199,8 @@ export const CaseStudiesPage = ({}) => {
     );
 };
 
-// Courses Page - MODIFIED
-export const CoursesPage = () => {
+// 100BusinessFrameworksPage - MODIFIED
+export const BusinessFrameworksPage = () => {
     const navigate = useNavigate();
     const sprintData = coursesData[1]; // General data for the "Courses" sprint (for reviews)
     const [selectedCourse, setSelectedCourse] = useState(courseOptionsData[0]); // State for selected course
@@ -202,7 +208,7 @@ export const CoursesPage = () => {
 const handleStartSprint = () => {
         // Navigate to the SWOT app only if that course is selected
         if (selectedCourse.title === 'SWOT Analysis') {
-            navigate('/my-sprints/courses/swot-analysis');
+            navigate('/all-courses/business-frameworks/swot-analysis');
         } else {
             alert(`Navigation for "${selectedCourse.title}" is not implemented yet.`);
         }
@@ -212,10 +218,12 @@ const handleStartSprint = () => {
             <NavBar />
             <main className="pt-20 pb-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <Button variant="outline" onClick={() => navigate('/my-sprints')} className="mb-4">
+                    <Button variant="outline" onClick={() => navigate('/all-courses')} className="mb-4">
                         <ArrowLeft className="h-4 w-4 mr-2" />
-                        Back to Sprints
+                        Back to All Courses
                     </Button>
+                    {/* Added heading for page identification */}
+                    <h1 className="text-3xl font-bold text-gray-900 mb-8">100 Business Frameworks</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
                             {/* Main card, now displays the content of the selectedCourse */}
@@ -260,15 +268,17 @@ const handleStartSprint = () => {
                                         </CardHeader>
                                         <CardFooter className="pt-0 pb-3">
                                             <div className="flex items-center gap-2 text-xs text-gray-500">
-                                                <Badge variant="outline" className="font-normal">{item.level}</Badge>
-                                                <Badge variant="outline" className="font-normal flex items-center gap-1"><Clock className="h-3 w-3" />{item.hours}</Badge>
+                                                <ul>
+                                                <li><Badge variant="outline" className="font-normal flex items-center gap-1 whitespace-nowrap">{item.level}</Badge></li>
+                                                <li><Badge variant="outline" className="font-normal flex items-center gap-1 whitespace-nowrap"><Clock className="h-3 w-3" />{item.hours}</Badge></li>
+                                                </ul>
                                             </div>
                                         </CardFooter>
                                     </Card>
                                 ))}
                             </div>
                         </div>
-                        {/* User reviews for the overall "Courses" sprint */}
+                        {/* User reviews for the overall  "Business Frameworks" sprint */}
                         <div className="lg:col-span-1">
                             <Card className="bg-white border">
                                 <CardHeader><CardTitle className="text-lg font-bold">User Reviews</CardTitle></CardHeader>
