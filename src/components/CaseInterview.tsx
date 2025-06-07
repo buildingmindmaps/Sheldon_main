@@ -403,7 +403,7 @@ flowchart TD
       }
     } catch (err: any) {
       console.error("Error in handleSubmit (Coach API):", err);
-      setError(`Failed to get coach response: ${err.message}`);
+      setError(`Failed to get Sheldon response: ${err.message}`);
       setChatHistory(prev => [...prev, {
         role: 'model',
         parts: [{ text: `Error: ${err.message}` }],
