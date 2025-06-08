@@ -438,88 +438,124 @@ const TrueFalseStatementInteraction: FC<TrueFalseStatementProps> = ({ question, 
     );
 };
 
-const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({ question, items, correctOrder, onCorrect, onIncorrect }) => {
-    const [currentOrder, setCurrentOrder] = useState<string[]>([...items]);
-    const [feedback, setFeedback] = useState('');
-    const [isAnswered, setIsAnswered] = useState(false);
+const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({ 
+  question, items, correctOrder, onCorrect, onIncorrect 
+}) => {
+  const [currentOrder, setCurrentOrder] = useState<string[]>([...items]);
+  const [feedback, setFeedback] = useState('');
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [targetPosition, setTargetPosition] = useState<number | null>(null);
 
-    // Setup sensors for pointer (mouse, touch) and keyboard interactions
-    const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
-    );
+  const handleItemClick = (item: string, index: number) => {
+      if (!isAnswered) {
+          if (selectedItem === null) {
+              // First click - select item
+              setSelectedItem(item);
+              setTargetPosition(index);
+          } else {
+              // Second click - move item
+              setCurrentOrder(prevOrder => {
+                  const newOrder = [...prevOrder];
+                  const currentIndex = newOrder.indexOf(selectedItem);
+                  [newOrder[currentIndex], newOrder[index]] = [newOrder[index], newOrder[currentIndex]];
+                  return newOrder;
+              });
+              setSelectedItem(null);
+              setTargetPosition(null);
+          }
+      }
+  };
 
-    // Handles the logic when a drag operation ends
-    const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
+  const handlePositionSelect = (position: number) => {
+      if (selectedItem && targetPosition !== null) {
+          setCurrentOrder(prevOrder => {
+              const newOrder = [...prevOrder];
+              newOrder.splice(targetPosition, 1); // Remove from old position
+              newOrder.splice(position, 0, selectedItem); // Insert at new position
+              return newOrder;
+          });
+          setTargetPosition(null);
+          setSelectedItem(null);
+      }
+  };
 
-        if (over && active.id !== over.id) {
-            setCurrentOrder((prevOrder) => {
-                const oldIndex = prevOrder.indexOf(active.id as string);
-                const newIndex = prevOrder.indexOf(over.id as string);
-                return arrayMove(prevOrder, oldIndex, newIndex);
-            });
-        }
-    };
+  const handleSubmit = () => {
+      setIsAnswered(true);
+      const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(correctOrder);
+      isCorrect ? onCorrect() : onIncorrect();
+      setFeedback(isCorrect ? 'Correct! You have ordered them correctly.' : 'Incorrect. Review the proper sequence.');
+  };
 
-    // Handles the submission and checks if the order is correct
-    const handleSubmit = () => {
-        setIsAnswered(true);
-        const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(correctOrder);
-        if (isCorrect) {
-            setFeedback('Correct! You have ordered them correctly.');
-            onCorrect();
-        } else {
-            setFeedback('Incorrect. Review the proper sequence.');
-            onIncorrect();
-        }
-    };
+  const handleRetry = () => {
+    setCurrentOrder([...items]);
+    setIsAnswered(false);
+    setFeedback('');
+    setSelectedItem(null);
+    setTargetPosition(null);
+  };
 
-    return (
-        <div className="p-6 rounded-lg my-6 border border-blue-200 bg-blue-50">
-            <p className="font-semibold text-lg mb-4">{question}</p>
-            <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-            >
-                <SortableContext items={currentOrder} strategy={verticalListSortingStrategy}>
-                    <div className="space-y-2">
-                        {currentOrder.map((item, index) => (
-                            <SortableItem
-                                key={item}
-                                id={item}
-                                index={index}
-                                isAnswered={isAnswered}
-                                isCorrect={item === correctOrder[index]}
-                            />
-                        ))}
-                    </div>
-                </SortableContext>
-            </DndContext>
+  return (
+    <div className="p-6 rounded-lg my-6 border border-blue-200 bg-blue-50">
+        <p className="font-semibold text-lg mb-4">{question}</p>
 
+        {/* Centered Position Indicators */}
+        <div className="flex gap-2 mb-2 justify-center items-center h-12">
+            {currentOrder.map((_, index) => (
+                <button
+                    key={index}
+                    onClick={() => handlePositionSelect(index)}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center 
+                        ${targetPosition === index ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                >
+                    {index + 1}
+                </button>
+            ))}
+        </div>
+
+        {/* Items with Position-based Borders */}
+        <div className="space-y-2">
+            {currentOrder.map((item, index) => (
+                <div
+                    key={item}
+                    onClick={() => handleItemClick(item, index)}
+                    className={`p-4 rounded-lg cursor-pointer transition-all border-4 
+                        ${isAnswered ? 
+                            (item === correctOrder[index] ? 
+                                'border-green-500' : 'border-red-500') 
+                            : 'border-transparent'} 
+                        ${selectedItem === item ? 'bg-blue-100 border-blue-500' : 'bg-white'}`}
+                >
+                    {item}
+                </div>
+            ))}
+        </div>
+
+        <div className="mt-6 flex gap-4">
             {!isAnswered && (
                 <button
                     onClick={handleSubmit}
-                    className="mt-6 px-6 py-2 bg-white text-black rounded-lg hover:shadow-lg transition-shadow duration-200"
+                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 >
                     Check Order
                 </button>
             )}
-
-            {feedback && (
-                <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`mt-4 text-sm ${feedback.startsWith('Correct') ? 'text-green-700' : 'text-red-700'}`}
+            
+            {isAnswered && (
+                <button
+                    onClick={handleRetry}
+                    className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
                 >
-                    {feedback}
-                </motion.p>
+                    Retry
+                </button>
             )}
         </div>
-    );
+
+
+          
+          
+      </div>
+  );
 };
 
 export default DragAndDropOrderingInteraction;
