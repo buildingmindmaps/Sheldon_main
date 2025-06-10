@@ -15,7 +15,7 @@ const Careers = () => {
       type: "Full-time",
       department: "Executive",
       postedDate: "May 15, 2025",
-      description: "Join our founding team as a visionary CTO to lead our cutting-edge AI research and development. You'll architect our technology strategy and build advanced systems that power our case interview preparation platform. The ideal candidate will have deep expertise in AI and a passion for developing innovative learning technologies.",
+      description: "Join our founding team as a visionary CTO to lead our cutting-edge AI research and development. You'll architect our technology strategy and build advanced systems that power our case preparation platform. The ideal candidate will have deep expertise in AI and a passion for developing innovative learning technologies.",
       requirements: [
         "Proven experience building and scaling AI systems with multi-agent architectures",
         "Expertise in large language model fine-tuning and modification (Hugging Face, OpenAI)",
@@ -33,7 +33,7 @@ const Careers = () => {
       type: "Full-time",
       department: "Executive",
       postedDate: "May 15, 2025",
-      description: "We're seeking a pioneering Chief Learning Officer to join our founding team and revolutionize how professionals develop problem-solving skills. You'll design learning frameworks based on cognitive science and neuroscience principles to create engaging and effective case interview preparation experiences.",
+      description: "We're seeking a pioneering Chief Learning Officer to join our founding team and revolutionize how professionals develop problem-solving skills. You'll design learning frameworks based on cognitive science and neuroscience principles to create engaging and effective case preparation experiences.",
       requirements: [
         "PhD or advanced degree in Neuroscience, Cognitive Science, or related field",
         "Deep understanding of learning science and cognitive development theories",
@@ -68,7 +68,7 @@ const Careers = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Help us transform how professionals prepare for case interviews and develop their problem-solving skills
+            Help us transform how professionals prepare for case and develop their problem-solving skills
           </motion.p>
         </div>
       </header>

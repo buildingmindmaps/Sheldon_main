@@ -103,7 +103,7 @@ const Index = () => {
           <div className="relative z-10 max-w-md">
             <h2 className="text-3xl font-bold mb-4">Be the First to Know</h2>
             <p className="text-gray-600 mb-6">
-              Join our waitlist and get early access when we launch. Plus, receive exclusive tips to prepare for your case interviews.
+              Join our waitlist and get early access when we launch. Plus, receive exclusive tips to prepare for your case.
             </p>
             <div className="mb-6">
               <WaitlistForm />

@@ -315,7 +315,7 @@ export function AuthPage() {
             Consultant Sprint
           </CardTitle>
           <CardDescription>
-            Access premium case interview training
+            Access premium case training
           </CardDescription>
         </CardHeader>
         
