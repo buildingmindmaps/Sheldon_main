@@ -16,8 +16,12 @@ import {
   applyActionCode,
   EmailAuthProvider,
   linkWithCredential,
-  updateProfile
+  updateProfile,
+  multiFactor,
+  PhoneAuthProvider,
+  PhoneMultiFactorGenerator
 } from 'firebase/auth';
+import { validatePasswordStrength, checkBruteForce } from './security';
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -71,6 +75,16 @@ export const signInWithFacebook = async () => {
 // Updated sign up function with email verification
 export const signUpWithEmail = async (email: string, password: string) => {
   try {
+    // Validate password strength
+    const validationResult = validatePasswordStrength(password);
+    if (!validationResult.isValid) {
+      // Instead of throwing a generic error, throw an error with the specific validation message
+      const error = new Error(validationResult.message);
+      // Add a custom property to identify this as a password validation error
+      (error as any).code = 'auth/password-validation-failed';
+      throw error;
+    }
+
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     // Send email verification
     if (userCredential.user) {
@@ -85,9 +99,23 @@ export const signUpWithEmail = async (email: string, password: string) => {
   }
 };
 
-export const signInWithEmail = async (email: string, password: string) => {
+export const signInWithEmail = async (email: string, password: string, ip: string = "unknown") => {
   try {
+    // Check for brute force attempts
+    const isLocked = checkBruteForce(email, ip);
+    if (isLocked) {
+      throw new Error("Too many login attempts. Account temporarily locked for security reasons.");
+    }
+
     const result = await signInWithEmailAndPassword(auth, email, password);
+
+    // If the user's email is not verified, we might want to restrict access
+    if (result.user && !result.user.emailVerified) {
+      console.warn("User email not verified");
+      // You might want to handle this case based on your security requirements
+      // e.g., throw new Error("Please verify your email before signing in");
+    }
+
     return result;
   } catch (error) {
     console.error("Error signing in with email: ", error);
@@ -132,6 +160,45 @@ export const updateUserProfile = async (user: User, displayName?: string, photoU
     return true;
   } catch (error) {
     console.error("Error updating user profile:", error);
+    throw error;
+  }
+};
+
+// Add MFA enrollment function
+export const enrollMFA = async (user: User, phoneNumber: string, verificationCode: string, verificationId: string) => {
+  try {
+    const multiFactorSession = await multiFactor(user).getSession();
+
+    // Create phone credential
+    const phoneAuthCredential = PhoneAuthProvider.credential(
+      verificationId,
+      verificationCode
+    );
+
+    // MFA assertion
+    const multiFactorAssertion = PhoneMultiFactorGenerator.assertion(phoneAuthCredential);
+
+    // Enroll the user
+    await multiFactor(user).enroll(multiFactorAssertion, "Phone Number");
+    return true;
+  } catch (error) {
+    console.error("Error enrolling in MFA: ", error);
+    throw error;
+  }
+};
+
+// Function to initiate MFA enrollment process
+export const initiateMFAEnrollment = async (user: User, phoneNumber: string) => {
+  try {
+    const auth = getAuth();
+    const phoneAuthProvider = new PhoneAuthProvider(auth);
+    const verificationId = await phoneAuthProvider.verifyPhoneNumber(
+      phoneNumber,
+      multiFactor(user)
+    );
+    return verificationId;
+  } catch (error) {
+    console.error("Error initiating MFA enrollment: ", error);
     throw error;
   }
 };

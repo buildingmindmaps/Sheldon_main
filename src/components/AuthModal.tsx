@@ -29,6 +29,7 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [needsVerification, setNeedsVerification] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!isOpen) return null;
 
@@ -111,9 +112,14 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
           setSuccess('Account created! Please check your email to verify your account.');
         } catch (err) {
           const errorMessage = (err as Error).message;
+          const errorCode = (err as any).code;
 
+          // Check for our custom password validation error
+          if (errorCode === 'auth/password-validation-failed') {
+            setError(errorMessage); // Use the exact message from our validator
+          }
           // Check for existing account
-          if (errorMessage.includes('auth/email-already-in-use') ||
+          else if (errorMessage.includes('auth/email-already-in-use') ||
               errorMessage.includes('firebase: Error (auth/email-already-in-use)') ||
               errorMessage.includes('email-already-in-use')) {
             setError('An account with this email already exists. Please sign in instead.');
@@ -351,14 +357,31 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
           </div>
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-[#f9fafb] focus:ring-[#b5ff4c] focus:border-[#b5ff4c] focus:outline-none"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-[#f9fafb] focus:ring-[#b5ff4c] focus:border-[#b5ff4c] focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3"
+              >
+                {showPassword ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A6.978 6.978 0 0012 19.5c-3.866 0-7-3.134-7-7s3.134-7 7-7c1.125 0 2.175.263 3.125.725M16.5 12c0 1.125-.263 2.175-.725 3.125M12 15.75l3.75 3.75m0-3.75L12 18.75" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A6.978 6.978 0 0012 19.5c-3.866 0-7-3.134-7-7s3.134-7 7-7c1.125 0 2.175.263 3.125.725M16.5 12c0 1.125-.263 2.175-.725 3.125M12 15.75l3.75 3.75m0-3.75L12 18.75" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
           <button
             type="submit"
