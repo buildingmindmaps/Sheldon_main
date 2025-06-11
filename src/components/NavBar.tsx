@@ -17,6 +17,7 @@ export function NavBar() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [displayName, setDisplayName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const isMobile = useIsMobile();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -26,6 +27,11 @@ export function NavBar() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       if (user) {
+        // Save user's email
+        if (user.email) {
+          setUserEmail(user.email);
+        }
+
         // Get user's name from Firebase
         if (user.displayName) {
           setDisplayName(user.displayName);
@@ -36,6 +42,7 @@ export function NavBar() {
         }
       } else {
         setDisplayName('');
+        setUserEmail('');
       }
     });
     return unsubscribe;
@@ -180,7 +187,7 @@ export function NavBar() {
                 className="bg-[#6feb62] text-[#000000] hover:bg-[#000000] hover:text-white ml-2"
                 onClick={() => setShowAuthModal(true)}
               >
-                Sign In / Sign Up
+                Log In
               </Button>
             ) : (
               <div className="relative" ref={dropdownRef}>
@@ -195,7 +202,7 @@ export function NavBar() {
                 <AnimatePresence>
                   {userDropdownOpen && (
                     <motion.div
-                      className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100"
+                      className="absolute right-0 mt-2 w-60 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -204,6 +211,7 @@ export function NavBar() {
                       <div className="px-4 py-3 border-b border-gray-100">
                         <p className="text-sm text-gray-500">Signed in as</p>
                         <p className="text-sm font-medium truncate">{displayName}</p>
+                        <p className="text-xs text-gray-500 truncate mt-0.5">{userEmail}</p>
                       </div>
                       <button
                         onClick={handleLogout}
@@ -362,10 +370,11 @@ export function NavBar() {
 
         {/* User dropdown for mobile (outside the hamburger menu) */}
         {currentUser && userDropdownOpen && (
-          <div className="md:hidden absolute right-4 top-16 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100">
+          <div className="md:hidden absolute right-4 top-16 w-60 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100">
             <div className="px-4 py-3 border-b border-gray-100">
               <p className="text-sm text-gray-500">Signed in as</p>
               <p className="text-sm font-medium truncate">{displayName}</p>
+              <p className="text-xs text-gray-500 truncate mt-0.5">{userEmail}</p>
             </div>
             <button
               onClick={handleLogout}
