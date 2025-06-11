@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookText, BarChart3, Users, Briefcase, ArrowRight } from "lucide-react";
@@ -15,6 +14,10 @@ import { JourneySection } from '@/components/JourneySection';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 
+// Auth imports
+import { useAuthPopup } from '@/hooks/use-auth-popup';
+import { AuthModal } from '@/components/AuthModal';
+
 // Add custom border width style
 const customStyles = `
   .border-3 {
@@ -24,6 +27,8 @@ const customStyles = `
 
 const Index = () => {
   const isMobile = useIsMobile();
+  // Add auth popup hook with 5 second delay
+  const { showAuthModal, setShowAuthModal } = useAuthPopup(5000);
 
   // Function to scroll to top when clicking "Back to Top" button
   const scrollToTop = () => {
@@ -117,6 +122,13 @@ const Index = () => {
         </div>
       </section>
       
+      {/* Auth Modal - added for authentication popup */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        isCompulsory={false}
+      />
+
       {/* Footer */}
       <Footer />
     </div>;

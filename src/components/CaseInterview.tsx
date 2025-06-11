@@ -890,7 +890,7 @@ flowchart TD
         {appPhase === 'case_ended' && (
             <div className="w-full">
                 <div className="w-full bg-white p-6 rounded-lg shadow-lg border border-gray-200 mb-4">
-                    <h3 className="text-2xl font-semibold text-gray-800 mb-4 text-center">🎉 Case Interview Complete!</h3>
+                    <h3 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Case Complete!</h3>
                     <p className="text-gray-600 text-center mb-4">
                         {frameworkText ?
                             "Great job! You've completed the case by submitting your framework. Review your performance and consider practicing more cases to further improve your consulting skills." :
