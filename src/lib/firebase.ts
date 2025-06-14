@@ -208,3 +208,17 @@ export const logOut = () => signOut(auth);
 // Export auth instance for use in other files
 export { auth, onAuthStateChanged };
 export type { User };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
