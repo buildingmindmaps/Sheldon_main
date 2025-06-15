@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { useSpeechToText } from '@/hooks/useSpeechToText';
+import { useSpeechToText } from '../hooks/useSpeechToText';
 import { VoiceVisualizer } from './VoiceVisualizer';
 
 interface FrameworkModalProps {

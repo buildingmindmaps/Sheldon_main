@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import type { Question } from './CaseInterview';
 import { toast } from 'sonner';
-import { useSpeechToText } from '@/hooks/useSpeechToText';
+import { useSpeechToText } from '../hooks/useSpeechToText';
 import { VoiceVisualizer } from './VoiceVisualizer';
 
 interface QuestionPanelProps {
