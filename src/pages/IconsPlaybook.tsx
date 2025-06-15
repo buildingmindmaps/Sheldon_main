@@ -96,7 +96,7 @@ const IconsPlaybook = () => {
             <BookText className="w-10 h-10 text-brand-green mb-4" />
             <h2 className="text-3xl font-bold mb-4">Want to stay updated?</h2>
             <p className="text-gray-600 mb-6">
-              Join our waitlist to receive updates on our launch and exclusive tips for case interview preparation.
+              Join our waitlist to receive updates on our launch and exclusive tips for case preparation.
             </p>
             <div className="max-w-md">
               <WaitlistForm />

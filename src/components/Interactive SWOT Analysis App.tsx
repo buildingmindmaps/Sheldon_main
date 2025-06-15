@@ -1,5 +1,4 @@
-import React, { FC, useState,usEffect, useMemo } from 'react';
-
+import React, { useState, useEffect, FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import {
@@ -57,7 +56,7 @@ interface ImageInteraction extends ModulePartBase { interactionType: 'image'; im
 interface MultipleChoiceSingle extends ModulePartBase { interactionType: 'multiple_choice_single'; question: string; options: string[]; correctAnswer: string; explanation: string; hotspots?: { term: string; definition: string }[]; }
 interface QuizMultipleCorrect extends ModulePartBase { interactionType: 'quiz_multiple_correct'; question: string; options: string[]; correctAnswers: string[]; explanation: string; }
 interface TrueFalseStatement extends ModulePartBase { interactionType: 'true_false_statement'; question: string; correctAnswer: boolean; explanation: string; }
-interface DragAndDropOrdering extends ModulePartBase { interactionType: 'drag_and_drop_ordering'; question: string; items: string[]; correctOrder: string[];onCorrect: () => void; onIncorrect: () => void; }
+interface DragAndDropOrdering extends ModulePartBase { interactionType: 'drag_and_drop_ordering'; question: string; items: string[]; correctOrder: string[]; }
 interface ScenarioDecisionMaking extends ModulePartBase { interactionType: 'scenario_decision_making'; scenario: string; choices: { text: string; feedback: string }[]; correctChoice: string; }
 interface MatchingTermToDefinition extends ModulePartBase { interactionType: 'matching_term_to_definition'; question: string; pairs: { term: string; definition: string }[]; customStyles?: { [key: string]: string | boolean }; }
 interface CategorySorting extends ModulePartBase { interactionType: 'category_sorting'; question: string; categories: string[]; items: { text: string; category: string }[]; }
@@ -72,7 +71,7 @@ interface InteractionProps { onCorrect: () => void; onIncorrect: () => void; }
 interface MultipleChoiceSingleProps extends InteractionProps { question: string; options: string[]; correctAnswer: string; explanation: string; }
 interface QuizMultipleCorrectProps extends InteractionProps { question: string; options: string[]; correctAnswers: string[]; explanation: string; }
 interface TrueFalseStatementProps extends InteractionProps { question: string; correctAnswer: boolean; explanation: string; }
-interface DragAndDropOrderingProps extends InteractionProps { question: string; items: string[]; correctOrder:  string[];onCorrect: () => void;onIncorrect: () => void; }
+interface DragAndDropOrderingProps extends InteractionProps { question: string; items: string[]; correctOrder: string[]; }
 interface ScenarioDecisionMakingProps extends InteractionProps { scenario: string; choices: { text: string; feedback: string }[]; correctChoice: string; }
 interface MatchingTermToDefinitionProps extends InteractionProps { question: string; pairs: { term: string; definition: string }[]; customStyles?: { [key: string]: string | boolean }; }
 interface CategorySortingProps extends InteractionProps { question: string; categories: string[]; items: { text: string; category: string }[]; }
@@ -212,65 +211,48 @@ const TOWSMatrixVisualization: FC<TOWSMatrixVisualizationProps> = ({ customStyle
   );
 };
 
-export interface Item {
-    id: string;
-    content: string;
-}
 
-// Props for the individual sortable item component
+// Define the props for the individual sortable item
 interface SortableItemProps {
-    item: Item;
+    id: string;
+    index: number;
     isAnswered: boolean;
     isCorrect: boolean;
 }
 
-
-// SortableItem Component: This is the visual representation of each draggable item.
-const SortableItem: FC<SortableItemProps> = ({ item, isAnswered, isCorrect }) => {
+// SortableItem Component: Represents each draggable item in the list
+const SortableItem: FC<SortableItemProps> = ({ id, index, isAnswered, isCorrect }) => {
     const {
         attributes,
         listeners,
         setNodeRef,
         transform,
         transition,
-        isDragging,
-    } = useSortable({ id: item.id });
+    } = useSortable({ id });
 
-    const style: React.CSSProperties = {
+    const style = {
         transform: CSS.Transform.toString(transform),
         transition,
-        zIndex: isDragging ? 10 : 'auto',
-        touchAction: 'none', // Critical for mobile drag-and-drop
     };
 
-    // Dynamic classes for styling based on state
+    // Determine background and border colors based on answer state
     const answeredCorrectClass = isAnswered && isCorrect ? 'bg-green-100 border-green-500' : '';
     const answeredIncorrectClass = isAnswered && !isCorrect ? 'bg-red-100 border-red-500' : '';
     const cursorClass = isAnswered ? 'cursor-not-allowed' : 'cursor-grab';
-    const draggingClass = isDragging ? 'shadow-lg' : '';
 
     return (
         <div
             ref={setNodeRef}
             style={style}
             {...attributes}
-            className={`p-3 bg-white border border-gray-300 rounded-md flex items-center justify-between relative ${answeredCorrectClass} ${answeredIncorrectClass} ${cursorClass} ${draggingClass}`}
+            {...listeners}
+            className={`p-3 bg-white border border-gray-300 rounded-md flex items-center justify-between ${answeredCorrectClass} ${answeredIncorrectClass} ${cursorClass}`}
         >
-            <div className="flex items-center w-full">
-                {/* The drag handle area */}
-                <span
-                    {...listeners}
-                    className={`text-gray-400 mr-3 ${isAnswered ? '' : 'cursor-grab'}`}
-                >
-                    ☰
-                </span>
-                {/* The content of the item */}
-                <span>{item.content}</span>
-            </div>
+            <span>{index + 1}. {id}</span>
+            {!isAnswered && <span className="text-gray-400">☰</span>}
         </div>
     );
 };
-
 //</editor-fold>
 
 //<editor-fold desc="Interaction Components">
@@ -456,89 +438,124 @@ const TrueFalseStatementInteraction: FC<TrueFalseStatementProps> = ({ question, 
     );
 };
 
-// Main DragAndDropOrderingInteraction Component
-const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({ question, items, correctOrder, onCorrect, onIncorrect }) => {
-    const [currentOrder, setCurrentOrder] = useState<Item[]>(items);
-    const [feedback, setFeedback] = useState('');
-    const [isAnswered, setIsAnswered] = useState(false);
+const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({ 
+  question, items, correctOrder, onCorrect, onIncorrect 
+}) => {
+  const [currentOrder, setCurrentOrder] = useState<string[]>([...items]);
+  const [feedback, setFeedback] = useState('');
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [targetPosition, setTargetPosition] = useState<number | null>(null);
 
-    // Memoize the item IDs for dnd-kit context
-    const itemIds = useMemo(() => currentOrder.map(item => item.id), [currentOrder]);
+  const handleItemClick = (item: string, index: number) => {
+      if (!isAnswered) {
+          if (selectedItem === null) {
+              // First click - select item
+              setSelectedItem(item);
+              setTargetPosition(index);
+          } else {
+              // Second click - move item
+              setCurrentOrder(prevOrder => {
+                  const newOrder = [...prevOrder];
+                  const currentIndex = newOrder.indexOf(selectedItem);
+                  [newOrder[currentIndex], newOrder[index]] = [newOrder[index], newOrder[currentIndex]];
+                  return newOrder;
+              });
+              setSelectedItem(null);
+              setTargetPosition(null);
+          }
+      }
+  };
 
-    const sensors = useSensors(
-        useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
-    );
+  const handlePositionSelect = (position: number) => {
+      if (selectedItem && targetPosition !== null) {
+          setCurrentOrder(prevOrder => {
+              const newOrder = [...prevOrder];
+              newOrder.splice(targetPosition, 1); // Remove from old position
+              newOrder.splice(position, 0, selectedItem); // Insert at new position
+              return newOrder;
+          });
+          setTargetPosition(null);
+          setSelectedItem(null);
+      }
+  };
 
-    function handleDragEnd(event: DragEndEvent) {
-        if (isAnswered) return; // Don't allow re-ordering after answering
-        const { active, over } = event;
+  const handleSubmit = () => {
+      setIsAnswered(true);
+      const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(correctOrder);
+      isCorrect ? onCorrect() : onIncorrect();
+      setFeedback(isCorrect ? 'Correct! You have ordered them correctly.' : 'Incorrect. Review the proper sequence.');
+  };
 
-        if (over && active.id !== over.id) {
-            setCurrentOrder((prevOrder) => {
-                const oldIndex = prevOrder.findIndex(item => item.id === active.id);
-                const newIndex = prevOrder.findIndex(item => item.id === over.id);
-                return arrayMove(prevOrder, oldIndex, newIndex);
-            });
-        }
-    }
+  const handleRetry = () => {
+    setCurrentOrder([...items]);
+    setIsAnswered(false);
+    setFeedback('');
+    setSelectedItem(null);
+    setTargetPosition(null);
+  };
 
-    const handleSubmit = () => {
-        setIsAnswered(true);
-        const isCorrect = JSON.stringify(currentOrder.map(i => i.id)) === JSON.stringify(correctOrder.map(i => i.id));
-        if (isCorrect) {
-            setFeedback('Correct! You have ordered them correctly.');
-            onCorrect();
-        } else {
-            setFeedback('Incorrect. Review the proper sequence.');
-            onIncorrect();
-        }
-    };
+  return (
+    <div className="p-6 rounded-lg my-6 border border-blue-200 bg-blue-50">
+        <p className="font-semibold text-lg mb-4">{question}</p>
 
-    return (
-        <div className="p-6 rounded-lg my-6 border border-blue-200 bg-blue-50">
-            <p className="font-semibold text-lg mb-4">{question}</p>
-            <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-            >
-                <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-                    <div className="space-y-2">
-                        {currentOrder.map((item, index) => (
-                            <SortableItem
-                                key={item.id}
-                                item={item}
-                                isAnswered={isAnswered}
-                                isCorrect={isAnswered && correctOrder[index] ? item.id === correctOrder[index].id : false}
-                            />
-                        ))}
-                    </div>
-                </SortableContext>
-            </DndContext>
+        {/* Centered Position Indicators */}
+        <div className="flex gap-2 mb-2 justify-center items-center h-12">
+            {currentOrder.map((_, index) => (
+                <button
+                    key={index}
+                    onClick={() => handlePositionSelect(index)}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center 
+                        ${targetPosition === index ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                >
+                    {index + 1}
+                </button>
+            ))}
+        </div>
 
+        {/* Items with Position-based Borders */}
+        <div className="space-y-2">
+            {currentOrder.map((item, index) => (
+                <div
+                    key={item}
+                    onClick={() => handleItemClick(item, index)}
+                    className={`p-4 rounded-lg cursor-pointer transition-all border-4 
+                        ${isAnswered ? 
+                            (item === correctOrder[index] ? 
+                                'border-green-500' : 'border-red-500') 
+                            : 'border-transparent'} 
+                        ${selectedItem === item ? 'bg-blue-100 border-blue-500' : 'bg-white'}`}
+                >
+                    {item}
+                </div>
+            ))}
+        </div>
+
+        <div className="mt-6 flex gap-4">
             {!isAnswered && (
                 <button
                     onClick={handleSubmit}
-                    className="mt-6 px-6 py-2 bg-white text-black rounded-lg hover:shadow-lg transition-shadow duration-200"
+                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 >
                     Check Order
                 </button>
             )}
-
-            {feedback && (
-                <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`mt-4 text-sm ${feedback.startsWith('Correct') ? 'text-green-700' : 'text-red-700'}`}
+            
+            {isAnswered && (
+                <button
+                    onClick={handleRetry}
+                    className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
                 >
-                    {feedback}
-                </motion.p>
+                    Retry
+                </button>
             )}
         </div>
-    );
+
+
+          
+          
+      </div>
+  );
 };
 
 export default DragAndDropOrderingInteraction;
