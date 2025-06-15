@@ -192,9 +192,10 @@ export const initiateMFAEnrollment = async (user: User, phoneNumber: string) => 
   try {
     const auth = getAuth();
     const phoneAuthProvider = new PhoneAuthProvider(auth);
+    const multiFactorSession = await multiFactor(user).getSession();
     const verificationId = await phoneAuthProvider.verifyPhoneNumber(
       phoneNumber,
-      multiFactor(user)
+      multiFactorSession
     );
     return verificationId;
   } catch (error) {
@@ -208,17 +209,3 @@ export const logOut = () => signOut(auth);
 // Export auth instance for use in other files
 export { auth, onAuthStateChanged };
 export type { User };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
