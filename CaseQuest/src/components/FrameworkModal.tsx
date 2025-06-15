@@ -40,7 +40,7 @@ export const FrameworkModal = ({ isOpen, onClose, onSubmit }: FrameworkModalProp
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-5xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-gray-900">
             Enter Your Framework
