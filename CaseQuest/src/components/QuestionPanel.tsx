@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, ChevronDown, ChevronUp, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -97,9 +96,9 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                     {/* Loading Answer */}
                     <div className="bg-blue-50 rounded-lg p-4 ml-4 border-l-4 border-blue-200">
                       <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                        <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '200ms' }}></div>
-                        <div className="w-3 h-3 bg-pink-500 rounded-full animate-pulse" style={{ animationDelay: '400ms' }}></div>
+                        <div className="w-3 h-3 bg-blue-500 rounded-full animate-dot-pulse"></div>
+                        <div className="w-3 h-3 bg-purple-500 rounded-full animate-dot-pulse" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-3 h-3 bg-pink-500 rounded-full animate-dot-pulse" style={{ animationDelay: '0.4s' }}></div>
                       </div>
                     </div>
                   </div>
