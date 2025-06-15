@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
@@ -137,7 +138,7 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-        <div className="bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-20">
+        <div className="hidden lg:flex bg-white border-b px-4 py-3 items-center justify-between sticky top-0 z-20">
             <Button 
                 variant="outline" 
                 onClick={onBack}
@@ -151,7 +152,7 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
         </div>
 
       {/* Mobile Layout */}
-      <div className="block lg:hidden h-[calc(100vh-61px)] flex flex-col">
+      <div className="block lg:hidden h-screen flex flex-col">
         <MobileCaseHeader 
           statement={caseStatement}
           instructions={caseInstructions}
@@ -159,6 +160,7 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
           onTimeUpdate={onTimeUpdate}
           isCompleted={isCompleted}
           questionCount={questions.length}
+          onBack={onBack}
         />
 
         <QuestionPanel 

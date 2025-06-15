@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { Info, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
+import { Button } from '@/components/ui/button';
 
 interface MobileCaseHeaderProps {
   statement: string;
@@ -10,6 +11,7 @@ interface MobileCaseHeaderProps {
   onTimeUpdate: (time: number) => void;
   isCompleted: boolean;
   questionCount?: number;
+  onBack: () => void;
 }
 
 export const MobileCaseHeader: React.FC<MobileCaseHeaderProps> = ({
@@ -18,7 +20,8 @@ export const MobileCaseHeader: React.FC<MobileCaseHeaderProps> = ({
   timeElapsed,
   onTimeUpdate,
   isCompleted,
-  questionCount = 0
+  questionCount = 0,
+  onBack,
 }) => {
   const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
   const [isCaseStatementOpen, setIsCaseStatementOpen] = useState(true); // Open by default
@@ -51,7 +54,10 @@ export const MobileCaseHeader: React.FC<MobileCaseHeaderProps> = ({
         {/* Timer and Info Button Row */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
-            <span className="text-base font-bold text-gray-700">Time Elapsed:</span>
+            <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 -ml-2">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <span className="text-base font-bold text-gray-700">Time:</span>
             <span className="text-base font-bold text-red-500 font-mono">
               {Math.floor(timeElapsed / 60).toString().padStart(2, '0')}:{(timeElapsed % 60).toString().padStart(2, '0')}
             </span>
@@ -117,4 +123,3 @@ export const MobileCaseHeader: React.FC<MobileCaseHeaderProps> = ({
     </div>
   );
 };
-
