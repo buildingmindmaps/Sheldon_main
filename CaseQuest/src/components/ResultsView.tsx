@@ -36,19 +36,19 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger 
                   value="solved-case"
-                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Solved Case
                 </TabsTrigger>
                 <TabsTrigger 
                   value="review"
-                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Review
                 </TabsTrigger>
                 <TabsTrigger 
                   value="framework"
-                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Framework
                 </TabsTrigger>
@@ -84,19 +84,19 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
               <TabsList className="grid grid-cols-3 max-w-2xl w-full">
                 <TabsTrigger 
                   value="solved-case"
-                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Solved Case
                 </TabsTrigger>
                 <TabsTrigger 
                   value="review"
-                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Review
                 </TabsTrigger>
                 <TabsTrigger 
                   value="framework"
-                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Framework
                 </TabsTrigger>
