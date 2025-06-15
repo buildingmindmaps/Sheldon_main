@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
@@ -162,14 +161,12 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
           questionCount={questions.length}
         />
 
-        <div className="flex-1 overflow-y-auto">
-          <QuestionPanel 
-            questions={questions}
-            onAddQuestion={handleAddQuestion}
-            onUpdateFeedback={handleUpdateFeedback}
-            maxQuestions={10}
-          />
-        </div>
+        <QuestionPanel 
+          questions={questions}
+          onAddQuestion={handleAddQuestion}
+          onUpdateFeedback={handleUpdateFeedback}
+          maxQuestions={10}
+        />
         
         {canSubmitFramework && (
           <div className="p-3 border-t border-gray-200 bg-white">
@@ -186,14 +183,12 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-[calc(100vh-61px)]">
         <div className="flex-1 bg-white border-r border-gray-200 flex flex-col">
-          <div className="flex-1 overflow-y-auto">
-            <QuestionPanel 
-              questions={questions}
-              onAddQuestion={handleAddQuestion}
-              onUpdateFeedback={handleUpdateFeedback}
-              maxQuestions={10}
-            />
-          </div>
+          <QuestionPanel 
+            questions={questions}
+            onAddQuestion={handleAddQuestion}
+            onUpdateFeedback={handleUpdateFeedback}
+            maxQuestions={10}
+          />
           
           {canSubmitFramework && (
             <div className="p-6 border-t border-gray-200 bg-white">

@@ -72,7 +72,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex-1 flex flex-col overflow-hidden">
       {/* Question List with dedicated scrollbar */}
       <div className="flex-1 overflow-y-auto p-6">
         {questions.length === 0 && currentQuestion.length === 0 ? (
