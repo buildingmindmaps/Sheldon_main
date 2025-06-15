@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
 import { CaseStatement } from './CaseStatement';
-import { QuestionPanel } from './QuestionPanel';
-import { FrameworkModal } from './FrameworkModal';
-import { ResultsView } from './ResultsView';
-import { MobileCaseHeader } from './MobileCaseHeader';
+import { QuestionPanel } from '../../CaseQuest/src/components/QuestionPanel';
+import { FrameworkModal } from '../../CaseQuest/src/components/FrameworkModal';
+import { ResultsView } from '../../CaseQuest/src/components/ResultsView';
+import { MobileCaseHeader } from '../../CaseQuest/src/components/MobileCaseHeader';
 import { Button } from '@/components/ui/button';
-import { generateResponseWithGemini } from '../services/geminiService';
+import { generateResponseWithGemini } from '../../CaseQuest/src/services/geminiService';
 
 export interface Question {
   id: number;
@@ -57,6 +58,10 @@ export const CaseInterview = () => {
   const onTimeUpdate = useCallback((newTime: number) => {
     setTimeElapsed(newTime);
   }, []);
+
+  const handleBack = () => {
+    window.history.back();
+  };
 
   const handleAddQuestion = async (questionText: string) => {
     if (questions.length >= 10) return;
@@ -143,6 +148,7 @@ export const CaseInterview = () => {
           onTimeUpdate={onTimeUpdate}
           isCompleted={isCompleted}
           questionCount={questions.length}
+          onBack={handleBack}
         />
 
         {/* Questions Panel - Takes remaining space */}

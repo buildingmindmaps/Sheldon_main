@@ -51,25 +51,25 @@ export const MobileCaseHeader: React.FC<MobileCaseHeaderProps> = ({
   return (
     <div className="bg-white border-b border-gray-200 relative">
       <div className="p-3">
-        {/* Timer and Info Button Row */}
+        {/* Header Row */}
         <div className="flex items-center justify-between mb-3">
+          <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 -ml-2">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 -ml-2">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
             <span className="text-base font-bold text-gray-700">Time:</span>
             <span className="text-base font-bold text-red-500 font-mono">
               {Math.floor(timeElapsed / 60).toString().padStart(2, '0')}:{(timeElapsed % 60).toString().padStart(2, '0')}
             </span>
+            
+            <button
+              onClick={() => setIsInstructionsOpen(!isInstructionsOpen)}
+              className="info-button w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold shadow-lg hover:bg-yellow-500 transition-colors"
+            >
+              <Info className="w-4 h-4" />
+            </button>
           </div>
-          
-          {/* Info Button moved to the right */}
-          <button
-            onClick={() => setIsInstructionsOpen(!isInstructionsOpen)}
-            className="info-button w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold shadow-lg hover:bg-yellow-500 transition-colors"
-          >
-            <Info className="w-4 h-4" />
-          </button>
         </div>
 
         {/* Case Statement Dropdown */}
