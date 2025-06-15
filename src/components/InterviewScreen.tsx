@@ -7,7 +7,7 @@ export function InterviewScreen() {
       <div className="floating">
         <img 
           src="/lovable-uploads/f99d3dc7-4f29-4b86-a075-8c115e0529b3.png" 
-          alt="Case Interface" 
+          alt="Case Interview Interface" 
           className="w-full h-auto object-contain"
         />
       </div>

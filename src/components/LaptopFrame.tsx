@@ -20,7 +20,7 @@ export function LaptopFrame({ className }: LaptopFrameProps) {
           {/* The mockup image */}
           <img 
             src="/lovable-uploads/fd7b8e0b-ae7c-46f9-acc4-9900c5c24048.png" 
-            alt="CaseMockup" 
+            alt="Case Interview Mockup" 
             className="w-full h-full object-contain rounded-lg"
           />
         </div>

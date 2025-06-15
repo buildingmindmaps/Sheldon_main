@@ -17,7 +17,7 @@ const PrivacyPolicy = () => {
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">1. Introduction</h2>
             <p>
-              Welcome to SheldonAI ("we," "our," or "us"). We are committed to protecting your privacy and handling your data with transparency. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our AI case practice services.
+              Welcome to SheldonAI ("we," "our," or "us"). We are committed to protecting your privacy and handling your data with transparency. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our AI case interview practice services.
             </p>
           </section>
           
@@ -36,7 +36,7 @@ const PrivacyPolicy = () => {
             
             <h3 className="text-lg font-medium mb-2 mt-6">2.2 Usage Data</h3>
             <p>
-              When you use our services, we may collect data about your interactions with our case practice platform, including your responses, performance metrics, practice frequency, and areas of improvement.
+              When you use our services, we may collect data about your interactions with our case interview practice platform, including your responses, performance metrics, practice frequency, and areas of improvement.
             </p>
             
             <h3 className="text-lg font-medium mb-2 mt-6">2.3 Technical Data</h3>

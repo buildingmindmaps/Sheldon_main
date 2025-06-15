@@ -4,10 +4,6 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
-// Auth import
-import { AuthProvider } from "./lib/AuthContext";
-import { ProtectedRoute } from "./components/ProtectedRoute";
-
 // Assuming components are in these locations
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -47,11 +43,7 @@ const CaseInterviewWrapper = () => {
   const handleBack = () => {
     navigate('/all-courses/case-practice');
   };
-  return (
-    <ProtectedRoute>
-      <CaseInterview onBack={handleBack} />
-    </ProtectedRoute>
-  );
+  return <CaseInterview onBack={handleBack} />;
 };
 
 // NEW: Wrapper component for SWOTApp to handle back navigation
@@ -60,47 +52,41 @@ const SWOTAppWrapper = () => {
   const handleBack = () => {
     navigate('/all-courses/business-frameworks');
   };
-  return (
-    <ProtectedRoute>
-      <SWOTApp onBack={handleBack} />
-    </ProtectedRoute>
-  );
+  return <SWOTApp onBack={handleBack} />;
 };
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          {/* The NavBar could be placed here to appear on all pages if needed */}
-          {/* <PlaceholderNavBar /> */}
-          <Routes>
-            {/* Assuming these page components exist in your project */}
-            <Route path="/" element={<Index />} />
-            <Route path="/playbook" element={<IconsPlaybook />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/article" element={<ArticlePage />} />
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        {/* The NavBar could be placed here to appear on all pages if needed */}
+        {/* <PlaceholderNavBar /> */}
+        <Routes>
+          {/* Assuming these page components exist in your project */}
+          <Route path="/" element={<Index />} />
+          <Route path="/playbook" element={<IconsPlaybook />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/article" element={<ArticlePage />} />
 
-            {/* Main Sprints and Sub-pages */}
-            <Route path="/all-courses" element={<AllCourses />} />
-            <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
-            <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
-            
-            {/* Sprint-specific Apps */}
-            <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
-            {/* UPDATED: Added a clean route for the SWOT Analysis App */}
-            <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
+          {/* Main Sprints and Sub-pages */}
+          <Route path="/all-courses" element={<AllCourses />} />
+          <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
+          <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
+          
+          {/* Sprint-specific Apps */}
+          <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
+          {/* UPDATED: Added a clean route for the SWOT Analysis App */}
+          <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

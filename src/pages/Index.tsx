@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookText, BarChart3, Users, Briefcase, ArrowRight } from "lucide-react";
@@ -14,10 +15,6 @@ import { JourneySection } from '@/components/JourneySection';
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 
-// Auth imports
-import { useAuthPopup } from '@/hooks/use-auth-popup';
-import { AuthModal } from '@/components/AuthModal';
-
 // Add custom border width style
 const customStyles = `
   .border-3 {
@@ -27,8 +24,6 @@ const customStyles = `
 
 const Index = () => {
   const isMobile = useIsMobile();
-  // Add auth popup hook with 5 second delay
-  const { showAuthModal, setShowAuthModal } = useAuthPopup(5000);
 
   // Function to scroll to top when clicking "Back to Top" button
   const scrollToTop = () => {
@@ -108,7 +103,7 @@ const Index = () => {
           <div className="relative z-10 max-w-md">
             <h2 className="text-3xl font-bold mb-4">Be the First to Know</h2>
             <p className="text-gray-600 mb-6">
-              Join our waitlist and get early access when we launch. Plus, receive exclusive tips to prepare for your case.
+              Join our waitlist and get early access when we launch. Plus, receive exclusive tips to prepare for your case interviews.
             </p>
             <div className="mb-6">
               <WaitlistForm />
@@ -122,13 +117,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Auth Modal - added for authentication popup */}
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        isCompulsory={false}
-      />
-
       {/* Footer */}
       <Footer />
     </div>;

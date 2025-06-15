@@ -201,7 +201,7 @@ export function HowItWorksSection() {
       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)"
     }}>
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-green via-blue-500 to-amber-500"></div>
-        <p className="text-brand-green font-medium">Ready to elevate your case skills?</p>
+        <p className="text-brand-green font-medium">Ready to elevate your case interview skills?</p>
         <h3 className="text-2xl font-bold mt-2 mb-6">Join our waitlist today and be among the first to experience SheldonAI</h3>
         <div className="max-w-md mx-auto">
           <WaitlistForm />

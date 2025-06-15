@@ -149,16 +149,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetPassword = async (email: string) => {
     // Use the actual current domain for password reset
     const currentDomain = window.location.origin;
-    const redirectUrl = currentDomain.includes('localhost') ?
-      `${currentDomain}/auth?type=recovery` :
+    const redirectUrl = currentDomain.includes('localhost') ? 
+      `${currentDomain}/auth?type=recovery` : 
       `${currentDomain}/auth?type=recovery`;
-
+    
     console.log('Password reset redirect URL:', redirectUrl);
-
+    
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl
     });
-
+    
     return { error };
   };
 
@@ -200,8 +200,3 @@ export function useAuth() {
   }
   return context;
 }
-
-
-
-
-

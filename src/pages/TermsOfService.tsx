@@ -24,7 +24,7 @@ const TermsOfService = () => {
           <section className="mb-8">
             <h2 className="text-xl font-semibold mb-4">2. Description of Services</h2>
             <p>
-              SheldonAI provides an AI-powered platform for practicing case and developing business problem-solving skills. Our Services include practice case scenarios, feedback on performance, and resources to improve your skills.
+              SheldonAI provides an AI-powered platform for practicing case interviews and developing business problem-solving skills. Our Services include practice case scenarios, feedback on performance, and resources to improve your interview skills.
             </p>
           </section>
           

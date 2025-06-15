@@ -160,7 +160,7 @@ const Contact = () => {
         <div className="text-center mb-10">
           <h3 className="text-xl font-semibold mb-4">Want to stay updated?</h3>
           <p className="text-gray-600 mb-6">
-            Join our waitlist to receive updates on our launch and exclusive tips for case preparation.
+            Join our waitlist to receive updates on our launch and exclusive tips for case interview preparation.
           </p>
           <div className="max-w-md mx-auto">
             <WaitlistForm />
