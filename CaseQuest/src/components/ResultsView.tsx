@@ -33,22 +33,22 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
         <div className="h-screen">
           <Tabs defaultValue="framework" className="w-full h-full flex flex-col">
             <div className="px-4 pt-4">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-3 bg-transparent p-0 gap-1">
                 <TabsTrigger 
                   value="solved-case"
-                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
                 >
                   Solved Case
                 </TabsTrigger>
                 <TabsTrigger 
                   value="review"
-                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
                 >
                   Review
                 </TabsTrigger>
                 <TabsTrigger 
                   value="framework"
-                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
                 >
                   Framework
                 </TabsTrigger>
@@ -81,22 +81,22 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
         <div className="w-full max-w-4xl bg-white flex flex-col">
           <Tabs defaultValue="framework" className="w-full h-full flex flex-col">
             <div className="border-b border-gray-200 px-6 pt-6 flex justify-center">
-              <TabsList className="grid grid-cols-3 max-w-2xl w-full">
+              <TabsList className="grid grid-cols-3 max-w-2xl w-full bg-transparent p-0 gap-1">
                 <TabsTrigger 
                   value="solved-case"
-                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
                 >
                   Solved Case
                 </TabsTrigger>
                 <TabsTrigger 
                   value="review"
-                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
                 >
                   Review
                 </TabsTrigger>
                 <TabsTrigger 
                   value="framework"
-                  className="text-slate-600 hover:bg-slate-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
                 >
                   Framework
                 </TabsTrigger>
