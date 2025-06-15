@@ -168,39 +168,37 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
       </div>
 
       <div className="border-t border-gray-200 p-4 bg-white">
-        <div className="flex items-center space-x-3">
-          <div className="relative flex-grow">
-            <Textarea
-              value={currentQuestion}
-              onChange={(e) => setCurrentQuestion(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Enter your clarifying question or use the mic to dictate."
-              className="min-h-[50px] resize-none py-3 pl-4 pr-14 w-full rounded-md"
-              disabled={questions.length >= maxQuestions || isRecording}
-            />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={handleMicClick}
-                disabled={!isSupported || questions.length >= maxQuestions}
-                title={isRecording ? "Stop recording" : "Start recording"}
-                className={`text-gray-500 hover:text-gray-700 ${isRecording ? 'p-0 rounded-full' : ''}`}
-              >
-                {isRecording ? (
-                  <VoiceVisualizer volume={volume} />
-                ) : (
-                  <Mic className="h-5 w-5" />
-                )}
-              </Button>
-            </div>
-          </div>
+        <div className="flex items-center w-full p-1 border border-gray-200 rounded-lg space-x-2 bg-gray-50">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={handleMicClick}
+            disabled={!isSupported || questions.length >= maxQuestions}
+            title={isRecording ? "Stop recording" : "Start recording"}
+            className={`flex-shrink-0 text-gray-500 hover:text-gray-700 ${isRecording ? 'p-0 rounded-full' : ''}`}
+          >
+            {isRecording ? (
+              <VoiceVisualizer volume={volume} />
+            ) : (
+              <Mic className="h-5 w-5" />
+            )}
+          </Button>
+          <Textarea
+            value={currentQuestion}
+            onChange={(e) => setCurrentQuestion(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Enter your clarifying question..."
+            className="flex-grow resize-none border-0 shadow-none focus-visible:ring-0 bg-transparent p-2 text-sm min-h-[40px]"
+            disabled={questions.length >= maxQuestions || isRecording}
+            rows={1}
+          />
           <Button
             onClick={handleSubmitQuestion}
             disabled={!currentQuestion.trim() || questions.length >= maxQuestions || isRecording}
-            className="bg-gray-800 hover:bg-gray-900 h-[50px] px-4 rounded-md flex-shrink-0"
+            className="flex-shrink-0 bg-gray-800 hover:bg-gray-900 rounded-md h-9 w-9 mr-1"
+            size="icon"
           >
-            <Send className="w-5 h-5" />
+            <Send className="w-4 h-4" />
           </Button>
         </div>
       </div>
