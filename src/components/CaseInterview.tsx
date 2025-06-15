@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ArrowLeft, X } from 'lucide-react';
+import { ChevronDown, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 // Define TypeScript interfaces
@@ -12,6 +12,7 @@ interface ChatMessage {
   feedbackVisible?: boolean;
   questionNumber?: number | null;
   isFrameworkResponse?: boolean;
+  hasDiagram?: boolean;
 }
 
 interface ApiPayload {
@@ -31,12 +32,6 @@ type AppPhase = 'clarifying' | 'framework_input' | 'framework_submitted' | 'case
 const LightningIcon: React.FC = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
     <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5Z"/>
-  </svg>
-);
-
-const InfoIcon: React.FC = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
   </svg>
 );
 
@@ -125,22 +120,22 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
   }, [mermaidAPI, mermaidDiagramCode]);
 
   useEffect(() => {
-  const aiResponses = chatHistory.filter(msg => msg.role === 'model').length;
-  const userQuestions = chatHistory.filter(msg => msg.role === 'user' && msg.type !== 'framework').length;
+    const aiResponses = chatHistory.filter(msg => msg.role === 'model').length;
+    const userQuestions = chatHistory.filter(msg => msg.role === 'user' && msg.type !== 'framework').length;
 
-  // After 10 clarifying questions, force framework popup
-  if (userQuestions >= 10 && appPhase === 'clarifying') {
-    setAppPhase('framework_input');
-    setShowFrameworkPopup(true); // Show the framework popup
-    return;
-  }
+    // After 10 clarifying questions, force framework popup
+    if (userQuestions >= 10 && appPhase === 'clarifying') {
+      setAppPhase('framework_input');
+      setShowFrameworkPopup(true); // Show the framework popup
+      return;
+    }
 
-  if (aiResponses >= 2 && appPhase === 'clarifying') {
-    setShowFrameworkButton(true);
-  } else {
-    setShowFrameworkButton(false);
-  }
-}, [chatHistory, appPhase]);
+    if (aiResponses >= 2 && appPhase === 'clarifying') {
+      setShowFrameworkButton(true);
+    } else {
+      setShowFrameworkButton(false);
+    }
+  }, [chatHistory, appPhase]);
 
 
   const toggleFeedbackVisibility = (index: number): void => {
@@ -632,164 +627,112 @@ flowchart TD
       `}</style>
 
       {/* Header */}
-      <div className="bg-white border-b px-4 py-3 flex flex-col sm:flex-row items-center justify-between">
-        <div className="flex items-center gap-4 w-full sm:w-auto mb-2 sm:mb-0">
-          <Button
-            variant="outline"
+      <div className="bg-white border-b px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
             onClick={onBack}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span className="responsive-button-text">Back to Case Practice</span>
+            Back to Sprints
           </Button>
-          <h1 className="text-lg sm:text-xl font-semibold">Water Purifier Manufacturer Case</h1>
+          <h1 className="text-xl font-semibold">Case Practice</h1>
         </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-          <Button variant="outline" className="rounded-full border-2 border-[#a3e635] text-black hover:bg-[#a3e635]/10 px-4 sm:px-5 py-1 sm:py-2 bg-white font-medium">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="rounded-full border-2 border-[#a3e635] text-black hover:bg-[#a3e635]/10 px-5 py-2 bg-white font-medium">
             <LightningIcon />
             <span className="ml-1.5">1</span>
           </Button>
-          <Button className="rounded-lg bg-[#a3e635] hover:bg-[#d8fca3] text-black font-medium px-4 sm:px-8 py-1 sm:py-2 border-2 border-[#a3e635]">
+          <Button className="rounded-lg bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium px-8 py-2 border-2 border-[#a3e635]">
             Start Free Trial
           </Button>
         </div>
       </div>
 
-      <main className="container mx-auto responsive-container py-6 sm:py-8 flex flex-col items-center w-full max-w-3xl">
-       
-
-        {/* Progress Indicator */}
-        <div className="w-full mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-700">
-              {appPhase === 'case_ended' ? 'Complete!' : appPhase === 'framework_input' ? 'Framework Stage' : `${userQuestions}/10 Questions`}
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-gradient-to-r from-[var(--gradient-green-start)] to-[var(--gradient-green-end)] h-2.5 rounded-full transition-all duration-300 ease-in-out"
-              style={{
-                width: appPhase === 'case_ended'
-                  ? '100%'
-                  : appPhase === 'framework_input'
-                    ? '75%'
-                    : `${Math.min((userQuestions / 10) * 60, 60)}%`
-              }}
-            ></div>
-          </div>
-        </div>
+      <main className="container mx-auto px-4 py-8 flex flex-col items-center w-full max-w-3xl">
+        <h1 className="text-4xl font-bold text-gray-800 mb-3 text-center tracking-tight">
+          Case Sprint: Water Purifier
+        </h1>
+        <p className="text-gray-600 mb-10 text-center text-lg">
+          Hone your consulting skills with AI-driven scenarios.
+        </p>
 
         <div className="w-full mb-6 case-statement-box">
           <h2 className="text-l font-semibold mb-3">
             Case Statement:
             <span className="tooltip ml-2 text-gray-500 cursor-help">
-              <InfoIcon />
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+              </svg>
               <span className="tooltip-text">The case statement contains the initial client problem. Read this carefully to understand the context before asking questions.</span>
             </span>
           </h2>
           <div className="text-sm leading-relaxed">{renderFormattedText(casePrompt, true)}</div>
-
-          {/* Educational tip box */}
-          {/*<div className="learning-tip mt-4">*/}
-          {/*  <div className="flex items-start">*/}
-          {/*    <div className="text-[var(--gradient-blue-end)] mr-2 mt-0.5">*/}
-          {/*      <InfoIcon />*/}
-          {/*    </div>*/}
-          {/*    <div>*/}
-          {/*      <p className="font-semibold text-sm mb-1">Learning Tip:</p>*/}
-          {/*      <p className="text-sm">In consulting case interviews, begin by asking clarifying questions to understand the client's situation better. Focus on gathering key information about the market, competitors, and internal factors before proposing solutions.</p>*/}
-          {/*    </div>*/}
-          {/*  </div>*/}
-          {/*</div>*/}
         </div>
 
         <div className="w-full flex-grow overflow-y-auto space-y-4 mb-4 custom-scrollbar pr-2 bg-white p-6 rounded-xl shadow-xl" style={{ minHeight: '350px', maxHeight: '60vh'}}>
           {chatHistory.map((msg, index) => (
-            <div key={msg.timestamp + '-' + index} className="w-full">
-              {/* User message - full width */}
-              {msg.role === 'user' && (
-                <div className="w-full mb-4">
-                  <p className="text-sm font-semibold mb-1.5 text-gray-700 text-right">
-                    {msg.type === 'framework' ? 'Your Framework:' : `You:`}
-                  </p>
-                  <div className="w-full p-3.5 rounded-xl shadow-md bg-gradient-to-br from-[var(--gradient-yellow-start)] to-[var(--gradient-yellow-end)] text-black">
-                    <div className="prose prose-sm max-w-none text-current leading-relaxed">
-                      {renderFormattedText(msg.parts[0].text)}
-                    </div>
-                  </div>
+            <div key={msg.timestamp + '-' + index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-[85%] p-3.5 rounded-xl shadow-md ${
+                  msg.role === 'user'
+                  ? 'bg-gradient-to-br from-[var(--gradient-blue-start)] to-[var(--gradient-blue-end)] text-white'
+                  : 'bg-gray-100 text-gray-800 border border-gray-200'
+                }`}
+              >
+                <p className={`text-sm font-semibold mb-1.5 ${msg.role === 'user' ? 'text-white/90' : 'text-gray-700'}`}>
+                  {msg.role === 'user' ? (msg.type === 'framework' ? 'Your Framework:' : 'You:') : (msg.isFrameworkResponse ? 'AI Coach (Framework Evaluation):' : 'AI Coach:')}
+                </p>
+                <div className="prose prose-sm max-w-none text-current leading-relaxed">
+                    {renderFormattedText(msg.parts[0].text)}
                 </div>
-              )}
 
-              {/* Model response - full width */}
-              {msg.role === 'model' && (
-                <div className="w-full mb-4">
-                  <p className="text-sm font-semibold mb-1.5 text-gray-700">
-                    {msg.isFrameworkResponse ? 'Sheldon (Framework Evaluation):' : `Sheldon:`}
-                  </p>
-                  <div className="w-full p-3.5 rounded-xl shadow-md bg-gray-100 text-gray-800 border border-gray-200">
-                    <div className="prose prose-sm max-w-none text-current leading-relaxed">
-                      {renderFormattedText(msg.parts[0].text)}
+                {/* Render mermaid diagram inside the chat message when hasDiagram is true */}
+                {msg.hasDiagram && (
+                  <div className="w-full my-4 mermaid-diagram-container">
+                    {isDiagramLoading && <p className="text-gray-500 text-center py-4">Generating diagram...</p>}
+                    {!isDiagramLoading && diagramError &&
+                      <div className="text-red-600 p-3 bg-red-50 border border-red-200 rounded-md">
+                        <strong>Diagram Error:</strong> {diagramError}
+                      </div>
+                    }
+                    <div ref={mermaidDivRef} className="mermaid">
+                      {/* Content injected by useEffect */}
                     </div>
+                    {!isDiagramLoading && !diagramError && !mermaidDiagramCode && mermaidAPI &&
+                      <p className="text-gray-500 text-sm text-center py-4">No diagram generated or framework was not suitable for visualization.</p>
+                    }
+                    {!mermaidAPI && !isDiagramLoading &&
+                      <p className="text-red-500 text-sm text-center py-4">Mermaid library could not be loaded. Diagrams are unavailable.</p>
+                    }
+                  </div>
+                )}
 
-                    {/* Render mermaid diagram inside the chat message when hasDiagram is true */}
-                    {msg.hasDiagram && (
-                      <div className="w-full my-4 mermaid-diagram-container">
-                        {isDiagramLoading && <p className="text-gray-500 text-center py-4">Generating diagram...</p>}
-                        {!isDiagramLoading && diagramError &&
-                          <div className="text-red-600 p-3 bg-red-50 border border-red-200 rounded-md">
-                            <strong>Diagram Error:</strong> {diagramError}
-                          </div>
-                        }
-                        <div ref={mermaidDivRef} className="mermaid">
-                          {/* Content injected by useEffect */}
-                        </div>
-                        {!isDiagramLoading && !diagramError && !mermaidDiagramCode && mermaidAPI &&
-                          <p className="text-gray-500 text-sm text-center py-4">No diagram generated or framework was not suitable for visualization.</p>
-                        }
-                        {!mermaidAPI && !isDiagramLoading &&
-                          <p className="text-red-500 text-sm text-center py-4">Mermaid library could not be loaded. Diagrams are unavailable.</p>
-                        }
+                {msg.role === 'model' && msg.feedback && msg.feedback !== "No specific feedback was parsed." && msg.feedback.trim() !== "" && (
+                  <div className="mt-2.5 pt-2.5 border-t border-gray-300/60">
+                    <button
+                      onClick={() => toggleFeedbackVisibility(index)}
+                      className="text-xs font-semibold flex items-center hover:opacity-80 transition-opacity group"
+                      style={{ color: msg.role === 'user' ? 'rgba(255,255,255,0.85)' : 'var(--gradient-blue-start)'}}
+                    >
+                      {msg.isFrameworkResponse ? "Detailed Suggestions" : `Feedback on Question ${msg.questionNumber || ''}`}
+                      <ChevronDown className={`ml-1.5 h-4 w-4 transform transition-transform duration-200 ${msg.feedbackVisible ? 'rotate-180' : ''}`} />
+                    </button>
+                    {msg.feedbackVisible && (
+                      <div className="mt-1.5 p-2.5 rounded-md bg-black/5 prose prose-xs max-w-none text-current leading-normal">
+                          {renderFormattedText(msg.feedback)}
                       </div>
                     )}
-
-                    {msg.feedback && msg.feedback !== "No specific feedback was parsed." && msg.feedback.trim() !== "" && (
-                      <div className="mt-2.5 pt-2.5 border-t border-gray-300/60">
-                        <button
-                          onClick={() => toggleFeedbackVisibility(index)}
-                          className="text-s font-semibold flex items-center hover:opacity-80 transition-opacity group"
-                          style={{ color: 'var(--gradient-green-start)'}}
-                        >
-                          {msg.isFrameworkResponse ? "Detailed Suggestions" : `Feedback`}
-                          <ChevronDown className={`ml-1.5 h-4 w-4 transform transition-transform duration-200 ${msg.feedbackVisible ? 'rotate-180' : ''}`} />
-                        </button>
-
-                        {/* Feedback content area */}
-                        <div className="mt-1.5 p-2.5 rounded-md bg-black/5 prose prose-xs max-w-none text-current leading-normal">
-                          {msg.feedbackVisible ? (
-                            // Full feedback when expanded
-                            renderFormattedText(msg.feedback)
-                          ) : (
-                            // Collapsed feedback with Show more button
-                            <>
-                              <div className="max-h-[3em] overflow-hidden relative">
-                                {renderFormattedText(msg.feedback)}
-                                <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.05)]"></div>
-                              </div>
-                              <button
-                                onClick={() => toggleFeedbackVisibility(index)}
-                                className="text-xs font-semibold mt-2 hover:opacity-80 transition-opacity block"
-                                style={{ color: 'var(--gradient-green-start)'}}
-                              >
-                                Show more
-                              </button>
-                            </>
-                          )}
-                        </div>
+                    {!msg.feedbackVisible && (
+                      <div className="max-h-[3em] overflow-hidden relative">
+                        {renderFormattedText(msg.feedback)}
+                        <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.05)]"></div>
                       </div>
                     )}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           ))}
           <div ref={chatMessagesEndRef} />
@@ -890,15 +833,13 @@ flowchart TD
         {appPhase === 'case_ended' && (
             <div className="w-full">
                 <div className="w-full bg-white p-6 rounded-lg shadow-lg border border-gray-200 mb-4">
-                    <h3 className="text-2xl font-semibold text-gray-800 mb-4 text-center">🎉 Case Interview Complete!</h3>
+                    <h3 className="text-2xl font-semibold text-gray-800 mb-4 text-center">🎉 Case Complete!</h3>
                     <p className="text-gray-600 text-center mb-4">
                         {frameworkText ?
                             "Great job! You've completed the case by submitting your framework. Review your performance and consider practicing more cases to further improve your consulting skills." :
                             "You've completed the maximum number of clarifying questions (10). Time to develop and submit a framework for this case!"
                         }
                     </p>
-
-
 
                     {mermaidDiagramCode && (
                         <div className="w-full my-4 mermaid-diagram-container">
@@ -957,7 +898,9 @@ flowchart TD
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-semibold text-gray-800">Enter Your Framework</h3>
                 <button onClick={() => setShowFrameworkPopup(false)} className="text-gray-500 hover:text-gray-700">
-                  <X className="h-5 w-5" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
 
