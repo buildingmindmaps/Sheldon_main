@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, ChevronDown, ChevronUp, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -169,43 +168,40 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
       </div>
 
       <div className="border-t border-gray-200 p-4 bg-white">
-        <div className="space-y-2">
-          <div className="flex space-x-3 items-end">
-            <div className="relative flex-1">
-              <Textarea
-                value={currentQuestion}
-                onChange={(e) => setCurrentQuestion(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Enter your clarifying question or use the mic to dictate."
-                className="min-h-[50px] resize-none py-2 pr-12 w-full"
-                disabled={questions.length >= maxQuestions || isRecording}
-              />
-              <div className="absolute bottom-2 right-3">
-                <Button
-                  size="icon"
-                  variant={isRecording ? "ghost" : "outline"}
-                  onClick={handleMicClick}
-                  disabled={!isSupported || questions.length >= maxQuestions}
-                  title={isRecording ? "Stop recording" : "Start recording"}
-                  className={isRecording ? 'p-0 rounded-full' : ''}
-                >
-                  {isRecording ? (
-                    <VoiceVisualizer volume={volume} />
-                  ) : (
-                    <Mic className="h-5 w-5" />
-                  )}
-                </Button>
-              </div>
+        <div className="flex items-center space-x-3">
+          <div className="relative flex-grow">
+            <Textarea
+              value={currentQuestion}
+              onChange={(e) => setCurrentQuestion(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Enter your clarifying question or use the mic to dictate."
+              className="min-h-[50px] resize-none py-3 pl-4 pr-14 w-full rounded-md"
+              disabled={questions.length >= maxQuestions || isRecording}
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={handleMicClick}
+                disabled={!isSupported || questions.length >= maxQuestions}
+                title={isRecording ? "Stop recording" : "Start recording"}
+                className={`text-gray-500 hover:text-gray-700 ${isRecording ? 'p-0 rounded-full' : ''}`}
+              >
+                {isRecording ? (
+                  <VoiceVisualizer volume={volume} />
+                ) : (
+                  <Mic className="h-5 w-5" />
+                )}
+              </Button>
             </div>
-            <Button
-              onClick={handleSubmitQuestion}
-              disabled={!currentQuestion.trim() || questions.length >= maxQuestions || isRecording}
-              size="sm"
-              className="self-end bg-gray-800 hover:bg-gray-900 h-[50px] px-3"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
           </div>
+          <Button
+            onClick={handleSubmitQuestion}
+            disabled={!currentQuestion.trim() || questions.length >= maxQuestions || isRecording}
+            className="bg-gray-800 hover:bg-gray-900 h-[50px] px-4 rounded-md flex-shrink-0"
+          >
+            <Send className="w-5 h-5" />
+          </Button>
         </div>
       </div>
     </div>
