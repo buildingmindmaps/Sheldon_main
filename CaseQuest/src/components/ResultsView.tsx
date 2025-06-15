@@ -32,23 +32,23 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
         {/* Results Tabs - Full height on mobile with transparent header */}
         <div className="h-screen">
           <Tabs defaultValue="framework" className="w-full h-full flex flex-col">
-            <div className="px-4 pt-4 bg-transparent">
-              <TabsList className="grid w-full grid-cols-3 bg-transparent border-0 shadow-none">
+            <div className="px-4 pt-4">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger 
                   value="solved-case"
-                  className="text-gray-700 hover:bg-green-100 hover:text-green-700 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Solved Case
                 </TabsTrigger>
                 <TabsTrigger 
                   value="review"
-                  className="text-gray-700 hover:bg-green-100 hover:text-green-700 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Review
                 </TabsTrigger>
                 <TabsTrigger 
                   value="framework"
-                  className="text-gray-700 hover:bg-green-100 hover:text-green-700 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Framework
                 </TabsTrigger>
@@ -84,19 +84,19 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
               <TabsList className="grid grid-cols-3 max-w-2xl w-full">
                 <TabsTrigger 
                   value="solved-case"
-                  className="text-gray-700 hover:bg-green-100 hover:text-green-700 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Solved Case
                 </TabsTrigger>
                 <TabsTrigger 
                   value="review"
-                  className="text-gray-700 hover:bg-green-100 hover:text-green-700 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Review
                 </TabsTrigger>
                 <TabsTrigger 
                   value="framework"
-                  className="text-gray-700 hover:bg-green-100 hover:text-green-700 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
+                  className="text-gray-700 hover:bg-gray-200 data-[state=active]:bg-gray-800 data-[state=active]:text-white"
                 >
                   Framework
                 </TabsTrigger>
