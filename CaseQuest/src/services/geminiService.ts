@@ -1,5 +1,5 @@
 const GEMINI_API_KEY = 'AIzaSyAHM7wY5VjVYL0Xj-GCDqhbuFeOgJzOx20';
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-06-05:generateContent?key=${GEMINI_API_KEY}`;
 
 
 export interface GeminiResponse {
@@ -893,10 +893,10 @@ Your job is to provide answers to the users questions. Before your every respond
             }
           ]
         },
-        
-        
-        
-        
+
+
+
+
         contents: [{
           parts: [{
             text: prompt
@@ -911,7 +911,7 @@ Your job is to provide answers to the users questions. Before your every respond
 
     const data = await response.json();
     const generatedText = data.candidates[0].content.parts[0].text;
-    
+
     // Parse the structured response
     const answerMatch = generatedText.match(/ANSWER:\s*(.*?)(?=RELEVANCE:|$)/s);
     const relevanceMatch = generatedText.match(/RELEVANCE:\s*(.*?)(?=DEPTH:|$)/s);
@@ -956,6 +956,7 @@ Your job is to provide answers to the users questions. Before your every respond
     };
   }
 };
+
 
 
 
