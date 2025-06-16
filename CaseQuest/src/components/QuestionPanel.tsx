@@ -90,7 +90,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                       <div className="flex items-start justify-between mb-2">
                         <span className="text-sm font-medium text-gray-700">Question {index + 1}:</span>
                       </div>
-                      <p className="text-gray-800">{question.text}</p>
+                      <p className="text-xs sm:text-sm text-gray-800">{question.text}</p>
                     </div>
 
                     {/* Loading Answer */}
@@ -115,13 +115,13 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                     <div className="flex items-start justify-between mb-2">
                       <span className="text-sm font-medium text-gray-700">Question {index + 1}:</span>
                     </div>
-                    <p className="text-gray-800">{question.text}</p>
+                    <p className="text-xs sm:text-sm text-gray-800">{question.text}</p>
                   </div>
 
                   {/* Answer */}
                   <div className="bg-blue-50 rounded-lg p-4 ml-4 border-l-4 border-blue-200">
-                    <p className="text-gray-800 mb-3">{question.answer}</p>
-                    
+                    <p className="text-xs sm:text-sm text-gray-800 mb-3">{question.answer}</p>
+
                     {/* Auto-assigned Rating Badge */}
                     {question.feedback && (
                       <div className="flex items-center space-x-2">

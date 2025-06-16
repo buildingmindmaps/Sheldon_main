@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import { motion } from "framer-motion";
 import { NavBar } from '@/components/NavBar';
 import { Footer } from '@/components/Footer';
 import { WaitlistForm } from '@/components/WaitlistForm';
+import { slugify } from '@/lib/utils/slug';
 
 const IconsPlaybook = () => {
   const featuredPost = {
@@ -77,7 +77,7 @@ const IconsPlaybook = () => {
                   <span className="text-sm">{featuredPost.author}</span>
                 </div>
                 
-                <Link to="/article">
+                <Link to={`/${slugify(featuredPost.title)}`}>
                   <Button className="bg-white text-black hover:bg-gray-200">
                     Read Playbook <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>

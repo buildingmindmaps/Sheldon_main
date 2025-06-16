@@ -1314,13 +1314,11 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
 
             <div className="bg-white border-b px-4 py-3 flex flex-col sm:flex-row items-center justify-between">
               <div className="flex items-center gap-4 w-full sm:w-auto mb-2 sm:mb-0">
-                <Button
-                  variant="outline"
-                  onClick={onBack}
-                  className="flex items-center gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="responsive-button-text">Back to Modules</span>
-                </Button>
+                  <a
+                      onClick={onBack}
+                      className="text-xl text-gray-700 hover:text-gray-900 hover:underline cursor-pointer">
+                      ←
+                  </a>
                 <h1 className="text-lg sm:text-xl font-semibold">SWOT Analysis</h1>
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto justify-end">

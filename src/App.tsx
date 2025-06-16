@@ -84,13 +84,18 @@ const App = () => (
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/contact" element={<Contact />} />
+
+            {/* Keep the old /article route for backward compatibility */}
             <Route path="/article" element={<ArticlePage />} />
+
+            {/* Add new route for article slugs */}
+            <Route path="/:slug" element={<ArticlePage />} />
 
             {/* Main Sprints and Sub-pages */}
             <Route path="/all-courses" element={<AllCourses />} />
             <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
             <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
-            
+
             {/* Sprint-specific Apps */}
             <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
             {/* UPDATED: Added a clean route for the SWOT Analysis App */}
@@ -105,3 +110,4 @@ const App = () => (
 );
 
 export default App;
+
