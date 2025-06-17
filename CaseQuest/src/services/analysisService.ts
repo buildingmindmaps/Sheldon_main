@@ -57,7 +57,8 @@ export const generateReview = async (
   questions: Question[],
   frameworkText: string,
   timeElapsed: number,
-  caseStatement: string
+  caseStatement: string,
+  conversation?: any
 ): Promise<ReviewScores> => {
   try {
     const response = await fetch('/api/generate-review', {
@@ -70,6 +71,7 @@ export const generateReview = async (
         frameworkText,
         timeElapsed,
         caseStatement,
+        conversation,
       }),
     });
 
