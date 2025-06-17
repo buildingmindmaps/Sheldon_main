@@ -6,11 +6,14 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+
+
 // Load environment variables from .env file
 dotenv.config();
 
 const app = express();
 const port = 3001;
+
 
 // --- Middleware ---
 // Use the port your React app runs on. I see localhost:8080 in your browser tabs.
@@ -50,6 +53,7 @@ if (!apiKey) {
   throw new Error("GEMINI_API_KEY is not defined in the .env file");
 }
 const genAI = new GoogleGenerativeAI(apiKey);
+
 
 // --- API Route ---
 // <--- MODIFICATION: Add types to req and res --->
@@ -104,6 +108,10 @@ app.post('/api/generate-flowchart', asyncHandler(async (req: Request, res: Respo
   }
 }));
 
+app.listen(port, () => {
+  console.log(`Backend server listening at http://localhost:${port}`);
+});
+
 app.post('/api/analyze-framework', asyncHandler(async (req: Request, res: Response) => {
   const { frameworkText, questions, caseStatement } = req.body;
 
@@ -114,25 +122,19 @@ app.post('/api/analyze-framework', asyncHandler(async (req: Request, res: Respon
 
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    
-    // Enhanced prompt that includes model response and feedback
     const prompt = `
-      Analyze this business case framework approach:
+      Analyze the following business framework and provide structured feedback.
       
+      Framework: "${frameworkText}"
       Case Statement: "${caseStatement}"
+      Questions Asked: ${JSON.stringify(questions)}
       
-      User's Framework: "${frameworkText}"
-      
-      Questions Asked: ${questions?.map((q: { text: string; feedback?: string }) => `- ${q.text} (Feedback: ${q.feedback || 'No feedback provided'})`).join('\n')}
-      
-      Please provide a structured analysis in the following JSON format:
+      Please provide analysis in the following JSON format:
       {
         "strengths": ["strength1", "strength2", "strength3"],
         "weaknesses": ["weakness1", "weakness2", "weakness3"],
         "recommendations": ["recommendation1", "recommendation2", "recommendation3"]
       }
-      
-      Consider both the framework quality and the questions asked (including any feedback provided for each question). Analyze how well the user understood the problem, structured their approach, and formulated insightful clarifying questions. Take into account any model responses or feedback that was provided to improve the overall assessment.
       
       Only return valid JSON, no additional text.
     `;
@@ -141,32 +143,37 @@ app.post('/api/analyze-framework', asyncHandler(async (req: Request, res: Respon
     const response = await result.response;
     let rawResponse = response.text();
 
-    // Extract JSON from a markdown code block
-    const jsonRegex = /```json([\s\S]*?)```/;
-    const match = rawResponse.match(jsonRegex);
+// Extract JSON from a markdown code block
+const jsonRegex = /```json([\s\S]*?)```/;
+const match = rawResponse.match(jsonRegex);
 
-    let jsonString;
-    if (match && match[1]) {
-        jsonString = match[1].trim();
-    } else {
-        jsonString = rawResponse.trim();
-    }
+let jsonString;
+if (match && match[1]) {
+    jsonString = match[1].trim();
+} else {
+    jsonString = rawResponse.trim();
+}
 
-    try {
-        const analysis = JSON.parse(jsonString);
-        res.status(200).json(analysis);
-    } catch (parseError) {
-        // Log the actual string that failed to parse for easier debugging
-        console.error('Failed to parse extracted JSON from Gemini response:', jsonString);
-        // Send a 500 error status to the client
-        res.status(500).json({ error: 'Failed to parse AI response.' }); 
-    }
+try {
+    const analysis = JSON.parse(jsonString);
+    res.status(200).json(analysis);
+} catch (parseError) {
+    // Log the actual string that failed to parse for easier debugging
+    console.error('Failed to parse extracted JSON from Gemini response:', jsonString);
+    // Send a 500 error status to the client
+    res.status(500).json({ error: 'Failed to parse AI response.' }); 
+}
+
 
   } catch (error) {
     console.error('Error calling Gemini API:', error);
     res.status(500).json({ error: 'Failed to analyze framework.' });
   }
 }));
+
+// server.ts
+
+// ... (keep all your existing code, including the '/api/analyze-framework' route)
 
 app.post('/api/generate-review', asyncHandler(async (req: Request, res: Response) => {
     const { questions, frameworkText, timeElapsed, caseStatement } = req.body;
