@@ -1,3 +1,4 @@
+
 // backend/src/server.ts
 
 import express, { Request, Response } from 'express'; // <--- MODIFICATION: Import Request and Response
@@ -54,17 +55,17 @@ const genAI = new GoogleGenerativeAI(apiKey);
 // --- API Route ---
 // <--- MODIFICATION: Add types to req and res --->
 app.post('/api/generate-flowchart', asyncHandler(async (req: Request, res: Response) => {
-  const { frameworkText } = req.body;
+  const { frameworkText } = req.body;
 
-  if (!frameworkText) {
-    res.status(400).json({ error: 'frameworkText is required.' });
-    return;
-  }
+  if (!frameworkText) {
+    res.status(400).json({ error: 'frameworkText is required.' });
+    return;
+  }
 
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const prompt = `
-      Convert the following text description into a valid Mermaid.js flowchart diagram.
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const prompt = `
+      Convert the following text description into a valid Mermaid.js flowchart diagram.
 
       IMPORTANT RULES:
       - Only respond with the Mermaid code block itself, starting with \`\`\`mermaid and ending with \`\`\`.
@@ -75,12 +76,12 @@ app.post('/api/generate-flowchart', asyncHandler(async (req: Request, res: Respo
       - Keep labels concise.
 
       Framework Text to Convert:
-      "${frameworkText}"
-    `;
+      "${frameworkText}"
+    `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    let rawResponse = response.text();
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let rawResponse = response.text();
 
     // --- ✅ KEY FIX START ---
     // Extract the code from the markdown block
@@ -96,12 +97,12 @@ app.post('/api/generate-flowchart', asyncHandler(async (req: Request, res: Respo
     const mermaidCode = match[1].trim();
     // --- ✅ KEY FIX END ---
 
-    res.status(200).json({ mermaidCode }); 
+    res.status(200).json({ mermaidCode }); 
 
-  } catch (error) {
-    console.error('Error calling Gemini API or parsing response:', error);
-    res.status(500).json({ error: 'Failed to generate flowchart.' });
-  }
+  } catch (error) {
+    console.error('Error calling Gemini API or parsing response:', error);
+    res.status(500).json({ error: 'Failed to generate flowchart.' });
+  }
 }));
 
 app.post('/api/analyze-framework', asyncHandler(async (req: Request, res: Response) => {
@@ -123,7 +124,11 @@ app.post('/api/analyze-framework', asyncHandler(async (req: Request, res: Respon
       
       User's Framework: "${frameworkText}"
       
-      Questions Asked: ${questions?.map((q: { text: string; feedback?: string }) => `- ${q.text} (Feedback: ${q.feedback || 'No feedback provided'})`).join('\n')}
+      Questions Asked: ${questions?.map((q: { text: string; feedback?: string; modelResponse?: string }) => `
+        - Question: ${q.text}
+        - Feedback: ${q.feedback || 'No feedback provided'}
+        - Model Response: ${q.modelResponse || 'No response provided'}
+      `).join('\n')}
       
       Please provide a structured analysis in the following JSON format:
       {
@@ -132,7 +137,7 @@ app.post('/api/analyze-framework', asyncHandler(async (req: Request, res: Respon
         "recommendations": ["recommendation1", "recommendation2", "recommendation3"]
       }
       
-      Consider both the framework quality and the questions asked (including any feedback provided for each question). Analyze how well the user understood the problem, structured their approach, and formulated insightful clarifying questions. Take into account any model responses or feedback that was provided to improve the overall assessment.
+      Consider both the framework quality and the questions asked (including any feedback and model responses provided for each question). Analyze how well the user understood the problem, structured their approach, and formulated insightful clarifying questions. Take into account the model responses and feedback that was provided to improve the overall assessment.
       
       Only return valid JSON, no additional text.
     `;
@@ -172,9 +177,8 @@ app.post('/api/generate-review', asyncHandler(async (req: Request, res: Response
     const { questions, frameworkText, timeElapsed, caseStatement } = req.body;
 
     if (!frameworkText || !caseStatement || !questions) {
-        // AFTER
-res.status(400).json({ error: 'frameworkText, caseStatement, and questions are required.' });
-return;
+        res.status(400).json({ error: 'frameworkText, caseStatement, and questions are required.' });
+        return;
     }
 
     try {
@@ -184,12 +188,16 @@ return;
             
             Case Statement: "${caseStatement}"
             User's Framework/Approach: "${frameworkText}"
-            User's Clarifying Questions: ${JSON.stringify(questions.map((q: { text: string }) => q.text))}
+            User's Clarifying Questions: ${JSON.stringify(questions.map((q: { text: string; feedback?: string; modelResponse?: string }) => ({
+              question: q.text,
+              feedback: q.feedback || 'No feedback provided',
+              modelResponse: q.modelResponse || 'No response provided'
+            })))}
             Time Taken: ${timeElapsed} seconds
 
             Based on this information, evaluate the user's performance on a scale of 1-7 for each of the following criteria:
             - Structure: How logical, comprehensive, and MECE (Mutually Exclusive, Collectively Exhaustive) was their framework?
-            - Problem Formulation: How insightful and relevant were their clarifying questions? Did they identify the core problem?
+            - Problem Formulation: How insightful and relevant were their clarifying questions? Did they identify the core problem? Consider the model responses and feedback.
             - Communication: Based on the clarity of their framework text.
             - Confidence: Infer a confidence level based on the quality of the framework and questions.
             - Overall: Your final overall assessment.
@@ -237,7 +245,6 @@ return;
     }
 }));
 
-
 app.listen(port, () => {
-  console.log(`Backend server listening at http://localhost:${port}`);
+  console.log(`Backend server listening at http://localhost:${port}`);
 });
