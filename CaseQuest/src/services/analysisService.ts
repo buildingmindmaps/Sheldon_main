@@ -21,9 +21,6 @@ interface Question {
   modelResponse?: string;
 }
 
-// Export types
-export type { ReviewScores, FrameworkAnalysis, Question };
-
 export const analyzeFramework = async (
   frameworkText: string,
   questions: Question[],
@@ -57,8 +54,7 @@ export const generateReview = async (
   questions: Question[],
   frameworkText: string,
   timeElapsed: number,
-  caseStatement: string,
-  conversation?: any
+  caseStatement: string
 ): Promise<ReviewScores> => {
   try {
     const response = await fetch('/api/generate-review', {
@@ -71,7 +67,6 @@ export const generateReview = async (
         frameworkText,
         timeElapsed,
         caseStatement,
-        conversation,
       }),
     });
 
@@ -82,34 +77,6 @@ export const generateReview = async (
     return await response.json();
   } catch (error) {
     console.error('Error generating review:', error);
-    throw error;
-  }
-};
-
-// Add the missing functions that components are trying to import
-export const generateFrameworkAnalysis = analyzeFramework;
-export const generateReviewScores = generateReview;
-
-export const generateFlowchartVisualization = async (frameworkText: string): Promise<string> => {
-  try {
-    const response = await fetch('/api/generate-flowchart', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        frameworkText,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.mermaidCode;
-  } catch (error) {
-    console.error('Error generating flowchart:', error);
     throw error;
   }
 };
