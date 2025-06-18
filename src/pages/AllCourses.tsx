@@ -4,7 +4,23 @@ import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Star, ArrowLeft } from 'lucide-react';
+import {
+    Clock,
+    Star,
+    ArrowLeft,
+    BarChart2,
+    DollarSign,
+    Droplet,
+    DoorOpen,
+    Package,
+    RefreshCw,
+    Settings,
+    TrendingUp,
+    Calculator,
+    LayoutGrid,
+    Target,
+    Workflow
+} from 'lucide-react';
 
 // Data for sprints and courses
 const coursesData = [
@@ -14,7 +30,7 @@ const coursesData = [
         route: "/all-courses/case-practice",
         description: "Learn to break down business problems with a structured approach that balances opportunity and risk.",
         badge: "Popular",
-        icon: "📊",
+        icon: <BarChart2 className="w-6 h-6" />,
         detailedDescription: "Master the frameworks needed to solve case studies effectively with a structured approach.",
         features: ["Water Purifier", "Market Entry", "XYZ"],
         reviews: [
@@ -28,7 +44,7 @@ const coursesData = [
         route: "/all-courses/business-frameworks",
         description: "Master the Theory Knowledge for Business Case Studies.",
         badge: "New",
-        icon: "💰",
+        icon: <DollarSign className="w-6 h-6" />,
         detailedDescription: "Build comprehensive business knowledge with our structured courses on various decision frameworks.",
         features: ["Platform Philosophy", "Operational Decision Frameworks", "Financial Decision Frameworks", "Organizational Decision Frameworks"],
         reviews: [
@@ -38,20 +54,20 @@ const coursesData = [
 ];
 
 const caseStudiesData = [
-    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: "💧" },
-    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: "🚪" },
-    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: "🧩" }
+    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: <Droplet className="w-6 h-6" /> },
+    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: <DoorOpen className="w-6 h-6" /> },
+    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: <Package className="w-6 h-6" /> }
 ];
 
 const courseOptionsData = [
-    { id: 6, title: "SWOT Analysis", description: "Map your strengths, weaknesses, opportunities, and threats in a simple 2x2 grid.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🔄" },
-    { id: 7, title: "Porter's Five Forces", description: "Check if your industry is a battlefield or a goldmine by analyzing five competitive pressures.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "", icon: "⚙️" },
-    { id: 8, title: "BCG Matrix", description: " Categorize your products as Stars, Cash Cows, Question Marks, or Dogs to decide where to invest. ", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "New", icon: "💹" },
-    { id: 9, title: "Ansoff Matrix", description: "Four growth paths - sell more to current customers, find new customers, create new products, or do something completely different.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
-    { id: 10, title: "Lean Six Sigma", description: "Eliminate waste (Lean) and reduce variation (Six Sigma) to improve processes.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
-    { id: 11, title: "Theory of Constraints", description: " Find the bottleneck that limits your entire system's performance", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
-    { id: 12, title: "5S Methodology", description: " Sort, Set in order, Shine, Standardize, Sustain for organized, efficient workspaces.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
-    { id: 13, title: "Kaizen", description: " Continuous small improvements add up to dramatic results over time.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "🧮" },
+    { id: 6, title: "SWOT Analysis", description: "Map your strengths, weaknesses, opportunities, and threats in a simple 2x2 grid.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <RefreshCw className="w-6 h-6" /> },
+    { id: 7, title: "Porter's Five Forces", description: "Check if your industry is a battlefield or a goldmine by analyzing five competitive pressures.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "", icon: <Settings className="w-6 h-6" /> },
+    { id: 8, title: "BCG Matrix", description: " Categorize your products as Stars, Cash Cows, Question Marks, or Dogs to decide where to invest. ", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "New", icon: <TrendingUp className="w-6 h-6" /> },
+    { id: 9, title: "Ansoff Matrix", description: "Four growth paths - sell more to current customers, find new customers, create new products, or do something completely different.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <Calculator className="w-6 h-6" /> },
+    { id: 10, title: "Lean Six Sigma", description: "Eliminate waste (Lean) and reduce variation (Six Sigma) to improve processes.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <LayoutGrid className="w-6 h-6" /> },
+    { id: 11, title: "Theory of Constraints", description: " Find the bottleneck that limits your entire system's performance", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <Target className="w-6 h-6" /> },
+    { id: 12, title: "5S Methodology", description: " Sort, Set in order, Shine, Standardize, Sustain for organized, efficient workspaces.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <Settings className="w-6 h-6" /> },
+    { id: 13, title: "Kaizen", description: " Continuous small improvements add up to dramatic results over time.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <Workflow className="w-6 h-6" /> },
 ];
 
 // Helper function to render stars
@@ -64,7 +80,6 @@ const renderStars = (rating: number) => (
 // Main "/all-courses" page
 export default function AllCourses() {
     const navigate = useNavigate();
-    const [featuredSprint, setFeaturedSprint] = useState(0);
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -73,19 +88,18 @@ export default function AllCourses() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="mb-12">
                         <h1 className="text-3xl font-bold text-gray-800 mb-2">All Courses</h1>
-                        <p className="text-gray-600">Develop business acumen with bite - size lessons & hands-on exercises that make skills stick for everyone.</p>
+                        <p className="text-gray-600">Develop business acumen with bite-size lessons & hands-on exercises that make skills stick for everyone.</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {coursesData.map((course) => (
                             <Card
                                 key={course.id}
                                 className="bg-white border hover:shadow-md transition-shadow cursor-pointer"
-                                onMouseEnter={() => setFeaturedSprint(course.id)}
                                 onClick={() => navigate(course.route)}
                             >
                                 <CardHeader className="pb-3">
                                     <div className="flex items-start justify-between mb-2">
-                                        <div className="p-3 bg-gray-100 rounded-lg"><span className="text-2xl">{course.icon}</span></div>
+                                        <div className="p-3 bg-gray-100 rounded-lg">{course.icon}</div>
                                         {course.badge && <Badge className={course.badge === 'Popular' ? 'bg-[#a3e635]/20 text-[#65a30d]' : 'bg-blue-100 text-blue-700'}>{course.badge}</Badge>}
                                     </div>
                                     <CardTitle className="text-base font-semibold">{course.title}</CardTitle>
@@ -106,7 +120,7 @@ export default function AllCourses() {
 }
 
 // Case Practice Page
-export const CasePracticePage = ({}) => {
+export const CasePracticePage = () => {
     const navigate = useNavigate();
     const sprintData = coursesData[0]; 
     const [selectedCase, setSelectedCase] = useState(caseStudiesData[0]);
@@ -116,9 +130,10 @@ export const CasePracticePage = ({}) => {
             <NavBar />
             <main className="pt-20 pb-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <Button variant="outline" onClick={() => navigate('/all-courses')} className="mb-4">
-                        <ArrowLeft className="h-4 w-4 mr-2" />
-                        Back to All Courses
+                    <Button variant="outline" onClick={() => navigate('/all-courses')} className="mb-2 p-1">
+                        <div className="rounded">
+                            <ArrowLeft className="h-4 w-4" />
+                        </div>
                     </Button>
                     {/* Added heading for page identification */}
                     <h1 className="text-3xl font-bold text-gray-900 mb-8">Case Practice</h1>
@@ -127,7 +142,7 @@ export const CasePracticePage = ({}) => {
                             <Card className="bg-white border mb-8">
                                 <CardHeader>
                                     <div className="flex items-start">
-                                        <div className="p-4 bg-gray-100 rounded-lg mr-4"><div className="text-4xl">{selectedCase.icon}</div></div>
+                                        <div className="p-4 bg-gray-100 rounded-lg mr-4">{selectedCase.icon}</div>
                                         <div>
                                             {selectedCase.badge && <Badge className="mb-2 bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedCase.badge}</Badge>}
                                             <CardTitle className="text-2xl font-bold mb-2">{selectedCase.title}</CardTitle>
@@ -158,7 +173,7 @@ export const CasePracticePage = ({}) => {
                                     >
                                         <CardHeader className="pb-3">
                                             <div className="flex items-start justify-between mb-2">
-                                                <div className="p-3 bg-gray-100 rounded-lg"><span className="text-2xl">{item.icon}</span></div>
+                                                <div className="p-3 bg-gray-100 rounded-lg">{item.icon}</div>
                                                 {item.badge && <Badge className={item.badge === 'Popular' ? 'bg-lime-100 text-lime-700' : 'bg-blue-100 text-blue-700'}>{item.badge}</Badge>}
                                             </div>
                                             <CardTitle className="text-base font-semibold">{item.title}</CardTitle>
@@ -218,9 +233,10 @@ const handleStartSprint = () => {
             <NavBar />
             <main className="pt-20 pb-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <Button variant="outline" onClick={() => navigate('/all-courses')} className="mb-4">
-                        <ArrowLeft className="h-4 w-4 mr-2" />
-                        Back to All Courses
+                    <Button variant="outline" onClick={() => navigate('/all-courses')} className="mb-2 p-1">
+                        <div className="rounded">
+                            <ArrowLeft className="h-4 w-4" />
+                        </div>
                     </Button>
                     {/* Added heading for page identification */}
                     <h1 className="text-3xl font-bold text-gray-900 mb-8">100 Business Frameworks</h1>
@@ -230,7 +246,7 @@ const handleStartSprint = () => {
                             <Card className="bg-white border mb-8">
                                 <CardHeader>
                                     <div className="flex items-start">
-                                        <div className="p-4 bg-gray-100 rounded-lg mr-4"><div className="text-4xl">{selectedCourse.icon}</div></div>
+                                        <div className="p-4 bg-gray-100 rounded-lg mr-4">{selectedCourse.icon}</div>
                                         <div>
                                             {selectedCourse.badge && <Badge className="mb-2 bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedCourse.badge}</Badge>}
                                             <CardTitle className="text-2xl font-bold mb-2">{selectedCourse.title}</CardTitle>
@@ -261,7 +277,7 @@ const handleStartSprint = () => {
                                     >
                                         <CardHeader className="pb-3">
                                             <div className="flex items-start justify-between mb-2">
-                                                <div className="p-3 bg-gray-100 rounded-lg"><span className="text-2xl">{item.icon}</span></div>
+                                                <div className="p-3 bg-gray-100 rounded-lg">{item.icon}</div>
                                                 {item.badge && <Badge className={item.badge === 'Popular' ? 'bg-lime-100 text-lime-700' : 'bg-blue-100 text-blue-700'}>{item.badge}</Badge>}
                                             </div>
                                             <CardTitle className="text-base font-semibold">{item.title}</CardTitle>

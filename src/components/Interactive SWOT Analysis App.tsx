@@ -1312,14 +1312,14 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
     <div className="min-h-screen font-sans antialiased" style={{ backgroundColor: theme.colors.background }}>
       {/* Header */}
 
-            <div className="bg-white border-b px-4 py-3 flex flex-col sm:flex-row items-center justify-between">
+            <div className="bg-white border-b px-4 py-1.5 flex flex-col sm:flex-row items-center justify-between">
               <div className="flex items-center gap-4 w-full sm:w-auto mb-2 sm:mb-0">
-                  <a
-                      onClick={onBack}
-                      className="text-xl text-gray-700 hover:text-gray-900 hover:underline cursor-pointer">
-                      ←
-                  </a>
-                <h1 className="text-lg sm:text-xl font-semibold">SWOT Analysis</h1>
+                  <Button variant="outline" className="p-1" onClick={onBack}>
+                      <div className="rounded">
+                          <ArrowLeft className="h-4 w-4" />
+                      </div>
+                  </Button>
+                {/*<h1 className="text-lg sm:text-xl font-semibold">OSWT Analysis</h1>*/}
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                 <Button variant="outline" className="rounded-full border-2 border-[#a3e635] text-black hover:bg-[#a3e635]/10 px-4 sm:px-5 py-1 sm:py-2 bg-white font-medium">
@@ -1342,7 +1342,7 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white p-8 md:p-10 rounded-lg shadow-lg mt-8"
+                className="bg-transparent p-8 md:p-10 rounded-lg shadow-none mt-8"
             >
                 <ModulePart
                     part={moduleContent[currentPartIndex]}

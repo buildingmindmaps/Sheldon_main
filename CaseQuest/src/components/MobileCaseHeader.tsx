@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Info, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
@@ -53,8 +52,10 @@ export const MobileCaseHeader: React.FC<MobileCaseHeaderProps> = ({
       <div className="p-3">
         {/* Header Row */}
         <div className="flex items-center justify-between mb-3">
-          <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 -ml-2">
-            <ArrowLeft className="h-5 w-5" />
+          <Button variant="ghost" size="icon" onClick={onBack} className="h-7 w-7">
+            <div className="rounded">
+              <ArrowLeft className="h-5 w-5" />
+            </div>
           </Button>
           
           <div className="flex items-center space-x-2">

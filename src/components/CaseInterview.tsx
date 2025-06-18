@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
@@ -142,10 +141,11 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
             <Button 
                 variant="outline" 
                 onClick={onBack}
-                className="flex items-center gap-2"
+                className="p-1"
             >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Sprints
+                <div className="rounded">
+                    <ArrowLeft className="h-4 w-4" />
+                </div>
             </Button>
             <h1 className="text-xl font-semibold text-center">Case Practice: Water Purifier</h1>
             <div className="w-36"></div> {/* Spacer to balance header */}
