@@ -1,7 +1,6 @@
-
 import { ReviewScores, FrameworkAnalysis } from '../types/types';
 
-export { ReviewScores, FrameworkAnalysis };
+export type { ReviewScores, FrameworkAnalysis };
 
 export const generateReview = async (
   questions: any[],
