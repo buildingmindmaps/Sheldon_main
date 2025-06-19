@@ -1,11 +1,12 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
-// Auth import
-import { AuthProvider } from "./lib/AuthContext";
+// Auth import - using the correct AuthProvider from useAuth hook
+import { AuthProvider } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Assuming components are in these locations
@@ -110,4 +111,3 @@ const App = () => (
 );
 
 export default App;
-
