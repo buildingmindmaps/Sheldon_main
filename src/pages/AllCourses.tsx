@@ -159,6 +159,7 @@ export const CasePracticePage = () => {
                             <ArrowLeft className="h-4 w-4" />
                         </div>
                     </Button>
+                    {/* Added heading for page identification */}
                     <h1 className="text-3xl font-bold text-gray-900 mb-8">Case Practice</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
@@ -264,7 +265,7 @@ export const BusinessFrameworksPage = () => {
     const sprintData = coursesData[1]; // General data for the "Courses" sprint (for reviews)
     const [selectedCourse, setSelectedCourse] = useState(courseOptionsData[0]); // State for selected course
 
-    const handleStartSprint = () => {
+const handleStartSprint = () => {
         // Navigate to the SWOT app only if that course is selected
         if (selectedCourse.title === 'SWOT Analysis') {
             navigate('/all-courses/business-frameworks/swot-analysis');
@@ -282,6 +283,7 @@ export const BusinessFrameworksPage = () => {
                             <ArrowLeft className="h-4 w-4" />
                         </div>
                     </Button>
+                    {/* Added heading for page identification */}
                     <h1 className="text-3xl font-bold text-gray-900 mb-8">100 Business Frameworks</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">

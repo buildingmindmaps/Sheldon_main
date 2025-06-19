@@ -1,9 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import { SolvedCaseTab } from './SolvedCaseTab';
 import { ReviewTab } from './ReviewTab';
 import { FrameworkTab } from './FrameworkTab';
@@ -17,12 +14,7 @@ interface ResultsViewProps {
 }
 
 export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatement }) => {
-  const navigate = useNavigate();
   const [timeElapsed, setTimeElapsed] = useState(caseData.timeElapsed);
-
-  const handleBackToCasePractice = () => {
-    navigate('/all-courses/case-practice');
-  };
 
   const caseInstructions = [
     "Analyze the provided data packs thoroughly.",
@@ -41,16 +33,6 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
         <div className="h-screen">
           <Tabs defaultValue="framework" className="w-full h-full flex flex-col">
             <div className="px-4 pt-4">
-              <div className="mb-4">
-                <Button 
-                  variant="outline" 
-                  onClick={handleBackToCasePractice}
-                  className="flex items-center gap-2"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Case Practice
-                </Button>
-              </div>
               <TabsList className="grid w-full grid-cols-3 bg-transparent p-0 gap-1">
                 <TabsTrigger 
                   value="solved-case"
@@ -86,7 +68,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
                 frameworkText={caseData.frameworkText} 
                 questions={caseData.questions}
                 caseStatement={caseStatement}
-                conversation={caseData.conversation}
+                conversation={caseData.conversation} // Pass conversation data here
               />
             </TabsContent>
           </Tabs>
@@ -98,39 +80,27 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
         {/* Centered Content with max-width */}
         <div className="w-full max-w-4xl bg-white flex flex-col">
           <Tabs defaultValue="framework" className="w-full h-full flex flex-col">
-            <div className="border-b border-gray-200 px-6 pt-6">
-              <div className="mb-4">
-                <Button 
-                  variant="outline" 
-                  onClick={handleBackToCasePractice}
-                  className="flex items-center gap-2"
+            <div className="border-b border-gray-200 px-6 pt-6 flex justify-center">
+              <TabsList className="grid grid-cols-3 max-w-2xl w-full bg-transparent p-0 gap-1">
+                <TabsTrigger 
+                  value="solved-case"
+                  className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
                 >
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Case Practice
-                </Button>
-              </div>
-              <div className="flex justify-center">
-                <TabsList className="grid grid-cols-3 max-w-2xl w-full bg-transparent p-0 gap-1">
-                  <TabsTrigger 
-                    value="solved-case"
-                    className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
-                  >
-                    Solved Case
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="review"
-                    className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
-                  >
-                    Review
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="framework"
-                    className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
-                  >
-                    Framework
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+                  Solved Case
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="review"
+                  className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
+                >
+                  Review
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="framework"
+                  className="text-slate-600 hover:bg-gray-100 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg"
+                >
+                  Framework
+                </TabsTrigger>
+              </TabsList>
             </div>
 
             <div className="flex-1 flex justify-center overflow-y-auto">
@@ -148,7 +118,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
                     frameworkText={caseData.frameworkText} 
                     questions={caseData.questions}
                     caseStatement={caseStatement}
-                    conversation={caseData.conversation}
+                    conversation={caseData.conversation} // Pass conversation data here
                   />
                 </TabsContent>
               </div>
