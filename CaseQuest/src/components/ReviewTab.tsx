@@ -53,14 +53,11 @@ export const ReviewTab: React.FC<ReviewTabProps> = ({ caseData }) => {
           const overall = Math.floor((structure + problemFormulation + communication + confidence) / 4);
 
           return {
-            structuredThinking: structure,
-            businessAcumen: problemFormulation,
-            communication,
-            dataAnalysis: confidence,
-            overall,
             structure,
             problemFormulation,
+            communication,
             confidence,
+            overall,
             areasForImprovement: [
               structure < 7 ? "Work on structuring your approach more systematically" : null,
               problemFormulation < 7 ? "Ask more targeted and insightful clarifying questions" : null,
