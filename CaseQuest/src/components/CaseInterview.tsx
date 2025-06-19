@@ -3,12 +3,12 @@ import { useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
 import { CaseStatement } from './CaseStatement';
-import { QuestionPanel } from '../../CaseQuest/src/components/QuestionPanel';
-import { FrameworkModal } from '../../CaseQuest/src/components/FrameworkModal';
-import { ResultsView } from '../../CaseQuest/src/components/ResultsView';
-import { MobileCaseHeader } from '../../CaseQuest/src/components/MobileCaseHeader';
+import { QuestionPanel } from './QuestionPanel';
+import { FrameworkModal } from './FrameworkModal';
+import { ResultsView } from './ResultsView';
+import { MobileCaseHeader } from './MobileCaseHeader';
 import { Button } from '@/components/ui/button';
-import { generateResponseWithGemini } from '../../CaseQuest/src/services/geminiService';
+import { generateResponseWithGemini } from '../services/geminiService';
 
 export interface Question {
   id: number;
