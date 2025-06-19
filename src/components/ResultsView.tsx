@@ -1,11 +1,12 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { SolvedCaseTab } from './SolvedCaseTab';
-import { ReviewTab } from './ReviewTab';
-import { FrameworkTab } from './FrameworkTab';
+import { SolvedCaseTab } from '../../CaseQuest/src/components/SolvedCaseTab';
+import { ReviewTab } from '../../CaseQuest/src/components/ReviewTab';
+import { FrameworkTab } from '../../CaseQuest/src/components/FrameworkTab';
 import { Timer } from './Timer';
 import { CaseStatement } from './CaseStatement';
 import type { CaseData } from './CaseInterview';
@@ -88,7 +89,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
                 frameworkText={caseData.frameworkText} 
                 questions={caseData.questions}
                 caseStatement={caseStatement}
-                conversation={caseData.conversation} // Pass conversation data here
+                conversation={caseData.conversation}
               />
             </TabsContent>
           </Tabs>
@@ -153,7 +154,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
                     frameworkText={caseData.frameworkText} 
                     questions={caseData.questions}
                     caseStatement={caseStatement}
-                    conversation={caseData.conversation} // Pass conversation data here
+                    conversation={caseData.conversation}
                   />
                 </TabsContent>
               </div>
