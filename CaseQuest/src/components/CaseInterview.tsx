@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
 import { CaseStatement } from './CaseStatement';
@@ -36,21 +35,16 @@ export interface CaseData {
   conversation: ConversationMessage[];
 }
 
-interface CaseInterviewProps {
-  onBack: () => void;
-}
-
-export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
-  const location = useLocation();
-  const caseData = location.state?.caseData;
-  const caseId = caseData?.id || 3; // Default to Water Purifier case if no data
-  
+export const CaseInterview = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isFrameworkModalOpen, setIsFrameworkModalOpen] = useState(false);
   const [frameworkText, setFrameworkText] = useState('');
   const [isCompleted, setIsCompleted] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
+
+  // Default case ID for this standalone component
+  const caseId = 3; // Water Purifier case
 
   const caseStatement = `Your client is a water purifier manufacturer in India, focused on residential customers. The client is experiencing lower profitability (defined as EBITDA/Revenue) compared to competitors. They have hired you to analyze the issue and provide recommendations.`;
 
@@ -86,22 +80,8 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
     setConversation(prev => [...prev, { sender: 'user', message: questionText }]);
 
     try {
-      let streamedAnswer = '';
+      const geminiResponse = await generateResponseWithGemini(questionText);
       
-      const geminiResponse = await generateResponseWithGemini(
-        questionText,
-        (chunk: string) => {
-          streamedAnswer += chunk;
-          // Update the question with the streaming response
-          setQuestions(prev => prev.map(q => 
-            q.id === tempId 
-              ? { ...q, answer: streamedAnswer, isLoading: true }
-              : q
-          ));
-        }
-      );
-      
-      // Final update with complete response and evaluation
       const newQuestion: Question = {
         id: tempId,
         text: questionText,
@@ -161,21 +141,6 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-        <div className="hidden lg:flex bg-white border-b px-4 py-3 items-center justify-between sticky top-0 z-20">
-            <Button 
-                variant="outline" 
-                onClick={onBack}
-                className="p-1"
-            >
-                <div className="rounded">
-                    <ArrowLeft className="h-4 w-4" />
-                </div>
-            </Button>
-            <h1 className="text-xl font-semibold text-center">Case Practice: Water Purifier</h1>
-            <div className="w-36"></div>
-        </div>
-
-      {/* Mobile Layout */}
       <div className="block lg:hidden h-screen flex flex-col">
         <MobileCaseHeader 
           statement={caseStatement}
@@ -184,15 +149,17 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
           onTimeUpdate={onTimeUpdate}
           isCompleted={isCompleted}
           questionCount={questions.length}
-          onBack={onBack}
+          onBack={handleBack}
         />
 
-        <QuestionPanel 
-          questions={questions}
-          onAddQuestion={handleAddQuestion}
-          onUpdateFeedback={handleUpdateFeedback}
-          maxQuestions={10}
-        />
+        <div className="flex-1 overflow-y-auto">
+          <QuestionPanel 
+            questions={questions}
+            onAddQuestion={handleAddQuestion}
+            onUpdateFeedback={handleUpdateFeedback}
+            maxQuestions={10}
+          />
+        </div>
         
         {canSubmitFramework && (
           <div className="p-3 border-t border-gray-200 bg-white">
@@ -206,15 +173,16 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
         )}
       </div>
 
-      {/* Desktop Layout */}
-      <div className="hidden lg:flex h-[calc(100vh-61px)]">
+      <div className="hidden lg:flex h-screen">
         <div className="flex-1 bg-white border-r border-gray-200 flex flex-col">
-          <QuestionPanel 
-            questions={questions}
-            onAddQuestion={handleAddQuestion}
-            onUpdateFeedback={handleUpdateFeedback}
-            maxQuestions={10}
-          />
+          <div className="flex-1 overflow-y-auto">
+            <QuestionPanel 
+              questions={questions}
+              onAddQuestion={handleAddQuestion}
+              onUpdateFeedback={handleUpdateFeedback}
+              maxQuestions={10}
+            />
+          </div>
           
           {canSubmitFramework && (
             <div className="p-6 border-t border-gray-200 bg-white">
