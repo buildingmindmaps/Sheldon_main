@@ -1,7 +1,5 @@
 
-import { ReviewScores as ImportedReviewScores, FrameworkAnalysis as ImportedFrameworkAnalysis } from '@/integrations/supabase/types';
-
-// Local type definitions (renamed to avoid conflicts)
+// Local type definitions
 export interface LocalReviewScores {
   clarity: number;
   structure: number;
