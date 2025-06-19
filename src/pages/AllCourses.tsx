@@ -4,6 +4,7 @@ import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useCaseProgress } from '@/hooks/useCaseProgress';
 import {
     Clock,
     Star,
@@ -19,7 +20,9 @@ import {
     Calculator,
     LayoutGrid,
     Target,
-    Workflow
+    Workflow,
+    Lock,
+    CheckCircle
 } from 'lucide-react';
 
 // Data for sprints and courses
@@ -119,11 +122,24 @@ export default function AllCourses() {
     );
 }
 
-// Case Practice Page
+// Case Practice Page - UPDATED
 export const CasePracticePage = () => {
     const navigate = useNavigate();
     const sprintData = coursesData[0]; 
     const [selectedCase, setSelectedCase] = useState(caseStudiesData[0]);
+    const { isCaseUnlocked, isCaseCompleted } = useCaseProgress();
+
+    const handleCaseSelect = (caseItem: any) => {
+        if (isCaseUnlocked(caseItem.id)) {
+            setSelectedCase(caseItem);
+        }
+    };
+
+    const handleStartSprint = () => {
+        if (isCaseUnlocked(selectedCase.id)) {
+            navigate('/all-courses/case-interview');
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -135,7 +151,6 @@ export const CasePracticePage = () => {
                             <ArrowLeft className="h-4 w-4" />
                         </div>
                     </Button>
-                    {/* Added heading for page identification */}
                     <h1 className="text-3xl font-bold text-gray-900 mb-8">Case Practice</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
@@ -144,7 +159,21 @@ export const CasePracticePage = () => {
                                     <div className="flex items-start">
                                         <div className="p-4 bg-gray-100 rounded-lg mr-4">{selectedCase.icon}</div>
                                         <div>
-                                            {selectedCase.badge && <Badge className="mb-2 bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedCase.badge}</Badge>}
+                                            <div className="flex items-center gap-2 mb-2">
+                                                {selectedCase.badge && <Badge className="bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedCase.badge}</Badge>}
+                                                {isCaseCompleted(selectedCase.id) && (
+                                                    <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                                                        <CheckCircle className="w-3 h-3 mr-1" />
+                                                        Completed
+                                                    </Badge>
+                                                )}
+                                                {!isCaseUnlocked(selectedCase.id) && (
+                                                    <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">
+                                                        <Lock className="w-3 h-3 mr-1" />
+                                                        Locked
+                                                    </Badge>
+                                                )}
+                                            </div>
                                             <CardTitle className="text-2xl font-bold mb-2">{selectedCase.title}</CardTitle>
                                             <CardDescription className="text-base text-gray-700 mb-4">{selectedCase.description}</CardDescription>
                                             <div className="flex flex-wrap gap-2 mt-4">
@@ -156,8 +185,23 @@ export const CasePracticePage = () => {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex justify-center my-4">
-                                        <Button className="bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 px-8 rounded-lg" onClick={() => navigate('/all-courses/case-interview')}>
-                                            Start Sprint
+                                        <Button 
+                                            className={`font-medium py-3 px-8 rounded-lg ${
+                                                isCaseUnlocked(selectedCase.id) 
+                                                    ? "bg-[#a3e635] hover:bg-[#84cc16] text-black" 
+                                                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                            }`}
+                                            onClick={handleStartSprint}
+                                            disabled={!isCaseUnlocked(selectedCase.id)}
+                                        >
+                                            {!isCaseUnlocked(selectedCase.id) ? (
+                                                <>
+                                                    <Lock className="w-4 h-4 mr-2" />
+                                                    Complete Previous Case
+                                                </>
+                                            ) : (
+                                                "Start Sprint"
+                                            )}
                                         </Button>
                                     </div>
                                 </CardContent>
@@ -165,27 +209,59 @@ export const CasePracticePage = () => {
 
                             <h2 className="text-xl font-bold mb-4">Profitability: Case Practice</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                {caseStudiesData.map((item) => (
-                                    <Card 
-                                      key={item.id} 
-                                      className={`bg-white hover:shadow-md transition-shadow cursor-pointer ${selectedCase.id === item.id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'}`}
-                                      onClick={() => setSelectedCase(item)}
-                                    >
-                                        <CardHeader className="pb-3">
-                                            <div className="flex items-start justify-between mb-2">
-                                                <div className="p-3 bg-gray-100 rounded-lg">{item.icon}</div>
-                                                {item.badge && <Badge className={item.badge === 'Popular' ? 'bg-lime-100 text-lime-700' : 'bg-blue-100 text-blue-700'}>{item.badge}</Badge>}
-                                            </div>
-                                            <CardTitle className="text-base font-semibold">{item.title}</CardTitle>
-                                        </CardHeader>
-                                        <CardFooter className="pt-0 pb-3">
-                                            <div className="flex items-center gap-2 text-xs text-gray-500">
-                                                <Badge variant="outline" className="font-normal">{item.level}</Badge>
-                                                <Badge variant="outline" className="font-normal flex items-center gap-1"><Clock className="h-3 w-3" />{item.hours}</Badge>
-                                            </div>
-                                        </CardFooter>
-                                    </Card>
-                                ))}
+                                {caseStudiesData.map((item) => {
+                                    const isUnlocked = isCaseUnlocked(item.id);
+                                    const isCompleted = isCaseCompleted(item.id);
+                                    const isSelected = selectedCase.id === item.id;
+                                    
+                                    return (
+                                        <Card 
+                                            key={item.id} 
+                                            className={`transition-all cursor-pointer ${
+                                                isSelected ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'
+                                            } ${
+                                                isUnlocked ? 'bg-white hover:shadow-md' : 'bg-gray-50 opacity-75'
+                                            }`}
+                                            onClick={() => handleCaseSelect(item)}
+                                        >
+                                            <CardHeader className="pb-3">
+                                                <div className="flex items-start justify-between mb-2">
+                                                    <div className={`p-3 rounded-lg relative ${isUnlocked ? 'bg-gray-100' : 'bg-gray-200'}`}>
+                                                        {item.icon}
+                                                        {!isUnlocked && (
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-75 rounded-lg">
+                                                                <Lock className="w-4 h-4 text-gray-500" />
+                                                            </div>
+                                                        )}
+                                                        {isCompleted && (
+                                                            <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1">
+                                                                <CheckCircle className="w-3 h-3 text-white" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex flex-col gap-1">
+                                                        {item.badge && <Badge className={item.badge === 'Popular' ? 'bg-lime-100 text-lime-700' : 'bg-blue-100 text-blue-700'}>{item.badge}</Badge>}
+                                                        {isCompleted && (
+                                                            <Badge className="bg-green-100 text-green-700 text-xs">
+                                                                <CheckCircle className="w-2 h-2 mr-1" />
+                                                                Done
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <CardTitle className={`text-base font-semibold ${!isUnlocked ? 'text-gray-500' : ''}`}>
+                                                    {item.title}
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardFooter className="pt-0 pb-3">
+                                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                    <Badge variant="outline" className="font-normal">{item.level}</Badge>
+                                                    <Badge variant="outline" className="font-normal flex items-center gap-1"><Clock className="h-3 w-3" />{item.hours}</Badge>
+                                                </div>
+                                            </CardFooter>
+                                        </Card>
+                                    );
+                                })}
                             </div>
                         </div>
                         <div className="lg:col-span-1">

@@ -1,47 +1,38 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { auth, onAuthStateChanged, User } from './firebase';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { auth } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface AuthContextType {
-  currentUser: User | null;
+  user: any;
   loading: boolean;
-  intended: string | null;
-  setIntended: (path: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [intended, setIntended] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+      setUser(user);
       setLoading(false);
     });
 
     return unsubscribe;
   }, []);
 
-  const value = {
-    currentUser,
-    loading,
-    intended,
-    setIntended,
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, loading }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}
+};

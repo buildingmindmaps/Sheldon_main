@@ -8,6 +8,7 @@ import { ResultsView } from '../../CaseQuest/src/components/ResultsView';
 import { MobileCaseHeader } from '../../CaseQuest/src/components/MobileCaseHeader';
 import { Button } from '@/components/ui/button';
 import { generateResponseWithGemini } from '../../CaseQuest/src/services/geminiService';
+import { useCaseProgress } from '@/hooks/useCaseProgress';
 
 export interface Question {
   id: number;
@@ -46,6 +47,8 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
+
+  const { markCaseCompleted } = useCaseProgress();
 
   const caseStatement = `Your client is a water purifier manufacturer in India, focused on residential customers. The client is experiencing lower profitability (defined as EBITDA/Revenue) compared to competitors. They have hired you to analyze the issue and provide recommendations.`;
 
@@ -116,6 +119,9 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
     setFrameworkText(framework);
     setIsCompleted(true);
     setIsFrameworkModalOpen(false);
+    
+    // Mark the current case as completed (assuming Water Purifier case with id 3)
+    markCaseCompleted(3);
   };
 
   const canSubmitFramework = questions.length >= 2 || questions.length >= 10;
