@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
@@ -44,6 +43,9 @@ export const CaseInterview = () => {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
 
+  // Default case ID for this standalone component
+  const caseId = 3; // Water Purifier case
+
   const caseStatement = `Your client is a water purifier manufacturer in India, focused on residential customers. The client is experiencing lower profitability (defined as EBITDA/Revenue) compared to competitors. They have hired you to analyze the issue and provide recommendations.`;
 
   const caseInstructions = [
@@ -55,7 +57,6 @@ export const CaseInterview = () => {
     "Time management is key. Allocate your time wisely across different phases of the case."
   ];
 
-  // Simple callback that updates the time with the new number
   const onTimeUpdate = useCallback((newTime: number) => {
     setTimeElapsed(newTime);
   }, []);
@@ -126,11 +127,12 @@ export const CaseInterview = () => {
     return (
       <ResultsView 
         caseData={{
+          id: caseId,
           questions,
           timeElapsed,
           frameworkText,
           isCompleted: true,
-          conversation, // Pass the conversation array to ResultsView
+          conversation,
         }}
         caseStatement={caseStatement}
       />
@@ -139,9 +141,7 @@ export const CaseInterview = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Mobile Layout */}
       <div className="block lg:hidden h-screen flex flex-col">
-        {/* New Mobile Header with Timer, Case Statement dropdown, and Info button */}
         <MobileCaseHeader 
           statement={caseStatement}
           instructions={caseInstructions}
@@ -152,7 +152,6 @@ export const CaseInterview = () => {
           onBack={handleBack}
         />
 
-        {/* Questions Panel - Takes remaining space */}
         <div className="flex-1 overflow-y-auto">
           <QuestionPanel 
             questions={questions}
@@ -162,7 +161,6 @@ export const CaseInterview = () => {
           />
         </div>
         
-        {/* Framework Button with reduced padding */}
         {canSubmitFramework && (
           <div className="p-3 border-t border-gray-200 bg-white">
             <Button 
@@ -175,9 +173,7 @@ export const CaseInterview = () => {
         )}
       </div>
 
-      {/* Desktop Layout - Unchanged */}
       <div className="hidden lg:flex h-screen">
-        {/* Left Panel - Questions with dedicated scrollbar */}
         <div className="flex-1 bg-white border-r border-gray-200 flex flex-col">
           <div className="flex-1 overflow-y-auto">
             <QuestionPanel 
@@ -188,7 +184,6 @@ export const CaseInterview = () => {
             />
           </div>
           
-          {/* Framework Button */}
           {canSubmitFramework && (
             <div className="p-6 border-t border-gray-200 bg-white">
               <Button 
@@ -202,7 +197,6 @@ export const CaseInterview = () => {
           )}
         </div>
 
-        {/* Right Panel - Timer, Case Statement, Instructions */}
         <div className="w-96 bg-gray-50 p-6 flex flex-col">
           <Timer 
             timeElapsed={timeElapsed}
@@ -217,7 +211,6 @@ export const CaseInterview = () => {
         </div>
       </div>
 
-      {/* Framework Modal */}
       <FrameworkModal 
         isOpen={isFrameworkModalOpen}
         onClose={() => setIsFrameworkModalOpen(false)}

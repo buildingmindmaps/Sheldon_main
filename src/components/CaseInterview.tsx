@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
 import { CaseStatement } from './CaseStatement';
@@ -40,6 +41,10 @@ interface CaseInterviewProps {
 }
 
 export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
+  const location = useLocation();
+  const caseData = location.state?.caseData;
+  const caseId = caseData?.id || 3; // Default to Water Purifier case if no data
+  
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isFrameworkModalOpen, setIsFrameworkModalOpen] = useState(false);
   const [frameworkText, setFrameworkText] = useState('');
@@ -124,6 +129,7 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
     return (
       <ResultsView 
         caseData={{
+          id: caseId,
           questions,
           timeElapsed,
           frameworkText,
@@ -148,7 +154,7 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
                 </div>
             </Button>
             <h1 className="text-xl font-semibold text-center">Case Practice: Water Purifier</h1>
-            <div className="w-36"></div> {/* Spacer to balance header */}
+            <div className="w-36"></div>
         </div>
 
       {/* Mobile Layout */}
