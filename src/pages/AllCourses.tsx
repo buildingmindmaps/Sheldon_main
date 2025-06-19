@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavBar } from '@/components/NavBar';
@@ -54,15 +55,11 @@ const coursesData = [
     }
 ];
 
-// Updated case studies data with proper locking logic
-const getInitialCaseStudiesData = () => {
-    const completedCases = JSON.parse(localStorage.getItem('completedCases') || '[]');
-    return [
-        { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: <Droplet className="w-6 h-6" />, isLocked: false },
-        { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: <DoorOpen className="w-6 h-6" />, isLocked: !completedCases.includes(3) },
-        { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: <Package className="w-6 h-6" />, isLocked: !completedCases.includes(4) }
-    ];
-};
+const initialCaseStudiesData = [
+    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: <Droplet className="w-6 h-6" />, isLocked: false },
+    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: <DoorOpen className="w-6 h-6" />, isLocked: true },
+    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: <Package className="w-6 h-6" />, isLocked: true }
+];
 
 const courseOptionsData = [
     { id: 6, title: "SWOT Analysis", description: "Map your strengths, weaknesses, opportunities, and threats in a simple 2x2 grid.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <RefreshCw className="w-6 h-6" /> },
@@ -124,32 +121,23 @@ export default function AllCourses() {
     );
 }
 
-// Case Practice Page - MODIFIED with improved locking system
+// Case Practice Page - MODIFIED with locking system
 export const CasePracticePage = () => {
     const navigate = useNavigate();
     const sprintData = coursesData[0]; 
     
-    // State management for case studies with locking that checks localStorage
-    const [caseStudiesData, setCaseStudiesData] = useState(getInitialCaseStudiesData());
+    // State management for case studies with locking
+    const [caseStudiesData, setCaseStudiesData] = useState(initialCaseStudiesData);
     const [selectedCase, setSelectedCase] = useState(caseStudiesData.find(c => !c.isLocked) || caseStudiesData[0]);
 
     // Function to handle case completion and unlock next case
     const handleCaseCompletion = (completedCaseId: number) => {
-        // Mark this case as completed in localStorage
-        const completedCases = JSON.parse(localStorage.getItem('completedCases') || '[]');
-        if (!completedCases.includes(completedCaseId)) {
-            completedCases.push(completedCaseId);
-            localStorage.setItem('completedCases', JSON.stringify(completedCases));
-        }
-
-        // Update the case studies data to unlock the next case
         const currentIndex = caseStudiesData.findIndex(c => c.id === completedCaseId);
         if (currentIndex !== -1 && currentIndex < caseStudiesData.length - 1) {
             setCaseStudiesData(prev => prev.map((caseStudy, index) => 
                 index === currentIndex + 1 ? { ...caseStudy, isLocked: false } : caseStudy
             ));
         }
-        
         // Navigate to the case interview
         navigate('/all-courses/case-interview');
     };
@@ -160,17 +148,6 @@ export const CasePracticePage = () => {
             setSelectedCase(caseStudy);
         }
     };
-
-    // Check if user returns from completing a case and refresh the data
-    React.useEffect(() => {
-        const refreshedData = getInitialCaseStudiesData();
-        setCaseStudiesData(refreshedData);
-        // Update selected case if it becomes unlocked
-        const currentSelected = refreshedData.find(c => c.id === selectedCase.id);
-        if (currentSelected) {
-            setSelectedCase(currentSelected);
-        }
-    }, []);
 
     return (
         <div className="min-h-screen bg-gray-50">
