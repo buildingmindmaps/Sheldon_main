@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
@@ -23,6 +22,23 @@ import {
     Workflow,
     Lock
 } from 'lucide-react';
+// Icon mapping for string-based rendering
+const iconMap: Record<string, JSX.Element> = {
+    Droplet: <Droplet className="w-6 h-6" />,
+    DoorOpen: <DoorOpen className="w-6 h-6" />,
+    Package: <Package className="w-6 h-6" />,
+    RefreshCw: <RefreshCw className="w-6 h-6" />,
+    Settings: <Settings className="w-6 h-6" />,
+    TrendingUp: <TrendingUp className="w-6 h-6" />,
+    Calculator: <Calculator className="w-6 h-6" />,
+    LayoutGrid: <LayoutGrid className="w-6 h-6" />,
+    Target: <Target className="w-6 h-6" />,
+    Workflow: <Workflow className="w-6 h-6" />,
+    DollarSign: <DollarSign className="w-6 h-6" />,
+    BarChart2: <BarChart2 className="w-6 h-6" />,
+};
+
+const getIcon = (name: string) => iconMap[name] || <Package className="w-6 h-6" />;
 
 // Data for sprints and courses
 const coursesData = [
@@ -32,7 +48,7 @@ const coursesData = [
         route: "/all-courses/case-practice",
         description: "Learn to break down business problems with a structured approach that balances opportunity and risk.",
         badge: "Popular",
-        icon: <BarChart2 className="w-6 h-6" />,
+        icon: "BarChart2",
         detailedDescription: "Master the frameworks needed to solve case studies effectively with a structured approach.",
         features: ["Water Purifier", "Market Entry", "XYZ"],
         reviews: [
@@ -46,7 +62,7 @@ const coursesData = [
         route: "/all-courses/business-frameworks",
         description: "Master the Theory Knowledge for Business Case Studies.",
         badge: "New",
-        icon: <DollarSign className="w-6 h-6" />,
+        icon: "DollarSign",
         detailedDescription: "Build comprehensive business knowledge with our structured courses on various decision frameworks.",
         features: ["Platform Philosophy", "Operational Decision Frameworks", "Financial Decision Frameworks", "Organizational Decision Frameworks"],
         reviews: [
@@ -56,21 +72,23 @@ const coursesData = [
 ];
 
 const initialCaseStudiesData = [
-    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: <Droplet className="w-6 h-6" />, isLocked: false },
-    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: <DoorOpen className="w-6 h-6" />, isLocked: true },
-    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: <Package className="w-6 h-6" />, isLocked: true }
+    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: "Droplet", isLocked: false },
+    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: "DoorOpen", isLocked: true },
+    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: "Package", isLocked: true }
 ];
 
+
 const courseOptionsData = [
-    { id: 6, title: "SWOT Analysis", description: "Map your strengths, weaknesses, opportunities, and threats in a simple 2x2 grid.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <RefreshCw className="w-6 h-6" /> },
-    { id: 7, title: "Porter's Five Forces", description: "Check if your industry is a battlefield or a goldmine by analyzing five competitive pressures.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "", icon: <Settings className="w-6 h-6" /> },
-    { id: 8, title: "BCG Matrix", description: " Categorize your products as Stars, Cash Cows, Question Marks, or Dogs to decide where to invest. ", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "New", icon: <TrendingUp className="w-6 h-6" /> },
-    { id: 9, title: "Ansoff Matrix", description: "Four growth paths - sell more to current customers, find new customers, create new products, or do something completely different.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <Calculator className="w-6 h-6" /> },
-    { id: 10, title: "Lean Six Sigma", description: "Eliminate waste (Lean) and reduce variation (Six Sigma) to improve processes.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <LayoutGrid className="w-6 h-6" /> },
-    { id: 11, title: "Theory of Constraints", description: " Find the bottleneck that limits your entire system's performance", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <Target className="w-6 h-6" /> },
-    { id: 12, title: "5S Methodology", description: " Sort, Set in order, Shine, Standardize, Sustain for organized, efficient workspaces.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <Settings className="w-6 h-6" /> },
-    { id: 13, title: "Kaizen", description: " Continuous small improvements add up to dramatic results over time.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: <Workflow className="w-6 h-6" /> },
+    { id: 6, title: "SWOT Analysis", description: "Map your strengths, weaknesses, opportunities, and threats in a simple 2x2 grid.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "RefreshCw" },
+    { id: 7, title: "Porter's Five Forces", description: "Check if your industry is a battlefield or a goldmine by analyzing five competitive pressures.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "", icon: "Settings" },
+    { id: 8, title: "BCG Matrix", description: "Categorize your products as Stars, Cash Cows, Question Marks, or Dogs to decide where to invest.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "New", icon: "TrendingUp" },
+    { id: 9, title: "Ansoff Matrix", description: "Four growth paths - sell more to current customers, find new customers, create new products, or do something completely different.", level: "Strategic Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "Calculator" },
+    { id: 10, title: "Lean Six Sigma", description: "Eliminate waste (Lean) and reduce variation (Six Sigma) to improve processes.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "LayoutGrid" },
+    { id: 11, title: "Theory of Constraints", description: "Find the bottleneck that limits your entire system's performance", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "Target" },
+    { id: 12, title: "5S Methodology", description: "Sort, Set in order, Shine, Standardize, Sustain for organized, efficient workspaces.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "Settings" },
+    { id: 13, title: "Kaizen", description: "Continuous small improvements add up to dramatic results over time.", level: "Operational Decision Frameworks", hours: "9 mins", badge: "Popular", icon: "Workflow" },
 ];
+
 
 // Helper function to render stars
 const renderStars = (rating: number) => (
@@ -101,7 +119,7 @@ export default function AllCourses() {
                             >
                                 <CardHeader className="pb-3">
                                     <div className="flex items-start justify-between mb-2">
-                                        <div className="p-3 bg-gray-100 rounded-lg">{course.icon}</div>
+                                        <div className="p-3 bg-gray-100 rounded-lg">{getIcon(course.icon)}</div>
                                         {course.badge && <Badge className={course.badge === 'Popular' ? 'bg-[#a3e635]/20 text-[#65a30d]' : 'bg-blue-100 text-blue-700'}>{course.badge}</Badge>}
                                     </div>
                                     <CardTitle className="text-base font-semibold">{course.title}</CardTitle>
@@ -121,28 +139,44 @@ export default function AllCourses() {
     );
 }
 
-// Case Practice Page - MODIFIED with locking system
+// Case Practice Page - CORRECTED to prevent render crash
 export const CasePracticePage = () => {
     const navigate = useNavigate();
-    const sprintData = coursesData[0]; 
-    
-    // State management for case studies with locking
-    const [caseStudiesData, setCaseStudiesData] = useState(initialCaseStudiesData);
-    const [selectedCase, setSelectedCase] = useState(caseStudiesData.find(c => !c.isLocked) || caseStudiesData[0]);
+    const sprintData = coursesData[0];
 
-    // Function to handle case completion and unlock next case
-    const handleCaseCompletion = (completedCaseId: number) => {
-        const currentIndex = caseStudiesData.findIndex(c => c.id === completedCaseId);
-        if (currentIndex !== -1 && currentIndex < caseStudiesData.length - 1) {
-            setCaseStudiesData(prev => prev.map((caseStudy, index) => 
-                index === currentIndex + 1 ? { ...caseStudy, isLocked: false } : caseStudy
-            ));
+    // FIX: First, prepare the initial data from a single source.
+    const getInitialData = () => {
+        try {
+            const storedCases = localStorage.getItem('caseStudiesData');
+            if (storedCases) {
+                return JSON.parse(storedCases);
+            }
+        } catch (error) {
+            console.error("Error parsing case studies from localStorage. Resetting.", error);
         }
-        // Navigate to the case interview
-        navigate('/all-courses/case-interview');
+        // If try block fails or there are no stored cases, initialize storage and return default data.
+        localStorage.setItem('caseStudiesData', JSON.stringify(initialCaseStudiesData));
+        return initialCaseStudiesData;
+    };
+    
+    // Call the function once to get the data for this render.
+    const initialData = getInitialData();
+
+    // Now, use this single, reliable data source to initialize your states.
+    const [caseStudiesData, setCaseStudiesData] = useState(initialData);
+    const [selectedCase, setSelectedCase] = useState(
+        // Find the selected case from the 'initialData' variable, not from another state.
+        () => initialData.find((c: any) => !c.isLocked) || initialData[0]
+    );
+
+    // Handle starting a sprint
+    const handleStartSprint = () => {
+        if (!selectedCase.isLocked) {
+            navigate('/all-courses/case-interview', { state: { caseData: selectedCase } });
+        }
     };
 
-    // Function to handle case selection (only for unlocked cases)
+    // Function to handle case selection from the list
     const handleCaseSelection = (caseStudy: typeof selectedCase) => {
         if (!caseStudy.isLocked) {
             setSelectedCase(caseStudy);
@@ -159,14 +193,13 @@ export const CasePracticePage = () => {
                             <ArrowLeft className="h-4 w-4" />
                         </div>
                     </Button>
-                    {/* Added heading for page identification */}
                     <h1 className="text-3xl font-bold text-gray-900 mb-8">Case Practice</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
                             <Card className="bg-white border mb-8">
                                 <CardHeader>
                                     <div className="flex items-start">
-                                        <div className="p-4 bg-gray-100 rounded-lg mr-4">{selectedCase.icon}</div>
+                                        <div className="p-4 bg-gray-100 rounded-lg mr-4">{getIcon(selectedCase.icon)}</div>
                                         <div>
                                             {selectedCase.badge && <Badge className="mb-2 bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedCase.badge}</Badge>}
                                             <CardTitle className="text-2xl font-bold mb-2">{selectedCase.title}</CardTitle>
@@ -186,7 +219,7 @@ export const CasePracticePage = () => {
                                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                                                     : 'bg-[#a3e635] hover:bg-[#84cc16] text-black'
                                             }`}
-                                            onClick={() => !selectedCase.isLocked && handleCaseCompletion(selectedCase.id)}
+                                            onClick={handleStartSprint}
                                             disabled={selectedCase.isLocked}
                                         >
                                             {selectedCase.isLocked ? 'Locked' : 'Start Sprint'}
@@ -199,15 +232,15 @@ export const CasePracticePage = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {caseStudiesData.map((item) => (
                                     <Card 
-                                      key={item.id} 
-                                      className={`bg-white transition-shadow relative ${
-                                          item.isLocked 
-                                              ? 'opacity-50 cursor-not-allowed' 
-                                              : 'hover:shadow-md cursor-pointer'
-                                      } ${
-                                          selectedCase.id === item.id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'
-                                      }`}
-                                      onClick={() => handleCaseSelection(item)}
+                                        key={item.id} 
+                                        className={`bg-white transition-shadow relative ${
+                                            item.isLocked 
+                                                ? 'opacity-50 cursor-not-allowed' 
+                                                : 'hover:shadow-md cursor-pointer'
+                                        } ${
+                                            selectedCase.id === item.id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'
+                                        }`}
+                                        onClick={() => handleCaseSelection(item)}
                                     >
                                         {item.isLocked && (
                                             <div className="absolute top-2 right-2 z-10">
@@ -218,7 +251,7 @@ export const CasePracticePage = () => {
                                         )}
                                         <CardHeader className="pb-3">
                                             <div className="flex items-start justify-between mb-2">
-                                                <div className="p-3 bg-gray-100 rounded-lg">{item.icon}</div>
+                                                <div className="p-3 bg-gray-100 rounded-lg">{getIcon(item.icon)}</div>
                                                 {item.badge && <Badge className={item.badge === 'Popular' ? 'bg-lime-100 text-lime-700' : 'bg-blue-100 text-blue-700'}>{item.badge}</Badge>}
                                             </div>
                                             <CardTitle className="text-base font-semibold">{item.title}</CardTitle>
@@ -259,20 +292,20 @@ export const CasePracticePage = () => {
     );
 };
 
-// 100BusinessFrameworksPage - UNMODIFIED
+// BusinessFrameworksPage - UNMODIFIED
 export const BusinessFrameworksPage = () => {
     const navigate = useNavigate();
-    const sprintData = coursesData[1]; // General data for the "Courses" sprint (for reviews)
-    const [selectedCourse, setSelectedCourse] = useState(courseOptionsData[0]); // State for selected course
+    const sprintData = coursesData[1];
+    const [selectedCourse, setSelectedCourse] = useState(courseOptionsData[0]);
 
-const handleStartSprint = () => {
-        // Navigate to the SWOT app only if that course is selected
+    const handleStartSprint = () => {
         if (selectedCourse.title === 'SWOT Analysis') {
             navigate('/all-courses/business-frameworks/swot-analysis');
         } else {
             alert(`Navigation for "${selectedCourse.title}" is not implemented yet.`);
         }
     };
+
     return (
         <div className="min-h-screen bg-gray-50">
             <NavBar />
@@ -283,15 +316,13 @@ const handleStartSprint = () => {
                             <ArrowLeft className="h-4 w-4" />
                         </div>
                     </Button>
-                    {/* Added heading for page identification */}
                     <h1 className="text-3xl font-bold text-gray-900 mb-8">100 Business Frameworks</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
-                            {/* Main card, now displays the content of the selectedCourse */}
                             <Card className="bg-white border mb-8">
                                 <CardHeader>
                                     <div className="flex items-start">
-                                        <div className="p-4 bg-gray-100 rounded-lg mr-4">{selectedCourse.icon}</div>
+                                        <div className="p-4 bg-gray-100 rounded-lg mr-4">{getIcon(selectedCourse.icon)}</div>
                                         <div>
                                             {selectedCourse.badge && <Badge className="mb-2 bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedCourse.badge}</Badge>}
                                             <CardTitle className="text-2xl font-bold mb-2">{selectedCourse.title}</CardTitle>
@@ -304,11 +335,9 @@ const handleStartSprint = () => {
                                     </div>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="flex justify-center my-4">
-                                         <Button className="bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 px-8 rounded-lg" onClick={handleStartSprint}>
-                                            Start Sprint
-                                        </Button>
-                                    </div>
+                                     <Button className="bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 px-8 rounded-lg" onClick={handleStartSprint}>
+                                        Start Sprint
+                                    </Button>
                                 </CardContent>
                             </Card>
                             
@@ -316,13 +345,13 @@ const handleStartSprint = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {courseOptionsData.map((item) => (
                                     <Card 
-                                      key={item.id} 
-                                      className={`bg-white hover:shadow-md transition-shadow cursor-pointer ${selectedCourse.id === item.id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'}`}
-                                      onClick={() => setSelectedCourse(item)}
+                                        key={item.id} 
+                                        className={`bg-white hover:shadow-md transition-shadow cursor-pointer ${selectedCourse.id === item.id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'}`}
+                                        onClick={() => setSelectedCourse(item)}
                                     >
                                         <CardHeader className="pb-3">
                                             <div className="flex items-start justify-between mb-2">
-                                                <div className="p-3 bg-gray-100 rounded-lg">{item.icon}</div>
+                                                <div className="p-3 bg-gray-100 rounded-lg">{getIcon(item.icon)}</div>
                                                 {item.badge && <Badge className={item.badge === 'Popular' ? 'bg-lime-100 text-lime-700' : 'bg-blue-100 text-blue-700'}>{item.badge}</Badge>}
                                             </div>
                                             <CardTitle className="text-base font-semibold">{item.title}</CardTitle>
@@ -330,8 +359,8 @@ const handleStartSprint = () => {
                                         <CardFooter className="pt-0 pb-3">
                                             <div className="flex items-center gap-2 text-xs text-gray-500">
                                                 <ul>
-                                                <li><Badge variant="outline" className="font-normal flex items-center gap-1 whitespace-nowrap">{item.level}</Badge></li>
-                                                <li><Badge variant="outline" className="font-normal flex items-center gap-1 whitespace-nowrap"><Clock className="h-3 w-3" />{item.hours}</Badge></li>
+                                                    <li><Badge variant="outline" className="font-normal flex items-center gap-1 whitespace-nowrap">{item.level}</Badge></li>
+                                                    <li><Badge variant="outline" className="font-normal flex items-center gap-1 whitespace-nowrap"><Clock className="h-3 w-3" />{item.hours}</Badge></li>
                                                 </ul>
                                             </div>
                                         </CardFooter>
@@ -339,7 +368,6 @@ const handleStartSprint = () => {
                                 ))}
                             </div>
                         </div>
-                        {/* User reviews for the overall  "Business Frameworks" sprint */}
                         <div className="lg:col-span-1">
                             <Card className="bg-white border">
                                 <CardHeader><CardTitle className="text-lg font-bold">User Reviews</CardTitle></CardHeader>
