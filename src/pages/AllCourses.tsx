@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
@@ -11,37 +12,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from "@/components/ui/badge";
 
 import {
-
-    Clock,
-
-    Star,
-
-    ArrowLeft,
-
-    BarChart2,
-
-    DollarSign,
-
-    Droplet,
-
-    DoorOpen,
-
-    Package,
-
-    RefreshCw,
-
-    Settings,
-
-    TrendingUp,
-
-    Calculator,
-
-    LayoutGrid,
-
-    Target,
-
-    Workflow
-
+    Clock,
+    Star,
+    ArrowLeft,
+    BarChart2,
+    DollarSign,
+    Droplet,
+    DoorOpen,
+    Package,
+    RefreshCw,
+    Settings,
+    TrendingUp,
+    Calculator,
+    LayoutGrid,
+    Target,
+    Workflow
 } from 'lucide-react';
 
 
@@ -109,13 +94,9 @@ const coursesData = [
 
 
 const caseStudiesData = [
-
-    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: <Droplet className="w-6 h-6" /> },
-
-    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: <DoorOpen className="w-6 h-6" /> },
-
-    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: <Package className="w-6 h-6" /> }
-
+    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: <Droplet className="w-6 h-6" /> },
+    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: <DoorOpen className="w-6 h-6" /> },
+    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: <Package className="w-6 h-6" /> }
 ];
 
 
@@ -241,197 +222,103 @@ export default function AllCourses() {
 
 
 // Case Practice Page
-
 export const CasePracticePage = () => {
-
-    const navigate = useNavigate();
-
-    const sprintData = coursesData[0];
-
-    const [selectedCase, setSelectedCase] = useState(caseStudiesData[0]);
-
-
-
-    return (
-
-        <div className="min-h-screen bg-gray-50">
-
-            <NavBar />
-
-            <main className="pt-20 pb-12">
-
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                    <Button variant="outline" onClick={() => navigate('/all-courses')} className="mb-2 p-1">
-
-                        <div className="rounded">
-
-                            <ArrowLeft className="h-4 w-4" />
-
-                        </div>
-
-                    </Button>
-
-                    {/* Added heading for page identification */}
-
-                    <h1 className="text-3xl font-bold text-gray-900 mb-8">Case Practice</h1>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                        <div className="lg:col-span-2">
-
-                            <Card className="bg-white border mb-8">
-
-                                <CardHeader>
-
-                                    <div className="flex items-start">
-
-                                        <div className="p-4 bg-gray-100 rounded-lg mr-4">{selectedCase.icon}</div>
-
-                                        <div>
-
-                                            {selectedCase.badge && <Badge className="mb-2 bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedCase.badge}</Badge>}
-
-                                            <CardTitle className="text-2xl font-bold mb-2">{selectedCase.title}</CardTitle>
-
-                                            <CardDescription className="text-base text-gray-700 mb-4">{selectedCase.description}</CardDescription>
-
-                                            <div className="flex flex-wrap gap-2 mt-4">
-
-                                                <Badge variant="outline" className="bg-gray-50 text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-full">{selectedCase.level}</Badge>
-
-                                                <Badge variant="outline" className="bg-gray-50 text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-full flex items-center gap-1.5"><Clock className="h-4 w-4"/>{selectedCase.hours}</Badge>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </CardHeader>
-
-                                <CardContent>
-
-                                    <div className="flex justify-center my-4">
-
-                                        <Button className="bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 px-8 rounded-lg" onClick={() => navigate('/all-courses/case-interview')}>
-
-                                            Start Sprint
-
-                                        </Button>
-
-                                    </div>
-
-                                </CardContent>
-
-                            </Card>
-
-
-
-                            <h2 className="text-xl font-bold mb-4">Profitability: Case Practice</h2>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                                {caseStudiesData.map((item) => (
-
-                                    <Card
-
-                                      key={item.id}
-
-                                      className={`bg-white hover:shadow-md transition-shadow cursor-pointer ${selectedCase.id === item.id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'}`}
-
-                                      onClick={() => setSelectedCase(item)}
-
-                                    >
-
-                                        <CardHeader className="pb-3">
-
-                                            <div className="flex items-start justify-between mb-2">
-
-                                                <div className="p-3 bg-gray-100 rounded-lg">{item.icon}</div>
-
-                                                {item.badge && <Badge className={item.badge === 'Popular' ? 'bg-lime-100 text-lime-700' : 'bg-blue-100 text-blue-700'}>{item.badge}</Badge>}
-
-                                            </div>
-
-                                            <CardTitle className="text-base font-semibold">{item.title}</CardTitle>
-
-                                        </CardHeader>
-
-                                        <CardFooter className="pt-0 pb-3">
-
-                                            <div className="flex items-center gap-2 text-xs text-gray-500">
-
-                                                <Badge variant="outline" className="font-normal">{item.level}</Badge>
-
-                                                <Badge variant="outline" className="font-normal flex items-center gap-1"><Clock className="h-3 w-3" />{item.hours}</Badge>
-
-                                            </div>
-
-                                        </CardFooter>
-
-                                    </Card>
-
-                                ))}
-
-                            </div>
-
-                        </div>
-
-                        <div className="lg:col-span-1">
-
-                            <Card className="bg-white border">
-
-                                <CardHeader><CardTitle className="text-lg font-bold">User Reviews</CardTitle></CardHeader>
-
-                                <CardContent className="space-y-4">
-
-                                    {sprintData.reviews.map((review, idx) => (
-
-                                        <div key={idx} className="border-b pb-4 last:border-0">
-
-                                            <div className="flex items-center mb-2">
-
-                                                <img src={review.avatar} alt={review.name} className="h-10 w-10 rounded-full object-cover mr-3" />
-
-                                                <div>
-
-                                                    <div className="font-semibold">{review.name}</div>
-
-                                                    <div className="flex">{renderStars(review.rating)}</div>
-
-                                                </div>
-
-                                            </div>
-
-                                            <p className="text-sm text-gray-600">{review.text}</p>
-
-                                        </div>
-
-                                    ))}
-
-                                </CardContent>
-
-                            </Card>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </main>
-
-        </div>
-
-    );
-
+    const navigate = useNavigate();
+    const sprintData = coursesData[0]; 
+    const [selectedCase, setSelectedCase] = useState(caseStudiesData[0]);
+
+    return (
+        <div className="min-h-screen bg-gray-50">
+            <NavBar />
+            <main className="pt-20 pb-12">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <Button variant="outline" onClick={() => navigate('/all-courses')} className="mb-2 p-1">
+                        <div className="rounded">
+                            <ArrowLeft className="h-4 w-4" />
+                        </div>
+                    </Button>
+                    {/* Added heading for page identification */}
+                    <h1 className="text-3xl font-bold text-gray-900 mb-8">Case Practice</h1>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-2">
+                            <Card className="bg-white border mb-8">
+                                <CardHeader>
+                                    <div className="flex items-start">
+                                        <div className="p-4 bg-gray-100 rounded-lg mr-4">{selectedCase.icon}</div>
+                                        <div>
+                                            {selectedCase.badge && <Badge className="mb-2 bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedCase.badge}</Badge>}
+                                            <CardTitle className="text-2xl font-bold mb-2">{selectedCase.title}</CardTitle>
+                                            <CardDescription className="text-base text-gray-700 mb-4">{selectedCase.description}</CardDescription>
+                                            <div className="flex flex-wrap gap-2 mt-4">
+                                                <Badge variant="outline" className="bg-gray-50 text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-full">{selectedCase.level}</Badge>
+                                                <Badge variant="outline" className="bg-gray-50 text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-full flex items-center gap-1.5"><Clock className="h-4 w-4"/>{selectedCase.hours}</Badge>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex justify-center my-4">
+                                        <Button className="bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 px-8 rounded-lg" onClick={() => navigate('/all-courses/case-interview')}>
+                                            Start Sprint
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <h2 className="text-xl font-bold mb-4">Profitability: Case Practice</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {caseStudiesData.map((item) => (
+                                    <Card 
+                                      key={item.id} 
+                                      className={`bg-white hover:shadow-md transition-shadow cursor-pointer ${selectedCase.id === item.id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'}`}
+                                      onClick={() => setSelectedCase(item)}
+                                    >
+                                        <CardHeader className="pb-3">
+                                            <div className="flex items-start justify-between mb-2">
+                                                <div className="p-3 bg-gray-100 rounded-lg">{item.icon}</div>
+                                                {item.badge && <Badge className={item.badge === 'Popular' ? 'bg-lime-100 text-lime-700' : 'bg-blue-100 text-blue-700'}>{item.badge}</Badge>}
+                                            </div>
+                                            <CardTitle className="text-base font-semibold">{item.title}</CardTitle>
+                                        </CardHeader>
+                                        <CardFooter className="pt-0 pb-3">
+                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                <Badge variant="outline" className="font-normal">{item.level}</Badge>
+                                                <Badge variant="outline" className="font-normal flex items-center gap-1"><Clock className="h-3 w-3" />{item.hours}</Badge>
+                                            </div>
+                                        </CardFooter>
+                                    </Card>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="lg:col-span-1">
+                            <Card className="bg-white border">
+                                <CardHeader><CardTitle className="text-lg font-bold">User Reviews</CardTitle></CardHeader>
+                                <CardContent className="space-y-4">
+                                    {sprintData.reviews.map((review, idx) => (
+                                        <div key={idx} className="border-b pb-4 last:border-0">
+                                            <div className="flex items-center mb-2">
+                                                <img src={review.avatar} alt={review.name} className="h-10 w-10 rounded-full object-cover mr-3" />
+                                                <div>
+                                                    <div className="font-semibold">{review.name}</div>
+                                                    <div className="flex">{renderStars(review.rating)}</div>
+                                                </div>
+                                            </div>
+                                            <p className="text-sm text-gray-600">{review.text}</p>
+                                        </div>
+                                    ))}
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
 };
 
 
 
 // 100BusinessFrameworksPage - MODIFIED
-
 export const BusinessFrameworksPage = () => {
 
     const navigate = useNavigate();
@@ -641,4 +528,3 @@ const handleStartSprint = () => {
     );
 
 };
-
