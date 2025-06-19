@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, ChevronDown, ChevronUp, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -70,6 +71,19 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
     setExpandedFeedback(expandedFeedback === questionId ? null : questionId);
   };
 
+  const StreamingText: React.FC<{ text: string; isStreaming: boolean }> = ({ text, isStreaming }) => {
+    return (
+      <div className="relative">
+        <p className="text-xs sm:text-sm text-gray-800 mb-3">{text}</p>
+        {isStreaming && (
+          <div className="inline-flex items-center ml-1">
+            <div className="w-1 h-4 bg-blue-500 animate-pulse"></div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Question List with dedicated scrollbar */}
@@ -93,13 +107,12 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                       <p className="text-xs sm:text-sm text-gray-800">{question.text}</p>
                     </div>
 
-                    {/* Loading Answer */}
+                    {/* Streaming Answer */}
                     <div className="bg-blue-50 rounded-lg p-4 ml-4 border-l-4 border-blue-200">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 bg-blue-400 rounded-full animate-dot-pulse"></div>
-                        <div className="w-3 h-3 bg-blue-500 rounded-full animate-dot-pulse" style={{ animationDelay: '0.2s' }}></div>
-                        <div className="w-3 h-3 bg-blue-600 rounded-full animate-dot-pulse" style={{ animationDelay: '0.4s' }}></div>
-                      </div>
+                      <StreamingText 
+                        text={question.answer} 
+                        isStreaming={question.isLoading || false} 
+                      />
                     </div>
                   </div>
                 );
