@@ -1,7 +1,8 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import mermaid from 'mermaid';
 import { generateFrameworkAnalysis, generateFlowchartVisualization, type FrameworkAnalysis } from '../services/analysisService';
-import type { Question, ConversationMessage } from '../../src/components/CaseInterview';
+import type { Question, ConversationMessage } from './CaseInterview';
 
 interface FrameworkTabProps {
   frameworkText: string;
@@ -100,7 +101,13 @@ export const FrameworkTab: React.FC<FrameworkTabProps> = ({ frameworkText, quest
     const generateAnalysis = async () => {
       setIsAnalysisLoading(true);
       try {
-        const analysisResult = await generateFrameworkAnalysis(frameworkText);
+        // Temporarily removed the 'conversation' argument to fix a build error.
+        // The underlying analysis service needs to be updated to handle it.
+        const analysisResult = await generateFrameworkAnalysis(
+          frameworkText,
+          questions,
+          caseStatement
+        );
         setAnalysis(analysisResult);
       } catch (error) {
         console.error('Error generating analysis:', error);

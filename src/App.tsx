@@ -4,11 +4,11 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
-// Auth import - using the correct AuthProvider from useAuth hook
-import { AuthProvider } from "./hooks/useAuth";
+// Auth import
+import { AuthProvider } from "./lib/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
-// Import the correct components from the main src folder
+// Assuming components are in these locations
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import IconsPlaybook from "./pages/IconsPlaybook";
@@ -19,7 +19,7 @@ import Contact from "./pages/Contact";
 import ArticlePage from "./pages/ArticlePage";
 import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
 import { CaseInterview } from "./components/CaseInterview";
-import { SWOTApp } from "./components/Interactive SWOT Analysis App";
+import {SWOTApp} from "./components/Interactive SWOT Analysis App"; // UPDATED: Import SWOTApp
 
 const queryClient = new QueryClient();
 
@@ -54,7 +54,7 @@ const CaseInterviewWrapper = () => {
   );
 };
 
-// Wrapper component for SWOTApp to handle back navigation
+// NEW: Wrapper component for SWOTApp to handle back navigation
 const SWOTAppWrapper = () => {
   const navigate = useNavigate();
   const handleBack = () => {
@@ -91,13 +91,14 @@ const App = () => (
             {/* Add new route for article slugs */}
             <Route path="/:slug" element={<ArticlePage />} />
 
-            {/* Main Courses and Sub-pages */}
+            {/* Main Sprints and Sub-pages */}
             <Route path="/all-courses" element={<AllCourses />} />
             <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
             <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
 
-            {/* Course-specific Apps */}
+            {/* Sprint-specific Apps */}
             <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
+            {/* UPDATED: Added a clean route for the SWOT Analysis App */}
             <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
 
             <Route path="*" element={<NotFound />} />
@@ -109,3 +110,4 @@ const App = () => (
 );
 
 export default App;
+

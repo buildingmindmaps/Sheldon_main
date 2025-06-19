@@ -1,14 +1,13 @@
-
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '../lib/AuthContext';
 
 export function useAuthPopup(delay: number = 5000) {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { user } = useAuth();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     // Skip popup if user is already logged in
-    if (user) return;
+    if (currentUser) return;
 
     // Check if popup has been shown before in this session
     const popupShown = sessionStorage.getItem('auth_popup_shown');
@@ -22,7 +21,7 @@ export function useAuthPopup(delay: number = 5000) {
 
       return () => clearTimeout(timer);
     }
-  }, [user, delay]);
+  }, [currentUser, delay]);
 
   return {
     showAuthModal,
