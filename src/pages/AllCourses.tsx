@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavBar } from '@/components/NavBar';
@@ -19,7 +20,8 @@ import {
     Calculator,
     LayoutGrid,
     Target,
-    Workflow
+    Workflow,
+    Lock
 } from 'lucide-react';
 
 // Data for sprints and courses
@@ -53,10 +55,10 @@ const coursesData = [
     }
 ];
 
-const caseStudiesData = [
-    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: <Droplet className="w-6 h-6" /> },
-    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: <DoorOpen className="w-6 h-6" /> },
-    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: <Package className="w-6 h-6" /> }
+const initialCaseStudiesData = [
+    { id: 3, title: "Water Purifier", description: "Analyze market opportunity and entry strategy for a new water purification technology", level: "Intermediate", hours: "10 minutes", badge: "", icon: <Droplet className="w-6 h-6" />, isLocked: false },
+    { id: 4, title: "Market Entry", description: "Evaluate expansion opportunities for a tech company entering emerging markets", level: "Beginner", hours: "10 minutes", badge: "Popular", icon: <DoorOpen className="w-6 h-6" />, isLocked: true },
+    { id: 5, title: "XYZ", description: "Solve complex business challenges with our comprehensive case methodology", level: "Advanced", hours: "10 minutes", badge: "New", icon: <Package className="w-6 h-6" />, isLocked: true }
 ];
 
 const courseOptionsData = [
@@ -119,11 +121,33 @@ export default function AllCourses() {
     );
 }
 
-// Case Practice Page
+// Case Practice Page - MODIFIED with locking system
 export const CasePracticePage = () => {
     const navigate = useNavigate();
     const sprintData = coursesData[0]; 
-    const [selectedCase, setSelectedCase] = useState(caseStudiesData[0]);
+    
+    // State management for case studies with locking
+    const [caseStudiesData, setCaseStudiesData] = useState(initialCaseStudiesData);
+    const [selectedCase, setSelectedCase] = useState(caseStudiesData.find(c => !c.isLocked) || caseStudiesData[0]);
+
+    // Function to handle case completion and unlock next case
+    const handleCaseCompletion = (completedCaseId: number) => {
+        const currentIndex = caseStudiesData.findIndex(c => c.id === completedCaseId);
+        if (currentIndex !== -1 && currentIndex < caseStudiesData.length - 1) {
+            setCaseStudiesData(prev => prev.map((caseStudy, index) => 
+                index === currentIndex + 1 ? { ...caseStudy, isLocked: false } : caseStudy
+            ));
+        }
+        // Navigate to the case interview
+        navigate('/all-courses/case-interview');
+    };
+
+    // Function to handle case selection (only for unlocked cases)
+    const handleCaseSelection = (caseStudy: typeof selectedCase) => {
+        if (!caseStudy.isLocked) {
+            setSelectedCase(caseStudy);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -156,8 +180,16 @@ export const CasePracticePage = () => {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="flex justify-center my-4">
-                                        <Button className="bg-[#a3e635] hover:bg-[#84cc16] text-black font-medium py-3 px-8 rounded-lg" onClick={() => navigate('/all-courses/case-interview')}>
-                                            Start Sprint
+                                        <Button 
+                                            className={`font-medium py-3 px-8 rounded-lg ${
+                                                selectedCase.isLocked 
+                                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                                    : 'bg-[#a3e635] hover:bg-[#84cc16] text-black'
+                                            }`}
+                                            onClick={() => !selectedCase.isLocked && handleCaseCompletion(selectedCase.id)}
+                                            disabled={selectedCase.isLocked}
+                                        >
+                                            {selectedCase.isLocked ? 'Locked' : 'Start Sprint'}
                                         </Button>
                                     </div>
                                 </CardContent>
@@ -168,9 +200,22 @@ export const CasePracticePage = () => {
                                 {caseStudiesData.map((item) => (
                                     <Card 
                                       key={item.id} 
-                                      className={`bg-white hover:shadow-md transition-shadow cursor-pointer ${selectedCase.id === item.id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'}`}
-                                      onClick={() => setSelectedCase(item)}
+                                      className={`bg-white transition-shadow relative ${
+                                          item.isLocked 
+                                              ? 'opacity-50 cursor-not-allowed' 
+                                              : 'hover:shadow-md cursor-pointer'
+                                      } ${
+                                          selectedCase.id === item.id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'
+                                      }`}
+                                      onClick={() => handleCaseSelection(item)}
                                     >
+                                        {item.isLocked && (
+                                            <div className="absolute top-2 right-2 z-10">
+                                                <div className="bg-gray-800 bg-opacity-75 rounded-full p-1">
+                                                    <Lock className="h-4 w-4 text-white" />
+                                                </div>
+                                            </div>
+                                        )}
                                         <CardHeader className="pb-3">
                                             <div className="flex items-start justify-between mb-2">
                                                 <div className="p-3 bg-gray-100 rounded-lg">{item.icon}</div>
@@ -214,7 +259,7 @@ export const CasePracticePage = () => {
     );
 };
 
-// 100BusinessFrameworksPage - MODIFIED
+// 100BusinessFrameworksPage - UNMODIFIED
 export const BusinessFrameworksPage = () => {
     const navigate = useNavigate();
     const sprintData = coursesData[1]; // General data for the "Courses" sprint (for reviews)
