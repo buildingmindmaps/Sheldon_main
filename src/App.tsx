@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
@@ -9,7 +8,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
-// Assuming components are in these locations
+// Import the correct components from the main src folder
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import IconsPlaybook from "./pages/IconsPlaybook";
@@ -20,7 +19,7 @@ import Contact from "./pages/Contact";
 import ArticlePage from "./pages/ArticlePage";
 import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
 import { CaseInterview } from "./components/CaseInterview";
-import {SWOTApp} from "./components/Interactive SWOT Analysis App"; // UPDATED: Import SWOTApp
+import { SWOTApp } from "./components/Interactive SWOT Analysis App";
 
 const queryClient = new QueryClient();
 
@@ -55,7 +54,7 @@ const CaseInterviewWrapper = () => {
   );
 };
 
-// NEW: Wrapper component for SWOTApp to handle back navigation
+// Wrapper component for SWOTApp to handle back navigation
 const SWOTAppWrapper = () => {
   const navigate = useNavigate();
   const handleBack = () => {
@@ -92,14 +91,13 @@ const App = () => (
             {/* Add new route for article slugs */}
             <Route path="/:slug" element={<ArticlePage />} />
 
-            {/* Main Sprints and Sub-pages */}
+            {/* Main Courses and Sub-pages */}
             <Route path="/all-courses" element={<AllCourses />} />
             <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
             <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
 
-            {/* Sprint-specific Apps */}
+            {/* Course-specific Apps */}
             <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
-            {/* UPDATED: Added a clean route for the SWOT Analysis App */}
             <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
 
             <Route path="*" element={<NotFound />} />
