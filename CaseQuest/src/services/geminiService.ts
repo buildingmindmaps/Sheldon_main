@@ -16,6 +16,16 @@ export const generateResponseWithGemini = async (userQuestion: string): Promise<
   const prompt = `
       User's question: "${userQuestion}"
       `;
+      // Define the required JSON output structure for the AI.
+  const jsonSchema = `{
+    "answer": "string (Direct response to the user's question)",
+    "evaluation": {
+      "relevance": "string (Your relevance assessment, <= 20 words)",
+      "depth": "string (Your depth rating and explanation, <= 20 words)",
+      "constructiveFeedback": "string (Your constructive feedback and examples, <= 100 words)"
+    },
+    "rating": "string (One of: 'excellent', 'satisfactory', 'needs-improvement', 'critical')"
+  }`;
 
   try {
     const response = await fetch(GEMINI_API_URL, {
@@ -879,20 +889,15 @@ If the user is going to calculate something, then make sure their calculation is
 
 <Section 8: ImmediateTask:>
 
-Your job is to provide answers to the users questions. Before your every respond, you have to go through Section 5 first and go through the Workflow sub section and follow all the steps mentioned there.
-
-
-     Format your response as:
-     ANSWER: [Your answer here]
-     RELEVANCE: [Your relevance assessment]
-     DEPTH: [Your depth rating and explanation]
-     CONSTRUCTIVE_FEEDBACK: [Your constructive feedback]
-     RATING: [Excellent/Satisfactory/Needs Improvement/Critical]`
+Your ONLY job is to respond with a single, valid JSON object that conforms to the structure  ${jsonSchema} defined in the GeminiResponse interface. Do not add any text, explanations, or markdown formatting outside of this JSON object.`
 
 
             }
           ]
         },
+        generationConfig: {
+    "response_mime_type": "application/json"
+  },
 
 
 
@@ -902,62 +907,63 @@ Your job is to provide answers to the users questions. Before your every respond
             text: prompt
           }]
         }]
+          
       })
+        
     });
-
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // If the response is not OK, we expect an error structure from the API
+      const errorData = await response.json();
+      console.error("API Error Response:", errorData);
+      const errorMessage = errorData?.error?.message || 'An unknown API error occurred.';
+      throw new Error(`HTTP error! status: ${response.status} - ${errorMessage}`);
     }
 
     const data = await response.json();
+
+    // Validate the successful response structure
+    if (!data.candidates || data.candidates.length === 0 || !data.candidates[0].content?.parts[0]?.text) {
+      console.error("Invalid success response structure from API:", data);
+      throw new Error("Invalid response from API: No valid content found.");
+    }
+    
     const generatedText = data.candidates[0].content.parts[0].text;
 
-    // Parse the structured response
-    const answerMatch = generatedText.match(/ANSWER:\s*(.*?)(?=RELEVANCE:|$)/s);
-    const relevanceMatch = generatedText.match(/RELEVANCE:\s*(.*?)(?=DEPTH:|$)/s);
-    const depthMatch = generatedText.match(/DEPTH:\s*(.*?)(?=CONSTRUCTIVE_FEEDBACK:|$)/s);
-    const feedbackMatch = generatedText.match(/CONSTRUCTIVE_FEEDBACK:\s*(.*?)(?=RATING:|$)/s);
-    const ratingMatch = generatedText.match(/RATING:\s*(.*?)$/s);
+    // --- This is the new, robust parsing logic ---
+    // No more regular expressions. Just parse the JSON text directly.
+    const parsedResponse: GeminiResponse = JSON.parse(generatedText);
 
-    // Parse and normalize the rating
-    let rating: 'excellent' | 'satisfactory' | 'needs-improvement' | 'critical' = 'satisfactory';
-    if (ratingMatch) {
-      const ratingText = ratingMatch[1].trim().toLowerCase();
-      if (ratingText.includes('excellent')) {
-        rating = 'excellent';
-      } else if (ratingText.includes('critical')) {
-        rating = 'critical';
-      } else if (ratingText.includes('needs improvement')) {
-        rating = 'needs-improvement';
-      } else {
-        rating = 'satisfactory';
-      }
+    // Basic validation to ensure the parsed object has the expected keys
+    if (!parsedResponse.answer || !parsedResponse.evaluation || !parsedResponse.rating) {
+        console.error("Parsed JSON is missing required fields:", parsedResponse);
+        throw new Error("Parsed JSON from API is missing required fields.");
     }
 
-    return {
-      answer: answerMatch ? answerMatch[1].trim() : generatedText,
-      evaluation: {
-        relevance: relevanceMatch ? relevanceMatch[1].trim() : 'Unable to evaluate relevance',
-        depth: depthMatch ? depthMatch[1].trim() : 'Unable to evaluate depth',
-        constructiveFeedback: feedbackMatch ? feedbackMatch[1].trim() : 'Unable to provide constructive feedback'
-      },
-      rating
-    };
+    return parsedResponse; // The parsed object already matches your interface
+
   } catch (error) {
-    console.error('Error calling Gemini API:', error);
+    console.error('Error in generateResponseWithGemini:', error);
+
+    // Create a user-friendly error message
+    let errorMessage = 'An unexpected error occurred. Please try again.';
+    if (error instanceof SyntaxError) {
+        // This catches errors from JSON.parse() if the AI returns malformed JSON
+        errorMessage = 'Failed to process the AI\'s response due to an invalid format.';
+    } else if (error instanceof Error) {
+        // This catches network errors or errors thrown from the !response.ok block
+        errorMessage = error.message;
+    }
+
+    // Provide a structured error response that matches the expected interface
     return {
-      answer: 'I apologize, but I encountered an error generating a response. Please try asking your question again.',
+      answer: `I apologize, but I encountered an error. ${errorMessage}`,
       evaluation: {
         relevance: 'Unable to evaluate due to technical error',
         depth: 'Unable to evaluate due to technical error',
-        constructiveFeedback: 'Please try asking your question again'
+        constructiveFeedback: 'Please try asking your question again.'
       },
-      rating: 'needs-improvement'
+      rating: 'critical' // Assign a rating for error cases
     };
   }
 };
-
-
-
-
-
+    
