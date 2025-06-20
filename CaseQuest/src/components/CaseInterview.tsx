@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Timer } from './Timer';
@@ -6,6 +7,7 @@ import { QuestionPanel } from './QuestionPanel';
 import { FrameworkModal } from './FrameworkModal';
 import { ResultsView } from './ResultsView';
 import { MobileCaseHeader } from './MobileCaseHeader';
+import { FeedbackModal } from './FeedbackModal';
 import { Button } from '@/components/ui/button';
 import { generateResponseWithGemini } from '../services/geminiService';
 
@@ -42,6 +44,7 @@ export const CaseInterview = () => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   // Default case ID for this standalone component
   const caseId = 3; // Water Purifier case
@@ -62,6 +65,12 @@ export const CaseInterview = () => {
   }, []);
 
   const handleBack = () => {
+    // Show feedback modal before going back
+    setShowFeedbackModal(true);
+  };
+
+  const handleFeedbackClose = () => {
+    setShowFeedbackModal(false);
     window.history.back();
   };
 
@@ -215,6 +224,11 @@ export const CaseInterview = () => {
         isOpen={isFrameworkModalOpen}
         onClose={() => setIsFrameworkModalOpen(false)}
         onSubmit={handleFrameworkSubmit}
+      />
+
+      <FeedbackModal 
+        isOpen={showFeedbackModal} 
+        onClose={handleFeedbackClose} 
       />
     </div>
   );

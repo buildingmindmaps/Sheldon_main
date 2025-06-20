@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SolvedCaseTab } from './SolvedCaseTab';
@@ -5,18 +6,19 @@ import { ReviewTab } from './ReviewTab';
 import { FrameworkTab } from './FrameworkTab';
 import { Timer } from './Timer';
 import { CaseStatement } from './CaseStatement';
+import { FeedbackModal } from './FeedbackModal';
 import type { CaseData } from './CaseInterview';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 interface ResultsViewProps {
-  // We explicitly add `id` to the caseData type being passed as a prop
   caseData: CaseData & { id: number };
   caseStatement: string;
 }
 
 export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatement }) => {
   const [timeElapsed, setTimeElapsed] = useState(caseData.timeElapsed);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const navigate = useNavigate();
 
   const caseInstructions = [
     "Analyze the provided data packs thoroughly.",
@@ -28,42 +30,47 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
   ];
 
   const handleCompleteCase = () => {
-  const completedCaseId = caseData.id;
+    setShowFeedbackModal(true);
+  };
 
-  // Read existing data
-  const storedCases = localStorage.getItem('caseStudiesData');
-  if (storedCases) {
-    let cases = JSON.parse(storedCases);
+  const handleFeedbackClose = () => {
+    setShowFeedbackModal(false);
+    
+    const completedCaseId = caseData.id;
 
-    // Find current case index
-    const completedCaseIndex = cases.findIndex((c: any) => c.id === completedCaseId);
+    // Read existing data
+    const storedCases = localStorage.getItem('caseStudiesData');
+    if (storedCases) {
+      let cases = JSON.parse(storedCases);
 
-    if (completedCaseIndex > -1) {
-      // Unlock the current case (just in case)
-      cases[completedCaseIndex].isLocked = false;
+      // Find current case index
+      const completedCaseIndex = cases.findIndex((c: any) => c.id === completedCaseId);
 
-      // Unlock the next case if available
-      if (completedCaseIndex < cases.length - 1) {
-        cases[completedCaseIndex + 1].isLocked = false;
+      if (completedCaseIndex > -1) {
+        // Unlock the current case (just in case)
+        cases[completedCaseIndex].isLocked = false;
+
+        // Unlock the next case if available
+        if (completedCaseIndex < cases.length - 1) {
+          cases[completedCaseIndex + 1].isLocked = false;
+        }
+
+        // Save back to localStorage
+        localStorage.setItem('caseStudiesData', JSON.stringify(cases));
       }
-
-      // Save back to localStorage
-      localStorage.setItem('caseStudiesData', JSON.stringify(cases));
     }
-  }
 
-  // Navigate back
-  navigate('/all-courses/case-practice');
-};
+    // Navigate back
+    navigate('/all-courses/case-practice');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Layout */}
       <div className="block lg:hidden">
-        {/* Results Tabs - Full height on mobile with transparent header */}
         <div className="h-screen">
           <Tabs defaultValue="framework" className="w-full h-full flex flex-col">
-            <div className="px-4 pt-4 flex flex-col items-center"> {/* Added flex-col and items-center for stacking/centering */}
+            <div className="px-4 pt-4 flex flex-col items-center">
               <TabsList className="grid w-full grid-cols-3 bg-transparent p-0 gap-1">
                 <TabsTrigger
                   value="solved-case"
@@ -84,7 +91,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
                   Framework
                 </TabsTrigger>
               </TabsList>
-              <div className="mt-4 w-full"> {/* Adjusted positioning and width for mobile button */}
+              <div className="mt-4 w-full">
                 <button
                   onClick={handleCompleteCase}
                   className="w-full px-6 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -107,7 +114,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
                 frameworkText={caseData.frameworkText}
                 questions={caseData.questions}
                 caseStatement={caseStatement}
-                conversation={caseData.conversation} // Pass conversation data here
+                conversation={caseData.conversation}
               />
             </TabsContent>
           </Tabs>
@@ -116,10 +123,9 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
 
       {/* Desktop Layout */}
       <div className="hidden lg:flex h-screen justify-center">
-        {/* Centered Content with max-width */}
         <div className="w-full max-w-4xl bg-white flex flex-col">
           <Tabs defaultValue="framework" className="w-full h-full flex flex-col">
-            <div className="border-b border-gray-200 px-6 pt-6 flex justify-between items-center"> {/* Changed to justify-between and items-center */}
+            <div className="border-b border-gray-200 px-6 pt-6 flex justify-between items-center">
               <TabsList className="grid grid-cols-3 max-w-2xl w-full bg-transparent p-0 gap-1">
                 <TabsTrigger
                   value="solved-case"
@@ -163,7 +169,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
                     frameworkText={caseData.frameworkText}
                     questions={caseData.questions}
                     caseStatement={caseStatement}
-                    conversation={caseData.conversation} // Pass conversation data here
+                    conversation={caseData.conversation}
                   />
                 </TabsContent>
               </div>
@@ -171,6 +177,11 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
           </Tabs>
         </div>
       </div>
+
+      <FeedbackModal 
+        isOpen={showFeedbackModal} 
+        onClose={handleFeedbackClose} 
+      />
     </div>
   );
 };
