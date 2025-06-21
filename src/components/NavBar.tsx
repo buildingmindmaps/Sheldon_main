@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,6 +21,7 @@ export function NavBar() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const isMobile = useIsMobile();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate(); // Add useNavigate hook for navigation
 
   // Track authentication state
   useEffect(() => {
@@ -144,6 +145,13 @@ export function NavBar() {
     return "U"; // Default fallback
   };
 
+  // Handle profile icon click to navigate to dashboard
+  const handleProfileClick = () => {
+    if (currentUser) {
+      navigate('/dashboard');
+    }
+  };
+
   return (
     <>
       <header
@@ -190,15 +198,20 @@ export function NavBar() {
                 Log In
               </Button>
             ) : (
-              <div className="relative" ref={dropdownRef}>
+              <div
+                className="relative"
+                ref={dropdownRef}
+                onMouseEnter={() => setUserDropdownOpen(true)}
+                onMouseLeave={() => setUserDropdownOpen(false)}
+              >
                 <Avatar
                   className="h-10 w-10 cursor-pointer bg-gradient-to-r from-[#49dd80] to-[#11ba81] text-white border-2 border-white"
-                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  onClick={handleProfileClick}
                 >
                   <AvatarFallback>{getUserInitial()}</AvatarFallback>
                 </Avatar>
 
-                {/* User Dropdown Menu */}
+                {/* User Dropdown Menu - Now shown on hover */}
                 <AnimatePresence>
                   {userDropdownOpen && (
                     <motion.div
@@ -242,7 +255,7 @@ export function NavBar() {
             ) : (
               <Avatar
                 className="h-8 w-8 cursor-pointer bg-gradient-to-r from-[#49dd80] to-[#11ba81] text-white border-2 border-white mr-2"
-                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                onClick={handleProfileClick}
               >
                 <AvatarFallback>{getUserInitial()}</AvatarFallback>
               </Avatar>
@@ -368,7 +381,7 @@ export function NavBar() {
           )}
         </AnimatePresence>
 
-        {/* User dropdown for mobile (outside the hamburger menu) */}
+        {/* User dropdown for mobile - update to be accessible on hover instead of click */}
         {currentUser && userDropdownOpen && (
           <div className="md:hidden absolute right-4 top-16 w-60 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100">
             <div className="px-4 py-3 border-b border-gray-100">
@@ -398,6 +411,3 @@ export function NavBar() {
     </>
   );
 }
-
-
-

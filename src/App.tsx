@@ -20,6 +20,7 @@ import ArticlePage from "./pages/ArticlePage";
 import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
 import { CaseInterview } from "./components/CaseInterview";
 import {SWOTApp} from "./components/Interactive SWOT Analysis App"; // UPDATED: Import SWOTApp
+import Dashboard from "./pages/Dashboard"; // Import Dashboard component
 
 const queryClient = new QueryClient();
 
@@ -101,6 +102,13 @@ const App = () => (
             {/* UPDATED: Added a clean route for the SWOT Analysis App */}
             <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
 
+            {/* Add Dashboard route */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
@@ -110,4 +118,3 @@ const App = () => (
 );
 
 export default App;
-
