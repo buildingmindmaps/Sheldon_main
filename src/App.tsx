@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 // Auth import
 import { AuthProvider } from "./lib/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import OAuthCallbackHandler from "./components/OAuthCallbackHandler";
 
 // Assuming components are in these locations
 import Index from "./pages/Index";
@@ -19,7 +20,7 @@ import Contact from "./pages/Contact";
 import ArticlePage from "./pages/ArticlePage";
 import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
 import { CaseInterview } from "./components/CaseInterview";
-import {SWOTApp} from "./components/Interactive SWOT Analysis App"; // UPDATED: Import SWOTApp
+import { SWOTApp } from "./components/SWOTApp"; // Updated to import from file without spaces
 import Dashboard from "./pages/Dashboard"; // Import Dashboard component
 
 const queryClient = new QueryClient();
@@ -102,6 +103,9 @@ const App = () => (
             {/* UPDATED: Added a clean route for the SWOT Analysis App */}
             <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
 
+            {/* Add OAuth callback route */}
+            <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
+
             {/* Add Dashboard route */}
             <Route path="/dashboard" element={
               <ProtectedRoute>
@@ -118,3 +122,5 @@ const App = () => (
 );
 
 export default App;
+
+

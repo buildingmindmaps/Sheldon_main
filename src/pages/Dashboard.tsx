@@ -1,56 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { NavBar } from '@/components/NavBar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from '@/lib/AuthContext';
 
 // Define the Dashboard component
 const Dashboard: React.FC = () => {
-  const [displayName, setDisplayName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-  const [joinDate, setJoinDate] = useState('');
+  const { user, fetchUserProfile } = useAuth();
   const navigate = useNavigate();
 
-  // Track authentication state
+  // Fetch fresh user data when component mounts
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Set user's display name
-        if (user.displayName) {
-          setDisplayName(user.displayName);
-        } else if (user.email) {
-          // Use email as fallback and extract first part before @
-          const emailName = user.email.split('@')[0];
-          setDisplayName(emailName);
-        }
+    if (user) {
+      fetchUserProfile().catch(err => console.error("Failed to refresh user data:", err));
+    }
+  }, []);
 
-        // Set user's email
-        if (user.email) {
-          setUserEmail(user.email);
-        }
+  // If user isn't loaded, show loading state (this should be handled by ProtectedRoute)
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
-        // Set user's join date
-        if (user.metadata && user.metadata.creationTime) {
-          const date = new Date(user.metadata.creationTime);
-          setJoinDate(date.toLocaleDateString());
-        }
-      } else {
-        // If no user is logged in, redirect to home page
-        navigate('/');
-      }
-    });
-    return unsubscribe;
-  }, [navigate]);
+  // Format user's join date
+  const formattedJoinDate = user.dateOfJoining ? new Date(user.dateOfJoining).toLocaleDateString() : 'N/A';
 
-  // Dummy data for solved modules
-  const solvedModules = [
-    { name: 'Module Name', time: '1 Hour Ago' },
-    { name: 'Module Name', time: '1 Week Ago' },
-    { name: 'Module Name', time: '2 Week Ago' },
-    { name: 'Module Name', time: '2 Week Ago' },
-  ];
+  // Dummy data for solved modules (can be replaced with actual data from user.modulesCompleted)
+  const solvedModules = user.modulesCompleted?.length > 0
+    ? user.modulesCompleted.map(module => ({
+        name: module.moduleId,
+        time: new Date(module.completedAt).toLocaleDateString()
+      }))
+    : [
+        { name: 'No modules completed yet', time: '' }
+      ];
 
   return (
     <>
@@ -70,12 +57,12 @@ const Dashboard: React.FC = () => {
                   alt="User Profile"
                   className="rounded-full object-cover border-2 border-gray-200"
                 />
-                <AvatarFallback className="w-20 h-20 text-2xl">{displayName ? displayName.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
+                <AvatarFallback className="w-20 h-20 text-2xl">{user.username ? user.username.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
               </Avatar>
               <div>
                 <h2 className="text-xl font-semibold text-gray-800">Profile</h2>
-                <p className="text-gray-600">{displayName}</p>
-                <p className="text-gray-500 text-sm">Joined: {joinDate || 'N/A'}</p>
+                <p className="text-gray-600">{user.username}</p>
+                <p className="text-gray-500 text-sm">Joined: {formattedJoinDate}</p>
               </div>
             </div>
 
@@ -104,59 +91,122 @@ const Dashboard: React.FC = () => {
                     </svg>
                   </span>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">0</p>
+                    <p className="text-2xl font-bold text-gray-900">7</p>
                     <p className="text-gray-600">Day Streak</p>
                   </div>
                 </div>
-                {/* Total XP */}
+                {/* Experience Points */}
                 <div className="flex items-center bg-gray-50 hover:bg-lime-100 hover:border hover:border-lime-300 p-4 rounded-lg shadow-sm transition-colors duration-200">
                   <span className="text-purple-500 text-2xl mr-3">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.92 8.72c-.783-.57-.381-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      <path d="M3.433 17.32l.707-.707-1.414-1.414-.707.707 1.414 1.414zm3.433-12.961l-.707.707 1.414 1.414.707-.707-1.414-1.414zm-7.416 5.178l10.416-10.416 7.778 7.778-10.417 10.416-7.777-7.778zm13.854-9.708l2.122 2.122-2.121 2.121-2.121-2.121 2.12-2.122zm-4.95-2.121l2.122 2.122-2.121 2.121-2.121-2.121 2.12-2.122zm2.828 15.85l2.122 2.121-2.121 2.121-2.121-2.121 2.12-2.121zm-8.484 2.121l2.121 2.121-2.12 2.121-2.122-2.121 2.121-2.121zM16.434 7.05L17.84 5.636l1.414 1.414-1.414 1.414-1.414-1.414z" />
                     </svg>
                   </span>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">30</p>
-                    <p className="text-gray-600">Total XP</p>
+                    <p className="text-2xl font-bold text-gray-900">{user.experiencePoints || 0}</p>
+                    <p className="text-gray-600">Experience Points</p>
                   </div>
                 </div>
-                {/* Total Module */}
-                <div className="flex items-center bg-gray-50 hover:bg-lime-100 hover:border hover:border-lime-300 p-4 rounded-lg shadow-sm transition-colors duration-200">
-                  <span className="text-blue-500 text-2xl mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M4 4a2 2 0 00-2 2v6a2 2 0 002 2l2 2v-2h4a2 2 0 002-2V6a2 2 0 00-2-2H4z" />
-                      <path d="M15.586 10.414A2 2 0 0117 12v2.586l2.293 2.293A1 1 0 0020 17v-3a2 2 0 00-2-2h-3.414z" />
+              </div>
+            </div>
+
+            {/* Achievements Section */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Achievements</h3>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="flex flex-col items-center">
+                  <div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                  </span>
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">3</p>
-                    <p className="text-gray-600">Total Module</p>
                   </div>
+                  <p className="text-xs text-center mt-2">Beginner</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <p className="text-xs text-center mt-2">Intermediate</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <p className="text-xs text-center mt-2">Advanced</p>
                 </div>
               </div>
             </div>
           </aside>
 
-          {/* Right Main Content */}
-          <main className="w-full lg:w-2/3 bg-white p-6 rounded-xl shadow-md">
-            {/* Solved Modules Section */}
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">Solved Modules</h3>
-                <button className="text-blue-600 text-sm hover:underline">Get Detailed Report</button>
-              </div>
-              <div className="space-y-3">
+          {/* Right Content Area */}
+          <main className="w-full lg:w-2/3 space-y-6">
+            {/* Recent Activities */}
+            <section className="bg-white p-6 rounded-xl shadow-md">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Recent Activities</h3>
+              <div className="space-y-4">
                 {solvedModules.map((module, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center bg-gray-50 hover:bg-lime-100 hover:border hover:border-lime-300 p-4 rounded-lg shadow-sm transition-colors duration-200"
-                  >
-                    <span className="font-medium text-gray-700">{module.name}</span>
-                    <span className="text-gray-500 text-sm">{module.time}</span>
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-lime-100 hover:border hover:border-lime-300 transition-colors duration-200">
+                    <div className="flex items-center">
+                      <div className="bg-green-100 p-2 rounded-full mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800">{module.name}</p>
+                        {module.time && <p className="text-sm text-gray-500">Completed on {module.time}</p>}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
+
+            {/* Recommended Modules */}
+            <section className="bg-white p-6 rounded-xl shadow-md">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Recommended For You</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Link to="/all-courses/case-interview" className="block group">
+                  <div className="border border-gray-200 rounded-lg overflow-hidden group-hover:border-blue-500 transition-colors duration-200">
+                    <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                      <img
+                        src="https://placehold.co/800x450/e0e0e0/333333?text=Case+Interview"
+                        alt="Case Interview"
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">Case Interview Basics</h4>
+                      <p className="text-sm text-gray-500 mt-1">Learn the fundamentals of case interviews</p>
+                    </div>
+                  </div>
+                </Link>
+                <Link to="/all-courses/business-frameworks/swot-analysis" className="block group">
+                  <div className="border border-gray-200 rounded-lg overflow-hidden group-hover:border-blue-500 transition-colors duration-200">
+                    <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                      <img
+                        src="https://placehold.co/800x450/e0e0e0/333333?text=SWOT+Analysis"
+                        alt="SWOT Analysis"
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">SWOT Analysis</h4>
+                      <p className="text-sm text-gray-500 mt-1">Master the SWOT framework for business analysis</p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+              <div className="mt-4 text-center">
+                <Button variant="outline" className="text-blue-600" asChild>
+                  <Link to="/all-courses">View All Courses</Link>
+                </Button>
+              </div>
+            </section>
           </main>
         </div>
       </div>

@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
-import {
-  signInWithGoogle,
-  signInWithFacebook,
-  signInWithEmail,
-  signUpWithEmail,
-  isEmailVerified,
-  resendVerificationEmail,
-  resetPassword,
-  updateUserProfile,
-  User
-} from '../lib/firebase';
+import { useAuth } from '../lib/AuthContext';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -19,15 +9,14 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath }: AuthModalProps) {
+  const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [needsVerification, setNeedsVerification] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,52 +31,27 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
     try {
       if (isLogin) {
         try {
-          const result = await signInWithEmail(email, password);
-          setCurrentUser(result.user);
+          await login(email, password);
 
-          // Check if email is verified
-          if (!isEmailVerified(result.user)) {
-            setNeedsVerification(true);
-            setError('Please verify your email before proceeding.');
-            return;
-          }
-
-          // User is verified, proceed with login
+          // User is logged in, close modal
           onClose();
           // Redirect if needed
           if (redirectPath) {
             window.location.href = redirectPath;
           }
-        } catch (err) {
-          const errorMessage = (err as Error).message;
+        } catch (err: any) {
+          const errorMessage = err.message || 'Login failed';
           console.log("Auth error:", errorMessage); // For debugging
 
-          // Check for specific Firebase error codes
-          if (errorMessage.includes('auth/user-not-found') ||
-              errorMessage.includes('firebase: Error (auth/user-not-found)') ||
-              errorMessage.includes('user-not-found')) {
+          if (errorMessage.includes('not found') || errorMessage.includes('not registered')) {
             // Custom friendly message for new users
             setError('This email is not registered. Please sign up first.');
             // Automatically switch to sign up mode
             setIsLogin(false);
-          } else if (errorMessage.includes('auth/wrong-password') ||
-                    errorMessage.includes('firebase: Error (auth/wrong-password)') ||
-                    errorMessage.includes('wrong-password')) {
+          } else if (errorMessage.includes('password') || errorMessage.includes('credential')) {
             setError('Incorrect password. Please try again.');
-          } else if (errorMessage.includes('auth/invalid-credential') ||
-                    errorMessage.includes('firebase: Error (auth/invalid-credential)') ||
-                    errorMessage.includes('invalid-credential')) {
-            // Handle invalid credential error (wrong password or email not registered)
+          } else if (errorMessage.includes('invalid')) {
             setError('Invalid email or password. If you don\'t have an account yet, please sign up.');
-            // We could optionally offer to switch to sign up here
-          } else if (errorMessage.includes('auth/invalid-email') ||
-                    errorMessage.includes('firebase: Error (auth/invalid-email)') ||
-                    errorMessage.includes('invalid-email')) {
-            setError('Please enter a valid email address.');
-          } else if (errorMessage.includes('auth/too-many-requests') ||
-                    errorMessage.includes('firebase: Error (auth/too-many-requests)') ||
-                    errorMessage.includes('too-many-requests')) {
-            setError('Too many failed login attempts. Please try again later or reset your password.');
           } else {
             setError('Login failed. Please check your credentials and try again.');
             console.error("Unhandled auth error:", errorMessage);
@@ -96,42 +60,27 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
       } else {
         // Sign up process
         try {
-          if (!name.trim()) {
+          if (!username.trim()) {
             setError('Please enter your name.');
             setLoading(false);
             return;
           }
 
-          const result = await signUpWithEmail(email, password);
-          setCurrentUser(result.user);
+          await register(username, email, password);
+          setSuccess('Account created! You can now log in with your credentials.');
 
-          // Update the user profile with their name
-          await updateUserProfile(result.user, name);
+          // Switch to login mode after successful registration
+          setIsLogin(true);
+        } catch (err: any) {
+          const errorMessage = err.message || 'Registration failed';
 
-          setNeedsVerification(true);
-          setSuccess('Account created! Please check your email to verify your account.');
-        } catch (err) {
-          const errorMessage = (err as Error).message;
-          const errorCode = (err as any).code;
-
-          // Check for our custom password validation error
-          if (errorCode === 'auth/password-validation-failed') {
-            setError(errorMessage); // Use the exact message from our validator
-          }
-          // Check for existing account
-          else if (errorMessage.includes('auth/email-already-in-use') ||
-              errorMessage.includes('firebase: Error (auth/email-already-in-use)') ||
-              errorMessage.includes('email-already-in-use')) {
+          if (errorMessage.includes('already exists') || errorMessage.includes('already in use')) {
             setError('An account with this email already exists. Please sign in instead.');
             // Automatically switch to sign in mode
             setIsLogin(true);
-          } else if (errorMessage.includes('auth/weak-password') ||
-                     errorMessage.includes('firebase: Error (auth/weak-password)') ||
-                     errorMessage.includes('weak-password')) {
+          } else if (errorMessage.includes('password') && errorMessage.includes('weak')) {
             setError('Password is too weak. Please use at least 6 characters.');
-          } else if (errorMessage.includes('auth/invalid-email') ||
-                     errorMessage.includes('firebase: Error (auth/invalid-email)') ||
-                     errorMessage.includes('invalid-email')) {
+          } else if (errorMessage.includes('email') && errorMessage.includes('invalid')) {
             setError('Please enter a valid email address.');
           } else {
             setError('Sign up failed. Please try again.');
@@ -139,30 +88,11 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       // This should only catch errors not handled in the nested try-catch blocks
-      const errorMessage = (err as Error).message;
+      const errorMessage = err.message || 'Authentication error';
       setError(`Authentication error: ${errorMessage}`);
       console.error("Unhandled outer auth error:", errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResendVerification = async () => {
-    setError('');
-    setSuccess('');
-    setLoading(true);
-
-    try {
-      if (currentUser) {
-        await resendVerificationEmail(currentUser);
-        setSuccess('Verification email sent! Please check your inbox.');
-      } else {
-        setError('No user found. Please try signing in again.');
-      }
-    } catch (err) {
-      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -175,269 +105,194 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
     setLoading(true);
 
     try {
-      await resetPassword(email);
-      setSuccess('Password reset email sent! Please check your inbox.');
-    } catch (err) {
-      setError((err as Error).message);
+      // If you implement password reset functionality in your backend, call it here
+      // For now, show a message to contact support
+      setSuccess('Please contact support to reset your password.');
+    } catch (err: any) {
+      setError(err.message || 'Failed to reset password');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    setError('');
-    setSuccess('');
-    setLoading(true);
-
-    try {
-      const result = await signInWithGoogle();
-      // Google accounts are pre-verified
-      onClose();
-      // Redirect if needed
-      if (redirectPath) {
-        window.location.href = redirectPath;
-      }
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setLoading(false);
-    }
+  const handleGoogleSignIn = () => {
+    // Redirect to your backend's Google OAuth endpoint
+    window.location.href = 'http://localhost:5001/api/auth/google';
   };
 
-  // Show verification required screen
-  if (needsVerification) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 max-w-md w-full">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Email Verification Required</h2>
-            {!isCompulsory && (
-              <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                &times;
-              </button>
-            )}
-          </div>
-
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-          {success && <p className="text-green-500 mb-4">{success}</p>}
-
-          <div className="text-center p-4">
-            <p className="mb-4">
-              We've sent a verification email to <strong>{email}</strong>.
-              Please check your inbox and click the verification link to continue.
-            </p>
-
-            <button
-              onClick={handleResendVerification}
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 mb-4"
-            >
-              {loading ? 'Sending...' : 'Resend Verification Email'}
-            </button>
-
-            <p className="text-sm text-gray-600">
-              If you've already verified your email, please sign in again.
-            </p>
-
-            <button
-              onClick={() => {
-                setNeedsVerification(false);
-                setIsLogin(true);
-              }}
-              className="mt-4 text-blue-600 hover:underline"
-            >
-              Back to Sign In
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show password reset screen
+  // Reset Password View
   if (showResetPassword) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 max-w-md w-full">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">Reset Password</h2>
-            {!isCompulsory && (
-              <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-                &times;
-              </button>
-            )}
-          </div>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+          <h2 className="text-2xl font-bold mb-4">Reset Password</h2>
+          <form onSubmit={handleResetPassword}>
+            {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
+            {success && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">{success}</div>}
 
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-          {success && <p className="text-green-500 mb-4">{success}</p>}
-
-          <form onSubmit={handleResetPassword} className="space-y-4">
-            <div>
-              <label htmlFor="reset-email" className="block text-sm font-medium text-gray-700">Email</label>
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-gray-700 mb-1">Email Address</label>
               <input
                 type="email"
                 id="reset-email"
+                className="w-full p-2 border rounded"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
-            >
-              {loading ? 'Sending...' : 'Send Reset Link'}
-            </button>
+            <div className="flex justify-between items-center">
+              <button
+                type="button"
+                className="text-blue-600 hover:underline"
+                onClick={() => setShowResetPassword(false)}
+              >
+                Back to Login
+              </button>
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                disabled={loading}
+              >
+                {loading ? 'Processing...' : 'Reset Password'}
+              </button>
+            </div>
           </form>
-
-          <button
-            onClick={() => setShowResetPassword(false)}
-            className="mt-4 text-blue-600 hover:underline w-full text-center"
-          >
-            Back to Sign In
-          </button>
         </div>
       </div>
     );
   }
 
-  // Default login/signup form
+  // Main Auth Modal (Login/Register)
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#FCFCFC] rounded-lg p-8 max-w-md w-full shadow-xl">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-[#49dd80] to-[#11ba81] bg-clip-text text-transparent">
-            {isLogin ? 'Sign In' : 'Sign Up'}
-          </h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">{isLogin ? 'Sign In' : 'Sign Up'}</h2>
           {!isCompulsory && (
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-              &times;
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+              aria-label="Close"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
             </button>
           )}
         </div>
 
-        {error && (
-          <p className="text-red-500 mb-4 bg-[#fef3c7] p-3 rounded-md border border-red-200">
-            {error}
-          </p>
-        )}
-        {success && (
-          <p className="text-green-700 mb-4 bg-[#ebf3ff] p-3 rounded-md border border-green-200">
-            {success}
-          </p>
-        )}
+        {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
+        {success && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">{success}</div>}
 
-        <form onSubmit={handleEmailAuth} className="space-y-4">
+        <form onSubmit={handleEmailAuth}>
           {!isLogin && (
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-gray-700 mb-1">Full Name</label>
               <input
                 type="text"
                 id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                className="w-full p-2 border rounded"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required={!isLogin}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-[#f9fafb] focus:ring-[#b5ff4c] focus:border-[#b5ff4c] focus:outline-none"
               />
             </div>
           )}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-gray-700 mb-1">Email Address</label>
             <input
               type="email"
               id="email"
+              className="w-full p-2 border rounded"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-[#f9fafb] focus:ring-[#b5ff4c] focus:border-[#b5ff4c] focus:outline-none"
             />
           </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+
+          <div className="mb-6">
+            <label htmlFor="password" className="block text-gray-700 mb-1">Password</label>
             <div className="relative">
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
+                className="w-full p-2 border rounded"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-[#f9fafb] focus:ring-[#b5ff4c] focus:border-[#b5ff4c] focus:outline-none"
               />
               <button
                 type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3"
               >
                 {showPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                  <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7A9.97 9.97 0 014.02 8.971m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
                   </svg>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                   </svg>
                 )}
               </button>
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#6feb62] text-[#000000] py-2 px-4 rounded-md hover:bg-[#000000] hover:text-[#FFFFFF] transition-colors duration-200 disabled:opacity-50 font-semibold"
-          >
-            {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Sign Up'}
-          </button>
 
-          {isLogin && (
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => setShowResetPassword(true)}
-                className="text-sm text-[#49dd80] hover:text-[#11ba81] hover:underline"
-              >
-                Forgot password?
-              </button>
-            </div>
-          )}
-        </form>
+          <div className="flex flex-col mb-6">
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-2"
+              disabled={loading}
+            >
+              {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Sign Up'}
+            </button>
 
-        <div className="mt-6 relative flex items-center">
-          <div className="flex-grow border-t border-gray-300"></div>
-          <span className="flex-shrink mx-3 text-gray-500 text-sm">or</span>
-          <div className="flex-grow border-t border-gray-300"></div>
-        </div>
-
-        <div className="mt-4 flex flex-col space-y-2">
-          <button
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            className="w-full border border-gray-300 bg-white py-2 px-4 rounded-md hover:bg-[#f1f2f3] flex items-center justify-center font-medium transition-colors"
-          >
-            <span>Continue with Google</span>
-          </button>
-        </div>
-
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-[#49dd80] hover:text-[#11ba81] hover:underline font-medium"
-          >
-            {isLogin ? 'Need an account? Sign Up' : 'Already have an account? Sign In'}
-          </button>
-        </div>
-
-        {!isCompulsory && (
-          <div className="mt-4 text-center">
-            <button onClick={onClose} className="text-gray-600 hover:text-gray-800 hover:underline text-sm">
-              Skip for now
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              className="bg-white hover:bg-gray-100 text-gray-800 font-bold py-2 px-4 border border-gray-400 rounded shadow flex items-center justify-center"
+              disabled={loading}
+            >
+              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+              </svg>
+              Sign {isLogin ? 'In' : 'Up'} with Google
             </button>
           </div>
-        )}
+
+          <div className="flex items-center justify-between">
+            {isLogin && (
+              <button
+                type="button"
+                className="text-blue-500 hover:underline"
+                onClick={() => setShowResetPassword(true)}
+              >
+                Forgot Password?
+              </button>
+            )}
+            <button
+              type="button"
+              className="text-blue-500 hover:underline"
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setError('');
+                setSuccess('');
+              }}
+            >
+              {isLogin ? 'Need an account? Sign Up' : 'Already have an account? Sign In'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
 }
+

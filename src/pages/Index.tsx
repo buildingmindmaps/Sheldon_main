@@ -28,7 +28,7 @@ const customStyles = `
 const Index = () => {
   const isMobile = useIsMobile();
   // Add auth popup hook with 5 second delay
-  const { showAuthModal, setShowAuthModal } = useAuthPopup(5000);
+  const { showAuthModal, setShowAuthModal } = useAuthPopup(5001);
 
   // Function to scroll to top when clicking "Back to Top" button
   const scrollToTop = () => {

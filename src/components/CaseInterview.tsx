@@ -9,6 +9,12 @@ import { ResultsView } from '../../CaseQuest/src/components/ResultsView';
 import { MobileCaseHeader } from '../../CaseQuest/src/components/MobileCaseHeader';
 import { Button } from '@/components/ui/button';
 import { generateResponseWithGemini } from '../../CaseQuest/src/services/geminiService';
+import { useAuth } from '@/lib/AuthContext';
+import axios from 'axios';
+import { useToast } from "@/components/ui/use-toast";
+
+// Define API base URL for backend calls
+const API_BASE_URL = 'http://localhost:5001/api';
 
 export interface Question {
   id: number;
@@ -51,6 +57,8 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
+  const { user, fetchUserProfile } = useAuth();
+  const toast = useToast();
 
   const caseStatement = `Your client is a water purifier manufacturer in India, focused on residential customers. The client is experiencing lower profitability (defined as EBITDA/Revenue) compared to competitors. They have hired you to analyze the issue and provide recommendations.`;
 
@@ -124,6 +132,92 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
   };
 
   const canSubmitFramework = questions.length >= 2 || questions.length >= 10;
+
+  // Add module completion functionality
+  const handleCompleteModule = async (moduleId: string) => {
+    if (!user) {
+      toast.toast({
+        title: "Authentication Required",
+        description: "Please log in to track your progress.",
+        variant: "destructive",
+      });
+      return;
+    }
+    try {
+      await axios.put(`${API_BASE_URL}/users/modules-completed`, { moduleId });
+      toast.toast({
+        title: "Success",
+        description: `Module ${moduleId} marked as completed!`,
+      });
+      await fetchUserProfile(); // Refresh user data in context
+    } catch (error: any) {
+      console.error('Error completing module:', error.response?.data?.message || error.message);
+      toast.toast({
+        title: "Progress Update Failed",
+        description: error.response?.data?.message || "Failed to mark module as completed.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Add XP earning functionality
+  const handleEarnXP = async (xpAmount: number) => {
+    if (!user) {
+      toast.toast({
+        title: "Authentication Required",
+        description: "Please log in to earn XP.",
+        variant: "destructive",
+      });
+      return;
+    }
+    try {
+      await axios.put(`${API_BASE_URL}/users/add-xp`, { xpAmount });
+      toast.toast({
+        title: "Success",
+        description: `${xpAmount} XP earned!`,
+      });
+      await fetchUserProfile(); // Refresh user data in context
+    } catch (error: any) {
+      console.error('Error earning XP:', error.response?.data?.message || error.message);
+      toast.toast({
+        title: "XP Update Failed",
+        description: error.response?.data?.message || "Failed to add XP.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Update the completeCase function to also mark the module as completed and award XP
+  const completeCase = useCallback(() => {
+    setIsCompleted(true);
+
+    // Mark the case interview module as completed
+    handleCompleteModule('case_interview_' + caseId);
+
+    // Award XP based on performance (simplified example)
+    const answeredQuestions = questions.filter(q => q.answer.trim().length > 0).length;
+    const totalQuestions = questions.length || 1;
+    const completionPercentage = (answeredQuestions / totalQuestions) * 100;
+
+    // Award XP based on completion percentage
+    let xpAmount = 0;
+    if (completionPercentage === 100) {
+      xpAmount = 50; // Full completion
+    } else if (completionPercentage >= 75) {
+      xpAmount = 35; // Mostly complete
+    } else if (completionPercentage >= 50) {
+      xpAmount = 25; // Half complete
+    } else if (completionPercentage > 0) {
+      xpAmount = 10; // Some progress
+    }
+
+    if (xpAmount > 0) {
+      handleEarnXP(xpAmount);
+    }
+
+    // Save completion data or other state management as needed
+    // ...existing code...
+  }, [questions, caseId]);
 
   if (isCompleted) {
     return (

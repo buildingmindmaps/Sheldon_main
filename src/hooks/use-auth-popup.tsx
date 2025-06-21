@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../lib/AuthContext';
 
-export function useAuthPopup(delay: number = 5000) {
+export function useAuthPopup(delay: number = 5001) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { currentUser } = useAuth();
 

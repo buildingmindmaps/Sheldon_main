@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { auth } from '@/lib/firebase';
 import { AuthModal } from './AuthModal';
-import { logOut } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { AuthContext } from '@/lib/AuthContext';
 
 export function NavBar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -15,39 +13,42 @@ export function NavBar() {
   const [isVisible, setIsVisible] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
   const [displayName, setDisplayName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const isMobile = useIsMobile();
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate(); // Add useNavigate hook for navigation
+  const navigate = useNavigate();
+  const auth = useContext(AuthContext);
+
+  // Make sure we have access to the auth context
+  if (!auth) {
+    throw new Error("NavBar must be used within an AuthProvider");
+  }
+
+  const { user, logout } = auth;
 
   // Track authentication state
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      if (user) {
-        // Save user's email
-        if (user.email) {
-          setUserEmail(user.email);
-        }
-
-        // Get user's name from Firebase
-        if (user.displayName) {
-          setDisplayName(user.displayName);
-        } else if (user.email) {
-          // Use email as fallback and extract first part before @
-          const emailName = user.email.split('@')[0];
-          setDisplayName(emailName);
-        }
-      } else {
-        setDisplayName('');
-        setUserEmail('');
+    if (user) {
+      // Set user email
+      if (user.email) {
+        setUserEmail(user.email);
       }
-    });
-    return unsubscribe;
-  }, []);
+
+      // Get user's name from username or email
+      if (user.username) {
+        setDisplayName(user.username);
+      } else if (user.email) {
+        // Use email as fallback and extract first part before @
+        const emailName = user.email.split('@')[0];
+        setDisplayName(emailName);
+      }
+    } else {
+      setDisplayName('');
+      setUserEmail('');
+    }
+  }, [user]);
 
   // Handle click outside of dropdown to close it
   useEffect(() => {
@@ -130,7 +131,7 @@ export function NavBar() {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await logOut();
+      await logout();
       setUserDropdownOpen(false);
     } catch (error) {
       console.error("Error logging out:", error);
@@ -147,7 +148,7 @@ export function NavBar() {
 
   // Handle profile icon click to navigate to dashboard
   const handleProfileClick = () => {
-    if (currentUser) {
+    if (user) {
       navigate('/dashboard');
     }
   };
@@ -190,7 +191,7 @@ export function NavBar() {
             </Button>
 
             {/* Authentication Button or User Avatar */}
-            {!currentUser ? (
+            {!user ? (
               <Button
                 className="bg-[#6feb62] text-[#000000] hover:bg-[#000000] hover:text-white ml-2"
                 onClick={() => setShowAuthModal(true)}
@@ -245,7 +246,7 @@ export function NavBar() {
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
             {/* Authentication Button for Mobile */}
-            {!currentUser ? (
+            {!user ? (
               <Button
                 className="bg-[#6feb62] text-[#000000] hover:bg-[#000000] hover:text-white mr-2 py-1 px-3 text-sm"
                 onClick={() => setShowAuthModal(true)}
@@ -351,7 +352,7 @@ export function NavBar() {
                 </motion.div>
 
                 {/* User Authentication in Mobile Menu */}
-                {currentUser && (
+                {user && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -382,7 +383,7 @@ export function NavBar() {
         </AnimatePresence>
 
         {/* User dropdown for mobile - update to be accessible on hover instead of click */}
-        {currentUser && userDropdownOpen && (
+        {user && userDropdownOpen && (
           <div className="md:hidden absolute right-4 top-16 w-60 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100">
             <div className="px-4 py-3 border-b border-gray-100">
               <p className="text-sm text-gray-500">Signed in as</p>
