@@ -17,6 +17,7 @@ require('./config/passport');
 // Import routes
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const casePracticeRoutes = require('./routes/casePractice'); // Add this line
 
 const app = express();
 
@@ -35,7 +36,7 @@ app.use(express.json());
 // Make sure this is used BEFORE passport.initialize() and passport.session()
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Use a strong secret from .env
+    secret: process.env.SESSION_SECRET || 'keyboard cat',
     resave: false, // Don't save session if unmodified
     saveUninitialized: false, // Don't create session until something stored
     cookie: {
@@ -59,6 +60,7 @@ app.get('/', (req, res) => {
 // Mount API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/case-practice', casePracticeRoutes); // Add this line
 
 // --- Error Handling (Optional: Add more specific error handling later) ---
 // Example basic 404 handler

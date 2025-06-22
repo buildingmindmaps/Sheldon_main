@@ -13,9 +13,10 @@ import { useNavigate } from 'react-router-dom';
 interface ResultsViewProps {
   caseData: CaseData & { id: number };
   caseStatement: string;
+  onComplete?: () => void;
 }
 
-export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatement }) => {
+export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatement, onComplete }) => {
   const [timeElapsed, setTimeElapsed] = useState(caseData.timeElapsed);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const navigate = useNavigate();
@@ -30,7 +31,10 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
   ];
 
   const handleCompleteCase = () => {
-    setShowFeedbackModal(true);
+     if (onComplete) onComplete();
+     setShowFeedbackModal(true);   // Optionally show modal after completion
+    
+   
   };
 
   const handleFeedbackClose = () => {

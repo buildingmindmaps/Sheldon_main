@@ -9,6 +9,9 @@ import { AuthProvider } from "./lib/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import OAuthCallbackHandler from "./components/OAuthCallbackHandler";
 
+// Add CasePracticeProvider import
+import { CasePracticeProvider } from "./contexts/CasePracticeContext.tsx"; // Or simply "./contexts/CasePracticeContext" and let bundler resolve// Path to your context file
+
 // Assuming components are in these locations
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -72,6 +75,7 @@ const SWOTAppWrapper = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+      <CasePracticeProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -117,6 +121,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </CasePracticeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

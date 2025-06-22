@@ -10,6 +10,7 @@ import { MobileCaseHeader } from './MobileCaseHeader';
 import { FeedbackModal } from './FeedbackModal';
 import { Button } from '@/components/ui/button';
 import { generateResponseWithGemini } from '../services/geminiService';
+import { useCasePractice } from '../../../src/contexts/CasePracticeContext';
 
 export interface Question {
   id: number;
@@ -38,6 +39,7 @@ export interface CaseData {
 }
 
 export const CaseInterview = () => {
+  const { actions } = useCasePractice();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isFrameworkModalOpen, setIsFrameworkModalOpen] = useState(false);
   const [frameworkText, setFrameworkText] = useState('');
@@ -46,6 +48,15 @@ export const CaseInterview = () => {
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
+  const startCaseSession = async () => {
+      await actions.startCase({
+        caseId: "water-purifier",
+        caseTitle: "Water Purifier",
+        caseDifficulty: "Beginner",
+        caseStatement: caseStatement
+      });
+    };
+    startCaseSession();
   // Default case ID for this standalone component
   const caseId = 3; // Water Purifier case
 
@@ -90,6 +101,19 @@ export const CaseInterview = () => {
 
     try {
       const geminiResponse = await generateResponseWithGemini(questionText);
+
+      // Add this API call
+    await actions.addQuestionAndResponse({
+      questionNumber: questions.length + 1,
+      userQuestion: questionText,
+      aiResponse: geminiResponse.answer,
+      feedback: {
+        rating: geminiResponse.rating,
+        relevance: geminiResponse.evaluation?.relevance || '',
+        depth: geminiResponse.evaluation?.depth || '',
+        constructiveFeedback: geminiResponse.evaluation?.constructiveFeedback || '',
+      }
+    });
       
       const newQuestion: Question = {
         id: tempId,
@@ -124,10 +148,13 @@ export const CaseInterview = () => {
     );
   };
 
-  const handleFrameworkSubmit = (framework: string) => {
+  const handleFrameworkSubmit = async (framework: string) => {
+  // Add this API call
+  await actions.submitFramework(framework);
     setFrameworkText(framework);
     setIsCompleted(true);
     setIsFrameworkModalOpen(false);
+    
   };
 
   const canSubmitFramework = questions.length >= 2 || questions.length >= 10;
@@ -232,4 +259,31 @@ export const CaseInterview = () => {
       />
     </div>
   );
+
+  const handleCaseComplete = async () => {
+  const completionData = {
+    performanceMetrics: {
+      overallRating: 8, // Calculate based on performance
+      structure: 7,
+      problemFormulation: 8,
+      communication: 8,
+      confidence: 7,
+      questionsAsked: questions.length,
+      excellentQuestions: questions.filter(q => q.feedback === 'excellent').length,
+      timeTaken: `${Math.floor(timeElapsed/60)}m ${timeElapsed%60}s`,
+      frameworkSubmitted: true,
+    },
+    areasForImprovement: questions
+      .filter(q => q.feedback === 'needs-improvement' || q.feedback === 'critical')
+      .map(q => ({
+        category: "Question Quality",
+        feedback: q.evaluation?.constructiveFeedback || "Needs improvement"
+      })),
+    totalTimeSpent: timeElapsed
+  };
+
+  await actions.completeCase(completionData);
+  setIsCompleted(true);
+};
+
 };
