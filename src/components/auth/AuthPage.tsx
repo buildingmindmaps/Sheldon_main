@@ -128,16 +128,23 @@ export function AuthPage() {
 
       if (error) {
         console.error('Sign in error:', error);
-        if (error.message.includes('Invalid login credentials') || error.message.includes('invalid_credentials')) {
+        // Check for email verification issues in Supabase error messages
+        if (error.message?.includes('Email not confirmed') ||
+            error.message?.includes('not verified') ||
+            error.message?.includes('verify your email') ||
+            error.message?.toLowerCase().includes('email') && error.message?.toLowerCase().includes('confirm')) {
+          toast({
+            title: "Email not verified",
+            description: "Please check your inbox and click the verification link before signing in.",
+            variant: "warning"
+          });
+          // Show verification needed tab/message
+          setActiveTab("verification-needed");
+          setFormData(prev => ({...prev})); // Preserve the email for resend verification
+        } else if (error.message?.includes('Invalid login credentials') || error.message?.includes('invalid_credentials')) {
           toast({
             title: "Sign in failed",
             description: "Invalid email or password. Please check your credentials and try again.",
-            variant: "destructive"
-          });
-        } else if (error.message.includes('Email not confirmed')) {
-          toast({
-            title: "Email not verified",
-            description: "Please check your email and click the verification link before signing in.",
             variant: "destructive"
           });
         } else {
@@ -274,10 +281,10 @@ export function AuthPage() {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    
+
     try {
       const { error } = await signInWithGoogle();
-      
+
       if (error) {
         console.error('Google sign in error:', error);
         if (error.message.includes('provider is not enabled') || error.message.includes('Unsupported provider')) {
@@ -303,7 +310,41 @@ export function AuthPage() {
         variant: "destructive"
       });
     }
-    
+
+    setIsLoading(false);
+  };
+
+  const handleResendVerification = async () => {
+    if (!formData.email) {
+      setErrors({ email: 'Email is required to resend verification' });
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      setErrors({ email: 'Please enter a valid email address' });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Call your API or function to resend the verification email here
+      // For example: await resendVerificationEmail(formData.email);
+
+      toast({
+        title: "Verification email sent",
+        description: "Please check your inbox for the verification email.",
+        variant: "default"
+      });
+    } catch (error: any) {
+      console.error('Error resending verification email:', error);
+      toast({
+        title: "Failed to resend verification email",
+        description: error.message || "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    }
+
     setIsLoading(false);
   };
 
@@ -318,7 +359,7 @@ export function AuthPage() {
             Access premium case training
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent>
           {successMessage && (
             <Alert className="mb-4">
@@ -334,8 +375,52 @@ export function AuthPage() {
               <TabsTrigger value="reset">Reset</TabsTrigger>
             </TabsList>
             
-            
-            
+            <TabsContent value="verification-needed">
+              <div className="space-y-4">
+                <div className="text-center p-4 rounded-md bg-amber-50 border border-amber-200">
+                  <AlertCircle className="h-10 w-10 text-amber-500 mx-auto mb-2" />
+                  <h3 className="font-medium text-lg mb-2">Email Verification Required</h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Your account has been created, but you need to verify your email address before you can login.
+                    Please check your inbox for a verification link.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="verify-email">Email Address</Label>
+                  <Input
+                    id="verify-email"
+                    name="email"
+                    type="email"
+                    placeholder="Confirm your email address"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={errors.email ? "border-red-500" : ""}
+                  />
+                  {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+                </div>
+
+                <Button
+                  type="button"
+                  className="w-full bg-[#a3e635] hover:bg-[#84cc16] text-black"
+                  disabled={isLoading}
+                  onClick={handleResendVerification}
+                >
+                  {isLoading ? "Sending..." : "Resend Verification Email"}
+                </Button>
+
+                <p className="text-sm text-center text-gray-600">
+                  Already verified? <button
+                    type="button"
+                    onClick={() => setActiveTab('signin')}
+                    className="text-[#a3e635] hover:underline"
+                  >
+                    Sign in
+                  </button>
+                </p>
+              </div>
+            </TabsContent>
+
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
@@ -352,7 +437,7 @@ export function AuthPage() {
                   />
                   {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signin-password">Password</Label>
                   <div className="relative">
@@ -382,9 +467,9 @@ export function AuthPage() {
                   </div>
                   {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className="w-full bg-[#a3e635] hover:bg-[#84cc16] text-black"
                   disabled={isLoading}
                 >
@@ -409,7 +494,7 @@ export function AuthPage() {
                   />
                   {errors.full_name && <p className="text-sm text-red-500">{errors.full_name}</p>}
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input
@@ -499,9 +584,9 @@ export function AuthPage() {
                   />
                   {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword}</p>}
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className="w-full bg-[#a3e635] hover:bg-[#84cc16] text-black"
                   disabled={isLoading}
                 >
@@ -526,9 +611,9 @@ export function AuthPage() {
                   />
                   {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className="w-full bg-[#a3e635] hover:bg-[#84cc16] text-black"
                   disabled={isLoading}
                 >
@@ -548,7 +633,7 @@ export function AuthPage() {
               </form>
             </TabsContent>
           </Tabs>
-          
+
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -560,7 +645,7 @@ export function AuthPage() {
                 </span>
               </div>
             </div>
-            
+
             <Button
               variant="outline"
               className="w-full mt-4"
@@ -593,5 +678,3 @@ export function AuthPage() {
     </div>
   );
 }
-
-

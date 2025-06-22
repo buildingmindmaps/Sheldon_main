@@ -1,12 +1,19 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const { sendVerificationEmail, sendVerificationEmailWithOTP } = require('../utils/emailService');
 
 // Helper function to generate a JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d', // Token expires in 30 days
   });
+};
+
+// Helper function to generate a 6-digit OTP
+const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 // @desc    Register a new user with email/password
@@ -26,20 +33,40 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User with this email already exists.' });
     }
 
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
     // Create a new user (password will be hashed by the pre-save hook in User model)
     const user = await User.create({
       username,
       email,
       password,
+      isVerified: false,
+      verificationToken,
     });
 
     if (user) {
-      res.status(201).json({
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        token: generateToken(user._id),
-      });
+      // Send verification email
+      try {
+        await sendVerificationEmail(email, username, verificationToken);
+
+        res.status(201).json({
+          message: 'Registration successful! Please check your email to verify your account.',
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          // No token provided until email is verified
+        });
+      } catch (emailError) {
+        console.error('Error sending verification email:', emailError);
+
+        // Delete the user if email sending fails
+        await User.findByIdAndDelete(user._id);
+
+        res.status(500).json({
+          message: 'Failed to send verification email. Please try again later.'
+        });
+      }
     } else {
       res.status(400).json({ message: 'Invalid user data provided.' });
     }
@@ -62,7 +89,19 @@ const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email });
 
-    if (user && (await user.matchPassword(password))) {
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    // Check if email is verified
+    if (!user.isVerified) {
+      return res.status(401).json({
+        message: 'Please verify your email before logging in.',
+        needsVerification: true
+      });
+    }
+
+    if (await user.matchPassword(password)) {
       res.json({
         _id: user._id,
         username: user.username,
@@ -70,6 +109,7 @@ const loginUser = async (req, res) => {
         dateOfJoining: user.dateOfJoining,
         modulesCompleted: user.modulesCompleted,
         experiencePoints: user.experiencePoints,
+        avatar: user.avatar, // Include avatar in the response
         token: generateToken(user._id),
       });
     } else {
@@ -100,5 +140,183 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile, generateToken };
+// @desc    Verify user email with token
+// @route   GET /api/auth/verify/:token
+// @access  Public
+const verifyEmail = async (req, res) => {
+  const { token } = req.params;
 
+  if (!token) {
+    return res.status(400).json({ message: 'Verification token is required.' });
+  }
+
+  try {
+    // Find the user with this verification token
+    const user = await User.findOne({ verificationToken: token });
+
+    if (!user) {
+      return res.status(400).json({
+        message: 'Invalid verification token or account already verified.'
+      });
+    }
+
+    // Mark user as verified and remove the verification token
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    res.status(200).json({
+      message: 'Email verified successfully! You can now log in.',
+      verified: true
+    });
+  } catch (error) {
+    console.error('Error during email verification:', error);
+    res.status(500).json({ message: 'Server error during verification. Please try again.' });
+  }
+};
+
+// @desc    Resend verification email
+// @route   POST /api/auth/resend-verification
+// @access  Public
+const resendVerificationEmail = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required.' });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'Email is already verified.' });
+    }
+
+    // Generate a new verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    user.verificationToken = verificationToken;
+    await user.save();
+
+    // Send verification email
+    await sendVerificationEmail(user.email, user.username, verificationToken);
+
+    res.status(200).json({ message: 'Verification email sent successfully.' });
+  } catch (error) {
+    console.error('Error resending verification email:', error);
+    res.status(500).json({ message: 'Server error. Please try again.' });
+  }
+};
+
+// @desc    Generate and send OTP for email verification
+// @route   POST /api/auth/send-otp
+// @access  Public
+const sendVerificationOTP = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required.' });
+  }
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'Email is already verified.' });
+    }
+
+    // Generate new OTP
+    const otp = generateOTP();
+
+    // Set OTP expiry (15 minutes from now)
+    const otpExpiry = new Date();
+    otpExpiry.setMinutes(otpExpiry.getMinutes() + 15);
+
+    // Update user with OTP info
+    user.verificationOTP = otp;
+    user.verificationOTPExpiry = otpExpiry;
+    await user.save();
+
+    // Send verification email with OTP
+    await sendVerificationEmailWithOTP(email, user.username, otp);
+
+    res.status(200).json({
+      message: 'OTP sent successfully to your email.',
+      email
+    });
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    res.status(500).json({ message: 'Failed to send verification OTP. Please try again.' });
+  }
+};
+
+// @desc    Verify email with OTP
+// @route   POST /api/auth/verify-otp
+// @access  Public
+const verifyEmailWithOTP = async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({ message: 'Email and OTP are required.' });
+  }
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Check if user is already verified
+    if (user.isVerified) {
+      return res.status(200).json({
+        message: 'Email already verified. You can now login.',
+        verified: true
+      });
+    }
+
+    // Check if OTP matches and is not expired
+    if (user.verificationOTP !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP. Please try again.' });
+    }
+
+    if (user.verificationOTPExpiry < new Date()) {
+      return res.status(400).json({ message: 'OTP has expired. Please request a new one.' });
+    }
+
+    // Mark user as verified and clear OTP fields
+    user.isVerified = true;
+    user.verificationOTP = undefined;
+    user.verificationOTPExpiry = undefined;
+    user.verificationToken = undefined; // Clear the old token as well
+    await user.save();
+
+    res.status(200).json({
+      message: 'Email verified successfully! You can now login.',
+      verified: true
+    });
+  } catch (error) {
+    console.error('Error verifying email with OTP:', error);
+    res.status(500).json({ message: 'Server error during verification. Please try again.' });
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getUserProfile,
+  verifyEmail,
+  resendVerificationEmail,
+  sendVerificationOTP,
+  verifyEmailWithOTP,
+  generateToken
+};

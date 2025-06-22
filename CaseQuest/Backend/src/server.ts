@@ -12,18 +12,26 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const port = 3001;
-
+const port = 5001; // Changed from 3001 to 5001 for Google OAuth callback
 
 // --- Middleware ---
 // Use the port your React app runs on. I see localhost:8080 in your browser tabs.
 const allowedOrigins = [
-  'http://localhost:8080',
-  'https://case-quest-flow.lovable.app'
+  'http://localhost:8081',
+  'https://case-quest-flow.lovable.app',
+  'https://sheldonai.in' // Added production frontend URL
 ];
 
 const corsOptions = {
-  origin: 'https://case-quest-flow.lovable.app', // **REQUIRED: Change this to your actual deployed frontend URL**
+  origin: function(origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // If you're sending cookies/auth headers
   optionsSuccessStatus: 204 // Some legacy browsers (IE11, various SmartTVs) choke on 200
@@ -32,20 +40,6 @@ const corsOptions = {
 app.use(cors(corsOptions)); // Use CORS middleware with your options
 
 app.use(express.json()); // To parse JSON request bodies
-
-app.use(cors({
-  origin: function(origin, callback){
-    // allow requests with no origin (like mobile apps, curl, etc.)
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){
-      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  }
-}));
-
-app.use(express.json());
 
 // --- API Key Setup ---
 const apiKey = process.env.GEMINI_API_KEY;
@@ -244,7 +238,89 @@ return;
     }
 }));
 
+// --- Google OAuth Routes ---
+app.get('/api/auth/google', (req: Request, res: Response) => {
+  const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+  const REDIRECT_URI = `http://localhost:${port}/api/auth/google/callback`;
 
-app.listen(port, () => {
-  console.log(`Backend server listening at http://localhost:${port}`);
+  // Generate the Google OAuth URL
+  const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email&access_type=offline`;
+
+  // Redirect the user to Google's OAuth page
+  res.redirect(googleOAuthUrl);
 });
+
+app.post('/api/auth/google/callback', asyncHandler(async (req: Request, res: Response) => {
+  const { code } = req.body;
+
+  if (!code) {
+    res.status(400).json({ error: 'Authorization code is required' });
+    return;
+  }
+
+  try {
+    // This is a placeholder for the token exchange logic
+    // You need to install google-auth-library: npm install google-auth-library --save
+
+    // Mock successful authentication for now
+    // In production, implement proper token exchange with Google
+
+    res.status(200).json({
+      success: true,
+      message: 'Successfully authenticated with Google',
+      user: {
+        // Mock user data that would come from Google
+        id: 'google-user-id',
+        name: 'Google User',
+        email: 'user@example.com',
+        picture: 'https://example.com/profile-picture.jpg'
+      },
+      token: 'mock-jwt-token'
+    });
+
+  } catch (error) {
+    console.error('Error processing Google OAuth callback:', error);
+    res.status(500).json({ error: 'Failed to process Google OAuth callback.' });
+  }
+}));
+
+// Also support GET request for the callback (as Google will redirect with code in query params)
+app.get('/api/auth/google/callback', asyncHandler(async (req: Request, res: Response) => {
+  const { code } = req.query;
+
+  if (!code) {
+    // If no code, redirect to frontend with error
+    res.redirect(`http://localhost:8081/auth-error?message=No authorization code received`);
+    return;
+  }
+
+  try {
+    // In production, you would use code like this:
+    /*
+    const { OAuth2Client } = require('google-auth-library');
+    const client = new OAuth2Client(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      `http://localhost:${port}/api/auth/google/callback`
+    );
+
+    const { tokens } = await client.getToken(code.toString());
+    const ticket = await client.verifyIdToken({
+      idToken: tokens.id_token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    // Generate a JWT token for the user
+    const token = generateToken(payload.sub);
+    */
+
+    // For now, just redirect to frontend with the code
+    // The frontend can then call the POST endpoint to exchange the code
+    res.redirect(`http://localhost:8081/auth-success?code=${code}`);
+  } catch (error) {
+    console.error('Error processing Google OAuth callback:', error);
+    res.redirect(`http://localhost:8081/auth-error?message=Failed to authenticate`);
+  }
+}));
+

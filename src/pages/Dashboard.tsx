@@ -10,6 +10,14 @@ const Dashboard: React.FC = () => {
   const { user, fetchUserProfile } = useAuth();
   const navigate = useNavigate();
 
+  // Debug log to check user and avatar data
+  useEffect(() => {
+    if (user) {
+      console.log("Dashboard - Current user:", user);
+      console.log("Dashboard - Avatar URL:", user.avatar);
+    }
+  }, [user]);
+
   // Fetch fresh user data when component mounts
   useEffect(() => {
     if (user) {
@@ -51,13 +59,20 @@ const Dashboard: React.FC = () => {
           <aside className="w-full lg:w-1/3 bg-white p-6 rounded-xl shadow-md space-y-6">
             {/* User Profile */}
             <div className="flex items-center space-x-4 pb-4 border-b border-gray-200">
-              <Avatar className="w-20 h-20">
-                <AvatarImage
-                  src="https://placehold.co/80x80/f0f0f0/333333?text=Profile"
-                  alt="User Profile"
-                  className="rounded-full object-cover border-2 border-gray-200"
-                />
-                <AvatarFallback className="w-20 h-20 text-2xl">{user.username ? user.username.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
+              <Avatar className="w-24 h-24">
+                {user.avatar ? (
+                  <AvatarImage
+                    src={user.avatar.replace('=s96-c', '=s400-c')}
+                    referrerPolicy="no-referrer"
+                    alt={user.username || "User Profile"}
+                    className="rounded-full h-24 w-24 object-cover border-2 border-gray-200"
+                    onError={(e) => {
+                      console.log("Dashboard avatar image failed to load:", e.currentTarget.src);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                ) : null}
+                <AvatarFallback className="w-24 h-24 text-3xl">{user.username ? user.username.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
               </Avatar>
               <div>
                 <h2 className="text-xl font-semibold text-gray-800">Profile</h2>
