@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../lib/AuthContext';
+import { useSearchParams } from 'react-router-dom';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath }: AuthModalProps) {
-  const { login, register } = useAuth();
+  const { login, register, resendVerificationEmail, verifyEmail } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -19,6 +20,44 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
   const [loading, setLoading] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  // Check for verification token in URL
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const token = searchParams.get('token');
+    if (token) {
+      handleVerifyEmail(token);
+    }
+  }, [isOpen, searchParams]);
+
+  // Function to handle email verification from token
+  const handleVerifyEmail = async (token: string) => {
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const result = await verifyEmail(token);
+
+      if (result?.verified) {
+        setSuccess(result.message || 'Email verified successfully! You can now log in.');
+        // Reset verification flag since email is now verified
+        setNeedsVerification(false);
+        // Switch to login tab since user can now log in
+        setIsLogin(true);
+      } else {
+        setError('Failed to verify email. The verification link may have expired.');
+      }
+    } catch (err: any) {
+      console.error('Email verification error:', err);
+      setError(err.message || 'Failed to verify email. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -27,13 +66,14 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
     setError('');
     setSuccess('');
     setLoading(true);
+    setNeedsVerification(false);
 
     try {
       if (isLogin) {
         try {
           await login(email, password);
 
-          // User is logged in, close modal
+          // If login is successful (no error thrown), close modal
           onClose();
           // Redirect if needed
           if (redirectPath) {
@@ -43,7 +83,12 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
           const errorMessage = err.message || 'Login failed';
           console.log("Auth error:", errorMessage); // For debugging
 
-          if (errorMessage.includes('not found') || errorMessage.includes('not registered')) {
+          // Check if this is an email verification issue
+          if (errorMessage.includes('verify') || errorMessage.includes('verification') ||
+              errorMessage.includes('not verified') || err.needsVerification) {
+            setNeedsVerification(true);
+            setError('Please verify your email before logging in.');
+          } else if (errorMessage.includes('not found') || errorMessage.includes('not registered')) {
             // Custom friendly message for new users
             setError('This email is not registered. Please sign up first.');
             // Automatically switch to sign up mode
@@ -67,10 +112,11 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
           }
 
           await register(username, email, password);
-          setSuccess('Account created! You can now log in with your credentials.');
+          setSuccess('Account created! Please check your email to verify your account before logging in.');
 
-          // Switch to login mode after successful registration
-          setIsLogin(true);
+          // Don't switch to login mode automatically
+          // Instead, show verification needed message
+          setNeedsVerification(true);
         } catch (err: any) {
           const errorMessage = err.message || 'Registration failed';
 
@@ -93,6 +139,24 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
       const errorMessage = err.message || 'Authentication error';
       setError(`Authentication error: ${errorMessage}`);
       console.error("Unhandled outer auth error:", errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!email) {
+      setError('Please enter your email address.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await resendVerificationEmail(email);
+      setSuccess('Verification email has been resent. Please check your inbox.');
+    } catch (err: any) {
+      setError('Failed to resend verification email. Please try again.');
+      console.error("Error resending verification:", err);
     } finally {
       setLoading(false);
     }
@@ -291,8 +355,22 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
             </button>
           </div>
         </form>
+
+        {needsVerification && (
+          <div className="mt-4">
+            <p className="text-sm text-gray-600">
+              {`A verification email has been sent to ${email}. Please check your inbox and verify your email to complete the registration.`}
+            </p>
+            <button
+              onClick={handleResendVerification}
+              className="mt-2 text-blue-500 hover:underline"
+              disabled={loading}
+            >
+              {loading ? 'Resending...' : 'Resend Verification Email'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-

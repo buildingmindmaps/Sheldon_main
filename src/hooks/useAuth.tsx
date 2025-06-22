@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         // Fetch profile when user signs in
         if (session?.user) {
           setTimeout(() => {
@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setProfile(null);
         }
-        
+
         setLoading(false);
       }
     );
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         fetchProfile(session.user.id);
       }
@@ -92,12 +92,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, userData: { full_name: string; education: string; phone_number: string }) => {
     // Use the actual current domain instead of localhost
     const currentDomain = window.location.origin;
-    const redirectUrl = currentDomain.includes('localhost') ? 
-      `${currentDomain}/my-sprints` : 
+    const redirectUrl = currentDomain.includes('localhost') ?
+      `${currentDomain}/my-sprints` :
       `${currentDomain}/my-sprints`;
-    
+
     console.log('Sign up redirect URL:', redirectUrl);
-    
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -110,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     });
-    
+
     return { error };
   };
 
@@ -119,26 +119,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password
     });
-    
+
     return { error };
   };
 
   const signInWithGoogle = async () => {
     // Use the actual current domain for Google OAuth redirect
     const currentDomain = window.location.origin;
-    const redirectUrl = currentDomain.includes('localhost') ? 
-      `${currentDomain}/my-sprints` : 
+    const redirectUrl = currentDomain.includes('localhost') ?
+      `${currentDomain}/my-sprints` :
       `${currentDomain}/my-sprints`;
-    
+
     console.log('Google OAuth redirect URL:', redirectUrl);
-    
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: redirectUrl
       }
     });
-    
+
     return { error };
   };
 

@@ -11,12 +11,13 @@ dotenv.config();
 const connectDB = require('./config/db');
 connectDB();
 
-// Passport configuration (if using OAuth)
-require('./config/passport');
+// Passport configuration
+require('./config/passport-setup'); // Updated path to our new passport configuration
 
 // Import routes
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const googleAuthRoutes = require('./routes/auth-routes'); // Import the Google auth routes
 
 const app = express();
 
@@ -24,7 +25,7 @@ const app = express();
 
 // Enable CORS
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Allow your frontend to access the backend
+  origin: ['http://localhost:8081', 'http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean), // Allow your frontend to access the backend
   credentials: true, // Allow cookies to be sent (important for sessions/OAuth)
 }));
 
@@ -59,6 +60,7 @@ app.get('/', (req, res) => {
 // Mount API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/auth', googleAuthRoutes); // Mount Google auth routes correctly
 
 // --- Error Handling (Optional: Add more specific error handling later) ---
 // Example basic 404 handler

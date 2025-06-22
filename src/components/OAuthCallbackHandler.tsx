@@ -7,7 +7,7 @@ const OAuthCallbackHandler = () => {
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { fetchUserProfile, intended } = useAuth();
+  const { fetchUserProfile, intended, user } = useAuth();
 
   useEffect(() => {
     const processOAuthCallback = async () => {
@@ -29,6 +29,9 @@ const OAuthCallbackHandler = () => {
         // Fetch user data with the new token
         await fetchUserProfile();
 
+        // Debug: Log the user object after fetching profile
+        console.log('User data received after OAuth login:', user);
+
         setStatus('success');
 
         // Redirect to intended page or dashboard after a short delay
@@ -43,7 +46,7 @@ const OAuthCallbackHandler = () => {
     };
 
     processOAuthCallback();
-  }, [fetchUserProfile, navigate, intended]);
+  }, [fetchUserProfile, navigate, intended, user]);
 
   // Show appropriate UI based on status
   if (status === 'processing') {

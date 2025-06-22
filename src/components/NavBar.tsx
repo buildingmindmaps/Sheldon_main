@@ -28,6 +28,14 @@ export function NavBar() {
 
   const { user, logout } = auth;
 
+  // Debug log to check user and avatar data
+  useEffect(() => {
+    if (user) {
+      console.log("NavBar - Current user:", user);
+      console.log("NavBar - Avatar URL:", user.avatar);
+    }
+  }, [user]);
+
   // Track authentication state
   useEffect(() => {
     if (user) {
@@ -206,9 +214,21 @@ export function NavBar() {
                 onMouseLeave={() => setUserDropdownOpen(false)}
               >
                 <Avatar
-                  className="h-10 w-10 cursor-pointer bg-gradient-to-r from-[#49dd80] to-[#11ba81] text-white border-2 border-white"
+                  className="h-10 w-10 cursor-pointer bg-gradient-to-r from-[#49dd80] to-[#11ba81] text-white border-2 border-white rounded-full object-cover"
                   onClick={handleProfileClick}
                 >
+                  {user?.avatar ? (
+                    <AvatarImage
+                      src={user.avatar.replace('=s96-c', '=s200-c')}
+                      referrerPolicy="no-referrer"
+                      alt={displayName}
+                      className="rounded-full h-10 w-10 object-cover"
+                      onError={(e) => {
+                        console.log("Avatar image failed to load:", e.currentTarget.src);
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  ) : null}
                   <AvatarFallback>{getUserInitial()}</AvatarFallback>
                 </Avatar>
 
@@ -255,9 +275,21 @@ export function NavBar() {
               </Button>
             ) : (
               <Avatar
-                className="h-8 w-8 cursor-pointer bg-gradient-to-r from-[#49dd80] to-[#11ba81] text-white border-2 border-white mr-2"
+                className="h-8 w-8 cursor-pointer bg-gradient-to-r from-[#49dd80] to-[#11ba81] text-white border-2 border-white mr-2 rounded-full object-cover"
                 onClick={handleProfileClick}
               >
+                {user?.avatar ? (
+                  <AvatarImage
+                    src={user.avatar.replace('=s96-c', '=s200-c')}
+                    referrerPolicy="no-referrer"
+                    alt={displayName}
+                    className="rounded-full h-8 w-8 object-cover"
+                    onError={(e) => {
+                      console.log("Mobile avatar image failed to load:", e.currentTarget.src);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                ) : null}
                 <AvatarFallback>{getUserInitial()}</AvatarFallback>
               </Avatar>
             )}

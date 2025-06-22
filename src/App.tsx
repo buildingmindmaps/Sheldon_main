@@ -8,6 +8,8 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { AuthProvider } from "./lib/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import OAuthCallbackHandler from "./components/OAuthCallbackHandler";
+import EmailVerification from "./pages/EmailVerification";
+import ResendVerification from "./pages/ResendVerification";
 
 // Assuming components are in these locations
 import Index from "./pages/Index";
@@ -97,14 +99,19 @@ const App = () => (
             <Route path="/all-courses" element={<AllCourses />} />
             <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
             <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
-
-            {/* Sprint-specific Apps */}
             <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
             {/* UPDATED: Added a clean route for the SWOT Analysis App */}
             <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
 
             {/* Add OAuth callback route */}
             <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
+
+            {/* Email verification routes - Only Link verification is now supported */}
+            <Route path="/auth/verify-email" element={<EmailVerification />} />
+            <Route path="/auth/resend-verification" element={<ResendVerification />} />
+            {/* Supabase verification route - this is the route that Supabase uses in verification emails */}
+            <Route path="/verify" element={<EmailVerification />} />
+            <Route path="/verify/:token" element={<EmailVerification />} />
 
             {/* Add Dashboard route */}
             <Route path="/dashboard" element={
@@ -122,5 +129,3 @@ const App = () => (
 );
 
 export default App;
-
-

@@ -26,6 +26,23 @@ const userSchema = mongoose.Schema(
       unique: true,
       sparse: true, // Allows multiple documents to have a null value for this field
     },
+    avatar: { // Added field to store user's profile image URL
+      type: String,
+      default: '',
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+    },
+    verificationOTP: {
+      type: String,
+    },
+    verificationOTPExpiry: {
+      type: Date,
+    },
     modulesCompleted: [
       {
         moduleId: {

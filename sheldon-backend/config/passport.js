@@ -14,11 +14,47 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        // Debug logging for Google profile data
+        console.log('Google OAuth Profile Data:');
+        console.log('Profile ID:', profile.id);
+        console.log('Display Name:', profile.displayName);
+        console.log('Full profile object:', JSON.stringify(profile, null, 2));
+
         // Check if a user with this Google ID already exists
         let user = await User.findOne({ googleId: profile.id });
 
+        // Get the profile image from Google - try multiple possible locations
+        let avatar = '';
+
+        // Try to find the avatar from different potential places in the profile object
+        if (profile.photos && profile.photos.length > 0) {
+          avatar = profile.photos[0].value;
+          console.log('Found avatar in profile.photos:', avatar);
+        } else if (profile._json && profile._json.picture) {
+          avatar = profile._json.picture;
+          console.log('Found avatar in profile._json.picture:', avatar);
+        } else if (profile.picture) {
+          avatar = profile.picture;
+          console.log('Found avatar in profile.picture:', avatar);
+        }
+
+        // Remove size limitation from Google profile picture if present
+        // (Google often adds '=s96-c' to restrict the image size)
+        if (avatar && avatar.includes('=s')) {
+          avatar = avatar.split('=s')[0];
+          console.log('Removed size restriction from avatar URL:', avatar);
+        }
+
+        console.log('Final avatar URL to be used:', avatar);
+
         if (user) {
-          // User exists, return the user
+          // User exists, update their avatar URL
+          console.log('Updating existing user with avatar:', avatar);
+          user.avatar = avatar;
+          await user.save();
+          console.log('Updated user:', user);
+
+          // Return the user
           done(null, user);
         } else {
           // If not, create a new user account
@@ -29,12 +65,16 @@ passport.use(
             return done(new Error('No email found in Google profile.'), null);
           }
 
+          console.log('Creating new user with avatar:', avatar);
           user = await User.create({
             googleId: profile.id,
             email: email,
             username: profile.displayName || email.split('@')[0], // Use display name or part of email
+            avatar: avatar, // Save the avatar URL from Google
+            isVerified: true, // OAuth users are considered verified
             // Password is not stored for OAuth users
           });
+          console.log('New user created with avatar:', user.avatar);
           done(null, user);
         }
       } catch (err) {
