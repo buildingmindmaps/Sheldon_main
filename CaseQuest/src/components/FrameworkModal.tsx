@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,9 +11,10 @@ interface FrameworkModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (framework: string) => void;
+  isLoading: boolean; // Added isLoading prop
 }
 
-export const FrameworkModal = ({ isOpen, onClose, onSubmit }: FrameworkModalProps) => {
+export const FrameworkModal = ({ isOpen, onClose, onSubmit, isLoading }: FrameworkModalProps) => {
   const [frameworkText, setFrameworkText] = useState('');
 
   const { isRecording, start, stop, isSupported, volume } = useSpeechToText({
@@ -59,14 +59,14 @@ export const FrameworkModal = ({ isOpen, onClose, onSubmit }: FrameworkModalProp
               onChange={(e) => setFrameworkText(e.target.value)}
               placeholder="Describe your framework structure here or use the microphone to dictate..."
               className="min-h-[200px] resize-none pr-12"
-              disabled={isRecording}
+              disabled={isRecording || isLoading} // Disable if loading
             />
             <div className="absolute bottom-3 right-3">
               <Button
                 size="icon"
                 variant={isRecording ? "ghost" : "outline"}
                 onClick={handleMicClick}
-                disabled={!isSupported}
+                disabled={!isSupported || isLoading} // Disable if loading
                 title={isRecording ? "Stop recording" : "Start recording"}
                 className={isRecording ? 'p-0 rounded-full' : ''}
               >
@@ -80,12 +80,12 @@ export const FrameworkModal = ({ isOpen, onClose, onSubmit }: FrameworkModalProp
           </div>
           
           <div className="flex justify-end space-x-3">
-            <Button variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={onClose} disabled={isLoading}> {/* Disable if loading */}
               Cancel
             </Button>
             <Button 
               onClick={handleSubmit}
-              disabled={!frameworkText.trim() || isRecording}
+              disabled={!frameworkText.trim() || isRecording || isLoading} // Disable if loading
               className="bg-gray-700 hover:bg-gray-800"
             >
               Submit Framework for Evaluation

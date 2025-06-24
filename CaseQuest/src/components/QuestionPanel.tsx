@@ -6,19 +6,22 @@ import type { Question } from './CaseInterview';
 import { toast } from 'sonner';
 import { useSpeechToText } from '../hooks/useSpeechToText';
 import { VoiceVisualizer } from './VoiceVisualizer';
+// We don't need useCasePractice here anymore as the debug buttons are removed.
 
 interface QuestionPanelProps {
   questions: Question[];
   onAddQuestion: (question: string) => void;
   onUpdateFeedback: (questionId: number, feedback: Question['feedback']) => void;
   maxQuestions: number;
+  isLoading: boolean;
 }
 
 export const QuestionPanel: React.FC<QuestionPanelProps> = ({
   questions,
   onAddQuestion,
   onUpdateFeedback,
-  maxQuestions
+  maxQuestions,
+  isLoading
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [expandedFeedback, setExpandedFeedback] = useState<number | null>(null);
@@ -41,6 +44,8 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
     if (currentQuestion.trim() && questions.length < maxQuestions) {
       onAddQuestion(currentQuestion.trim());
       setCurrentQuestion('');
+    } else if (questions.length >= maxQuestions) {
+      toast.info(`You have reached the maximum of ${maxQuestions} questions.`);
     }
   };
 
@@ -72,9 +77,8 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Question List with dedicated scrollbar */}
       <div className="flex-1 overflow-y-auto p-6">
-        {questions.length === 0 && currentQuestion.length === 0 ? (
+        {questions.length === 0 && !isLoading ? (
           <div className="text-center text-gray-500 mt-20">
             <p className="text-lg mb-2">No questions asked yet</p>
             <p className="text-sm">Start by asking your clarifying questions below</p>
@@ -105,11 +109,12 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                 );
               }
 
+              // Use question.feedback for display
               const feedbackDisplay = getFeedbackDisplay(question.feedback);
               const isExpanded = expandedFeedback === question.id;
-              
+
               return (
-                <div key={question.id} className="space-y-3">
+                <div key={question.id} className="space-y-3 animate-fade-in">
                   {/* Question */}
                   <div className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-start justify-between mb-2">
@@ -122,7 +127,6 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                   <div className="bg-blue-50 rounded-lg p-4 ml-4 border-l-4 border-blue-200">
                     <p className="text-xs sm:text-sm text-gray-800 mb-3">{question.answer}</p>
 
-                    {/* Auto-assigned Rating Badge */}
                     {question.feedback && (
                       <div className="flex items-center space-x-2">
                         <button
@@ -130,18 +134,13 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
                           className={`flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium border cursor-pointer hover:opacity-80 transition-opacity ${feedbackDisplay.className}`}
                         >
                           <span>{feedbackDisplay.label}</span>
-                          {isExpanded ? (
-                            <ChevronUp className="w-3 h-3" />
-                          ) : (
-                            <ChevronDown className="w-3 h-3" />
-                          )}
+                          {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                         </button>
                       </div>
                     )}
 
-                    {/* Detailed Feedback Display */}
                     {isExpanded && question.evaluation && (
-                      <div className="mt-3 p-3 bg-gray-100 rounded-lg border text-xs">
+                       <div className="mt-3 p-3 bg-gray-100 rounded-lg border text-xs">
                         <h4 className="font-semibold text-gray-800 mb-2">Detailed Feedback:</h4>
                         <div className="space-y-2">
                           <div>
@@ -167,6 +166,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
         )}
       </div>
 
+      {/* Input Area */}
       <div className="border-t border-gray-200 p-4 bg-white">
         <div className="flex items-end space-x-2">
           <Textarea
@@ -175,7 +175,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
             onKeyPress={handleKeyPress}
             placeholder="Enter your clarifying question..."
             className="flex-grow resize-none border border-gray-200 rounded-lg p-2 text-sm focus-visible:ring-1"
-            disabled={questions.length >= maxQuestions || isRecording}
+            disabled={questions.length >= maxQuestions || isRecording || isLoading}
             rows={1}
             style={{ minHeight: '40px' }}
           />
@@ -183,19 +183,15 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
             size="icon"
             variant="outline"
             onClick={handleMicClick}
-            disabled={!isSupported || questions.length >= maxQuestions}
+            disabled={!isSupported || questions.length >= maxQuestions || isLoading}
             title={isRecording ? "Stop recording" : "Start recording"}
             className={`flex-shrink-0 ${isRecording ? 'p-0' : ''}`}
           >
-            {isRecording ? (
-              <VoiceVisualizer volume={volume} />
-            ) : (
-              <Mic className="h-5 w-5" />
-            )}
+            {isRecording ? <VoiceVisualizer volume={volume} /> : <Mic className="h-5 w-5" />}
           </Button>
           <Button
             onClick={handleSubmitQuestion}
-            disabled={!currentQuestion.trim() || questions.length >= maxQuestions || isRecording}
+            disabled={!currentQuestion.trim() || questions.length >= maxQuestions || isRecording || isLoading}
             className="flex-shrink-0 bg-gray-800 hover:bg-gray-900"
             size="icon"
           >

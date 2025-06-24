@@ -26,12 +26,18 @@ const app = express();
 
 // Enable CORS
 app.use(cors({
-  origin: ['http://localhost:8081', 'http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean), // Allow your frontend to access the backend
+  origin: ['http://localhost:8081', 'http://localhost:5001', process.env.FRONTEND_URL].filter(Boolean), // Allow your frontend to access the backend
   credentials: true, // Allow cookies to be sent (important for sessions/OAuth)
 }));
 
 // Body parser for JSON data
 app.use(express.json());
+
+// Add a general request logger BEFORE session/passport middleware
+app.use((req, res, next) => {
+  console.log(`[SERVER] Incoming request to: ${req.method} ${req.originalUrl}`);
+  next();
+});
 
 // Express Session middleware (Crucial for Passport.js OAuth flow)
 // Make sure this is used BEFORE passport.initialize() and passport.session()
@@ -62,7 +68,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', googleAuthRoutes); // Mount Google auth routes correctly
-app.use('/api/case-practice', casePracticeRoutes); // Add this line
+app.use('/api/case-practice', casePracticeRoutes); // Add this line - ensure this is AFTER any general auth/user routes if they use similar prefixes but specific logic
 
 // --- Error Handling (Optional: Add more specific error handling later) ---
 // Example basic 404 handler

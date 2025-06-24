@@ -15,6 +15,7 @@ const startCasePractice = async (req, res) => {
       caseStatement,
     });
 
+    console.log('[START_CASE] New case practice session created:', casePractice._id); // Log the new session ID
     res.status(201).json({
       success: true,
       data: casePractice,
@@ -22,7 +23,16 @@ const startCasePractice = async (req, res) => {
     });
   } catch (error) {
     console.error('Error starting case practice:', error);
-    res.status(500).json({ message: 'Error starting case practice session' });
+    // Log specific Mongoose validation errors
+    if (error.name === 'ValidationError') {
+        console.error('Mongoose Validation Error Details:', error.errors);
+        return res.status(400).json({
+            message: 'Validation failed for starting case practice',
+            errors: error.errors,
+            rawError: error.message
+        });
+    }
+    res.status(500).json({ message: 'Error starting case practice session', error: error.message });
   }
 };
 
@@ -32,6 +42,10 @@ const startCasePractice = async (req, res) => {
 const addQuestionAndResponse = async (req, res) => {
   const { sessionId } = req.params;
   const { questionNumber, userQuestion, aiResponse, feedback } = req.body;
+  console.log('--- Add Q&A Controller ---');
+  console.log('Session ID:', sessionId);
+  console.log('Request Body:', JSON.stringify(req.body, null, 2)); // Stringify for better logging of nested objects
+  console.log('User ID from token:', req.user._id);
 
   try {
     const casePractice = await CasePractice.findOne({
@@ -39,33 +53,67 @@ const addQuestionAndResponse = async (req, res) => {
       userId: req.user._id,
     });
 
+    console.log('Found case practice session:', casePractice ? 'YES' : 'NO');
     if (!casePractice) {
-      return res.status(404).json({ message: 'Case practice session not found' });
+      console.warn(`[ADD_QA] Session ${sessionId} not found or unauthorized for user ${req.user._id}`);
+      return res.status(404).json({ message: 'Case practice session not found or unauthorized' });
     }
+
+    // [FIX] Map frontend feedback rating to backend schema enum to prevent validation errors.
+    const mapRatingToSchema = (rating) => {
+      const lowerCaseRating = rating?.toLowerCase();
+      switch (lowerCaseRating) {
+        case 'excellent':
+          return 'Excellent';
+        case 'critical':
+          return 'Critical';
+        case 'satisfactory':
+        case 'needs-improvement':
+          return 'Good'; // Map both to 'Good'
+        default:
+          return 'Good'; // Default value if something unexpected is passed
+      }
+    };
+
+    const formattedFeedback = {
+      ...feedback,
+      rating: mapRatingToSchema(feedback.rating),
+    };
 
     casePractice.questionsAndResponses.push({
       questionNumber,
       userQuestion,
       aiResponse,
-      feedback,
+      feedback: formattedFeedback,
+      timestamp: new Date()
     });
 
     await casePractice.save();
-
+    console.log('[ADD_QA] Session saved successfully!');
     res.json({
       success: true,
       data: casePractice,
       message: 'Question and response added successfully',
     });
   } catch (error) {
+    console.error('--- Error in Add Q&A Controller ---');
     console.error('Error adding Q&A:', error);
-    res.status(500).json({ message: 'Error adding question and response' });
+    // Log specific Mongoose validation errors
+    if (error.name === 'ValidationError') {
+        console.error('Mongoose Validation Error Details:', error.errors);
+        return res.status(400).json({
+            message: 'Validation failed for adding question and response',
+            errors: error.errors,
+            rawError: error.message
+        });
+    }
+    res.status(500).json({
+      message: 'Error adding question and response',
+      error: error.message
+    });
   }
 };
 
-// @desc    Submit framework for case practice session
-// @route   PUT /api/case-practice/:sessionId/submit-framework
-// @access  Private
 const submitFramework = async (req, res) => {
   const { sessionId } = req.params;
   const { frameworkContent } = req.body;
@@ -79,13 +127,15 @@ const submitFramework = async (req, res) => {
         'framework.submittedAt': new Date(),
         'performanceMetrics.frameworkSubmitted': true,
       },
-      { new: true }
+      { new: true, runValidators: true } // Add runValidators for update operations
     );
 
     if (!casePractice) {
-      return res.status(404).json({ message: 'Case practice session not found' });
+      console.warn(`[SUBMIT_FRAMEWORK] Session ${sessionId} not found or unauthorized for user ${req.user._id}`);
+      return res.status(404).json({ message: 'Case practice session not found or unauthorized' });
     }
 
+    console.log('[SUBMIT_FRAMEWORK] Framework submitted successfully for session:', casePractice._id);
     res.json({
       success: true,
       data: casePractice,
@@ -93,13 +143,18 @@ const submitFramework = async (req, res) => {
     });
   } catch (error) {
     console.error('Error submitting framework:', error);
-    res.status(500).json({ message: 'Error submitting framework' });
+    if (error.name === 'ValidationError') {
+        console.error('Mongoose Validation Error Details:', error.errors);
+        return res.status(400).json({
+            message: 'Validation failed for framework submission',
+            errors: error.errors,
+            rawError: error.message
+        });
+    }
+    res.status(500).json({ message: 'Error submitting framework', error: error.message });
   }
 };
 
-// @desc    Complete case practice session with performance metrics
-// @route   PUT /api/case-practice/:sessionId/complete
-// @access  Private
 const completeCasePractice = async (req, res) => {
   const { sessionId } = req.params;
   const { performanceMetrics, areasForImprovement, totalTimeSpent } = req.body;
@@ -114,13 +169,15 @@ const completeCasePractice = async (req, res) => {
         areasForImprovement,
         totalTimeSpent,
       },
-      { new: true }
+      { new: true, runValidators: true } // Add runValidators
     );
 
     if (!casePractice) {
-      return res.status(404).json({ message: 'Case practice session not found' });
+      console.warn(`[COMPLETE_CASE] Session ${sessionId} not found or unauthorized for user ${req.user._id}`);
+      return res.status(404).json({ message: 'Case practice session not found or unauthorized' });
     }
 
+    console.log('[COMPLETE_CASE] Case practice session completed:', casePractice._id);
     res.json({
       success: true,
       data: casePractice,
@@ -128,13 +185,18 @@ const completeCasePractice = async (req, res) => {
     });
   } catch (error) {
     console.error('Error completing case practice:', error);
-    res.status(500).json({ message: 'Error completing case practice session' });
+    if (error.name === 'ValidationError') {
+        console.error('Mongoose Validation Error Details:', error.errors);
+        return res.status(400).json({
+            message: 'Validation failed for completing case',
+            errors: error.errors,
+            rawError: error.message
+        });
+    }
+    res.status(500).json({ message: 'Error completing case practice session', error: error.message });
   }
 };
 
-// @desc    Get user's case practice history
-// @route   GET /api/case-practice/history
-// @access  Private
 const getCasePracticeHistory = async (req, res) => {
   try {
     const casePractices = await CasePractice.find({ userId: req.user._id })
@@ -148,13 +210,10 @@ const getCasePracticeHistory = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching case practice history:', error);
-    res.status(500).json({ message: 'Error fetching case practice history' });
+    res.status(500).json({ message: 'Error fetching case practice history', error: error.message });
   }
 };
 
-// @desc    Get specific case practice session details
-// @route   GET /api/case-practice/:sessionId
-// @access  Private
 const getCasePracticeDetails = async (req, res) => {
   const { sessionId } = req.params;
 
@@ -165,7 +224,8 @@ const getCasePracticeDetails = async (req, res) => {
     });
 
     if (!casePractice) {
-      return res.status(404).json({ message: 'Case practice session not found' });
+      console.warn(`[GET_DETAILS] Session ${sessionId} not found or unauthorized for user ${req.user._id}`);
+      return res.status(404).json({ message: 'Case practice session not found or unauthorized' });
     }
 
     res.json({
@@ -174,7 +234,7 @@ const getCasePracticeDetails = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching case practice details:', error);
-    res.status(500).json({ message: 'Error fetching case practice details' });
+    res.status(500).json({ message: 'Error fetching case practice details', error: error.message });
   }
 };
 
