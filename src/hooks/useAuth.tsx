@@ -1,7 +1,16 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
+
+// Define types for our authentication system
+interface User {
+  id: string;
+  email: string;
+}
+
+interface Session {
+  user: User;
+  token: string;
+  expires_at: number;
+}
 
 interface Profile {
   id: string;
@@ -28,6 +37,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// API URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -35,162 +47,219 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener first
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        // Fetch profile when user signs in
-        if (session?.user) {
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-          }, 0);
+    // Check for existing session in localStorage
+    const storedSession = localStorage.getItem('sheldonai_session');
+    if (storedSession) {
+      try {
+        const parsedSession = JSON.parse(storedSession);
+        // Check if session is expired
+        if (parsedSession.expires_at > Date.now()) {
+          setSession(parsedSession);
+          setUser(parsedSession.user);
+          // Fetch user profile
+          fetchProfile(parsedSession.user.id);
         } else {
-          setProfile(null);
+          // Session expired, clear it
+          localStorage.removeItem('sheldonai_session');
+          setLoading(false);
         }
-
+      } catch (err) {
+        console.error('Error parsing stored session:', err);
         setLoading(false);
       }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.email);
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
+    } else {
       setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    }
   }, []);
 
+  // Function to fetch user profile from MongoDB
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      const response = await fetch(`${API_URL}/users/${userId}/profile`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${session?.token}`,
+          'Content-Type': 'application/json'
+        },
+      });
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching profile:', error);
-        return;
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile');
       }
 
-      setProfile(data);
+      const data = await response.json();
+      setProfile(data.profile);
     } catch (error) {
       console.error('Error fetching profile:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const signUp = async (email: string, password: string, userData: { full_name: string; education: string; phone_number: string }) => {
-    // Use the actual current domain instead of localhost
-    const currentDomain = window.location.origin;
-    const redirectUrl = currentDomain.includes('localhost') ?
-      `${currentDomain}/my-sprints` :
-      `${currentDomain}/my-sprints`;
-
-    console.log('Sign up redirect URL:', redirectUrl);
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
+  // Sign up with email and password
+  const signUp = async (
+    email: string,
+    password: string,
+    userData: { full_name: string; education: string; phone_number: string }
+  ) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
           full_name: userData.full_name,
           education: userData.education,
           phone_number: userData.phone_number
-        }
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { error: data.message || 'Registration failed' };
       }
-    });
 
-    return { error };
-  };
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    return { error };
-  };
-
-  const signInWithGoogle = async () => {
-    // Use the actual current domain for Google OAuth redirect
-    const currentDomain = window.location.origin;
-    const redirectUrl = currentDomain.includes('localhost') ?
-      `${currentDomain}/my-sprints` :
-      `${currentDomain}/my-sprints`;
-
-    console.log('Google OAuth redirect URL:', redirectUrl);
-
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: redirectUrl
-      }
-    });
-
-    return { error };
-  };
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-  };
-
-  const resetPassword = async (email: string) => {
-    // Use the actual current domain for password reset
-    const currentDomain = window.location.origin;
-    const redirectUrl = currentDomain.includes('localhost') ?
-      `${currentDomain}/auth?type=recovery` :
-      `${currentDomain}/auth?type=recovery`;
-
-    console.log('Password reset redirect URL:', redirectUrl);
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: redirectUrl
-    });
-
-    return { error };
-  };
-
-  const updateProfile = async (updates: Partial<Profile>) => {
-    if (!user) return { error: new Error('No user logged in') };
-
-    const { error } = await supabase
-      .from('profiles')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('id', user.id);
-
-    if (!error && profile) {
-      setProfile({ ...profile, ...updates });
+      return { error: null };
+    } catch (error: any) {
+      console.error('Sign up error:', error);
+      return { error: error.message || 'An unknown error occurred' };
     }
-
-    return { error };
   };
 
-  const value = {
-    user,
-    session,
-    profile,
-    loading,
-    signUp,
-    signIn,
-    signInWithGoogle,
-    signOut,
-    resetPassword,
-    updateProfile
+  // Sign in with email and password
+  const signIn = async (email: string, password: string) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { error: data.message || 'Authentication failed' };
+      }
+
+      // Set session, user and expiry
+      const newSession = {
+        token: data.token,
+        user: data.user,
+        expires_at: Date.now() + (data.expiresIn || 86400) * 1000, // Default to 24 hours
+      };
+
+      localStorage.setItem('sheldonai_session', JSON.stringify(newSession));
+      setSession(newSession);
+      setUser(data.user);
+
+      // Fetch user profile after successful login
+      await fetchProfile(data.user.id);
+
+      return { error: null };
+    } catch (error: any) {
+      console.error('Sign in error:', error);
+      return { error: error.message || 'An unknown error occurred' };
+    }
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  // Sign in with Google OAuth
+  const signInWithGoogle = async () => {
+    try {
+      // Redirect to Google OAuth route
+      window.location.href = `${API_URL}/auth/google`;
+      return { error: null };
+    } catch (error: any) {
+      console.error('Google sign in error:', error);
+      return { error: error.message };
+    }
+  };
+
+  // Sign out
+  const signOut = async () => {
+    localStorage.removeItem('sheldonai_session');
+    setUser(null);
+    setSession(null);
+    setProfile(null);
+  };
+
+  // Reset password
+  const resetPassword = async (email: string) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { error: data.message || 'Password reset request failed' };
+      }
+
+      return { error: null };
+    } catch (error: any) {
+      console.error('Reset password error:', error);
+      return { error: error.message || 'An unknown error occurred' };
+    }
+  };
+
+  // Update user profile
+  const updateProfile = async (updates: Partial<Profile>) => {
+    if (!user) return { error: 'Not authenticated' };
+
+    try {
+      const response = await fetch(`${API_URL}/users/${user.id}/profile`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${session?.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { error: data.message || 'Failed to update profile' };
+      }
+
+      // Update local profile state
+      setProfile(prev => prev ? { ...prev, ...updates } : null);
+
+      return { error: null };
+    } catch (error: any) {
+      console.error('Update profile error:', error);
+      return { error: error.message || 'An unknown error occurred' };
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        profile,
+        loading,
+        signUp,
+        signIn,
+        signInWithGoogle,
+        signOut,
+        resetPassword,
+        updateProfile,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
@@ -200,8 +269,3 @@ export function useAuth() {
   }
   return context;
 }
-
-
-
-
-

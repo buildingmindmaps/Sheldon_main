@@ -1,13 +1,12 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { Form, FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { submitToWaitlist } from "@/services/waitlistService";
 
 // Define form validation schema
 const waitlistSchema = z.object({
@@ -37,25 +36,16 @@ export function WaitlistForm() {
     setIsLoading(true);
     
     try {
-      // Insert data into Supabase
-      console.log("Attempting to insert into Supabase...");
-      const { data: insertedData, error } = await supabase
-        .from('waitlist')
-        .insert([
-          {
-            name: data.name,
-            education: data.education,
-            email: data.email
-          }
-        ])
-        .select();
+      // Submit data to MongoDB via our API
+      console.log("Submitting to waitlist API...");
+      const result = await submitToWaitlist({
+        name: data.name,
+        education: data.education,
+        email: data.email,
+        source: 'waitlist_form'
+      });
 
-      if (error) {
-        console.error("Supabase error:", error);
-        throw error;
-      }
-
-      console.log("Successfully inserted data:", insertedData);
+      console.log("Successfully submitted data:", result);
 
       toast({
         title: "Success!",

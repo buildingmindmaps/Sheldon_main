@@ -77,7 +77,7 @@ const IconsPlaybook = () => {
                   <span className="text-sm">{featuredPost.author}</span>
                 </div>
                 
-                <Link to={`/${slugify(featuredPost.title)}`}>
+                <Link to={`/articles/${slugify(featuredPost.title)}`}>
                   <Button className="bg-white text-black hover:bg-gray-200">
                     Read Playbook <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>

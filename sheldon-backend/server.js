@@ -19,6 +19,10 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const googleAuthRoutes = require('./routes/auth-routes'); // Import the Google auth routes
 const casePracticeRoutes = require('./routes/casePractice'); // Add this line
+const courseRoutes = require('./routes/course'); // Import course routes
+const modulesRoutes = require('./routes/modules'); // Import modules routes
+const progressRoutes = require('./routes/progress'); // Import progress routes
+const waitlistRoutes = require('./routes/waitlist'); // Import waitlist routes
 
 const app = express();
 
@@ -69,6 +73,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', googleAuthRoutes); // Mount Google auth routes correctly
 app.use('/api/case-practice', casePracticeRoutes); // Add this line - ensure this is AFTER any general auth/user routes if they use similar prefixes but specific logic
+app.use('/api/courses', courseRoutes); // Mount course routes
+app.use('/api/modules', modulesRoutes); // Mount modules routes
+app.use('/api/users', progressRoutes); // Fix: Mount progress routes under /api/users instead of /api/progress
+app.use('/api/waitlist', waitlistRoutes); // Mount waitlist routes
 
 // --- Error Handling (Optional: Add more specific error handling later) ---
 // Example basic 404 handler
