@@ -10,6 +10,8 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import OAuthCallbackHandler from "./components/OAuthCallbackHandler";
 import EmailVerification from "./pages/EmailVerification";
 import ResendVerification from "./pages/ResendVerification";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // Assuming components are in these locations
 import Index from "./pages/Index";
@@ -24,6 +26,7 @@ import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/Al
 import { CaseInterview } from "./components/CaseInterview";
 import { SWOTApp } from "./components/SWOTApp"; // Updated to import from file without spaces
 import Dashboard from "./pages/Dashboard"; // Import Dashboard component
+import SWOTAnalysisPage from "./pages/SWOTAnalysisPage"; // Import the SWOTAnalysisPage component
 
 const queryClient = new QueryClient();
 
@@ -58,19 +61,6 @@ const CaseInterviewWrapper = () => {
   );
 };
 
-// NEW: Wrapper component for SWOTApp to handle back navigation
-const SWOTAppWrapper = () => {
-  const navigate = useNavigate();
-  const handleBack = () => {
-    navigate('/all-courses/business-frameworks');
-  };
-  return (
-    <ProtectedRoute>
-      <SWOTApp onBack={handleBack} />
-    </ProtectedRoute>
-  );
-};
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -97,11 +87,22 @@ const App = () => (
 
             {/* Main Sprints and Sub-pages */}
             <Route path="/all-courses" element={<AllCourses />} />
-            <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
-            <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
-            <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
-            {/* UPDATED: Added a clean route for the SWOT Analysis App */}
-            <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
+            <Route path="/swot-analysis" element={<SWOTAnalysisPage />} />
+
+            <Route
+                path="/all-courses/case-practice"
+                element={<CasePracticePage />}
+            />
+            <Route
+                path="/all-courses/business-frameworks"
+                element={<BusinessFrameworksPage />}
+            />
+            <Route
+                path="/all-courses/case-interview"
+                element={<CaseInterviewWrapper />}
+            />
+            {/* UPDATED: Change to use SWOTAnalysisPage instead of SWOTAppWrapper */}
+            <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAnalysisPage />} />
 
             {/* Add OAuth callback route */}
             <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
@@ -119,6 +120,10 @@ const App = () => (
                 <Dashboard />
               </ProtectedRoute>
             } />
+
+            {/* NEW: Forgot Password and Reset Password routes */}
+            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+            <Route path="/auth/reset-password" element={<ResetPassword />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>

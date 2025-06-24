@@ -113,3 +113,7 @@ const addExperiencePoints = async (req, res) => {
 };
 
 module.exports = { updateUserProfile, updateModulesCompleted, addExperiencePoints };
+
+
+
+

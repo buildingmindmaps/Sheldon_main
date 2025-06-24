@@ -43,6 +43,12 @@ const userSchema = mongoose.Schema(
     verificationOTPExpiry: {
       type: Date,
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpiry: {
+      type: Date,
+    },
     modulesCompleted: [
       {
         moduleId: {

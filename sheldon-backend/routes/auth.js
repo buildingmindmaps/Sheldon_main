@@ -1,5 +1,16 @@
 const express = require('express');
-const { registerUser, loginUser, getUserProfile, generateToken, verifyEmail, resendVerificationEmail } = require('../controllers/authController');
+const {
+  registerUser,
+  loginUser,
+  getUserProfile,
+  generateToken,
+  verifyEmail,
+  resendVerificationEmail,
+  sendVerificationOTP,
+  verifyEmailWithOTP,
+  forgotPassword,
+  resetPassword
+} = require('../controllers/authController');
 const { protect } = require('../middleware/auth');
 const passport = require('passport'); // For OAuth integration
 
@@ -13,6 +24,12 @@ router.get('/profile', protect, getUserProfile); // Protected route to get user'
 // --- Email Verification Routes ---
 router.get('/verify/:token', verifyEmail);
 router.post('/resend-verification', resendVerificationEmail);
+router.post('/send-otp', sendVerificationOTP);
+router.post('/verify-otp', verifyEmailWithOTP);
+
+// --- Password Reset Routes ---
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 // --- Google OAuth Routes (Conditional: Only if you enable Google Sign-In) ---
 

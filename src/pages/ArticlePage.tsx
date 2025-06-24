@@ -197,7 +197,7 @@ const ArticlePage = () => {
 							// This ensures the game is always before the *last* content block if that block is 'conclusion'.
 							if (block.type === 'conclusion') {
 								return (
-									<React.Fragment key={`game-${index}`}>
+									<div key={`game-${index}`} className="conclusion-wrapper">
 										{/* Title and subtitle for the game section */}
 										<div className="mt-12 mb-6">
 											<h2 className="text-2xl font-bold text-gray-800 underline">Practise your learnings :</h2>
@@ -213,7 +213,7 @@ const ArticlePage = () => {
 											<h3 className="font-bold text-xl mb-3">Conclusion</h3>
 											<p>{block.text}</p>
 										</div>
-									</React.Fragment>
+									</div>
 								);
 							}
 
