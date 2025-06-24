@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom"; // Ensure useNavigate is imported
 
 // Auth import
 import { AuthProvider } from "./lib/AuthContext";
@@ -10,8 +10,10 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import OAuthCallbackHandler from "./components/OAuthCallbackHandler";
 import EmailVerification from "./pages/EmailVerification";
 import ResendVerification from "./pages/ResendVerification";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+import Dashboard from "./pages/Dashboard"; // Assuming Dashboard is imported
+
+// CasePracticeProvider import
+import { CasePracticeProvider } from "./contexts/CasePracticeContext";
 
 // Assuming components are in these locations
 import Index from "./pages/Index";
@@ -24,112 +26,74 @@ import Contact from "./pages/Contact";
 import ArticlePage from "./pages/ArticlePage";
 import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
 import { CaseInterview } from "./components/CaseInterview";
-import { SWOTApp } from "./components/SWOTApp"; // Updated to import from file without spaces
-import Dashboard from "./pages/Dashboard"; // Import Dashboard component
-import SWOTAnalysisPage from "./pages/SWOTAnalysisPage"; // Import the SWOTAnalysisPage component
+import { SWOTApp } from "./components/SWOTApp";
 
-const queryClient = new QueryClient();
-
-// --- Placeholder Components (for self-containment) ---
-// In a real project, you would import these from their actual files.
-
-const PlaceholderNavBar = () => (
-    <div className="bg-white shadow-sm h-16 flex items-center justify-between px-8 sticky top-0 z-50">
-        <div className="font-bold text-xl">Sheldon</div>
-        <div className="flex items-center gap-4">
-            <a href="#" className="text-gray-600 hover:text-gray-900">Dashboard</a>
-            <a href="/all-courses" className="text-gray-600 hover:text-gray-900">All Courses</a>
-            <a href="#" className="text-gray-600 hover:text-gray-900">Settings</a>
-        </div>
-    </div>
-);
-
-// We need to provide the component definitions if they are not in scope.
-// Since MySprints, Index, etc. are imported, we assume they exist.
-// We are adding wrappers for pages that need navigation props.
-
-// Wrapper component for CaseInterview to handle back navigation
+// Modified CaseInterviewWrapper to pass the onBack prop
 const CaseInterviewWrapper = () => {
   const navigate = useNavigate();
   const handleBack = () => {
-    navigate('/all-courses/case-practice');
+    // You can choose to navigate back to the previous page or a specific route
+    navigate('/all-courses/case-practice'); // Example: Navigate to the case practice list
   };
-  return (
-    <ProtectedRoute>
-      <CaseInterview onBack={handleBack} />
-    </ProtectedRoute>
-  );
+  return <CaseInterview onBack={handleBack} />; // Pass onBack prop
 };
+
+// Modified SWOTAppWrapper to pass the onBack prop
+const SWOTAppWrapper = () => {
+  const navigate = useNavigate();
+  const handleBack = () => {
+    // Navigate back to the business frameworks page
+    navigate('/all-courses/business-frameworks');
+  };
+  return <SWOTApp onBack={handleBack} />; // Pass onBack prop
+};
+
+const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <AuthProvider>
         <BrowserRouter>
-          {/* The NavBar could be placed here to appear on all pages if needed */}
-          {/* <PlaceholderNavBar /> */}
-          <Routes>
-            {/* Assuming these page components exist in your project */}
-            <Route path="/" element={<Index />} />
-            <Route path="/playbook" element={<IconsPlaybook />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/contact" element={<Contact />} />
+          <CasePracticeProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/icons-playbook" element={<IconsPlaybook />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/articles/:slug" element={<ArticlePage />} />
+              <Route path="/all-courses" element={<AllCourses />} />
+              <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
+              <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
 
-            {/* Keep the old /article route for backward compatibility */}
-            <Route path="/article" element={<ArticlePage />} />
+              {/* CaseInterview route using the wrapper */}
+              <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
 
-            {/* Add new route for article slugs */}
-            <Route path="/:slug" element={<ArticlePage />} />
+              {/* SWOTApp route using the wrapper */}
+              <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
 
-            {/* Main Sprints and Sub-pages */}
-            <Route path="/all-courses" element={<AllCourses />} />
-            <Route path="/swot-analysis" element={<SWOTAnalysisPage />} />
+              <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
+              <Route path="/auth/verify-email" element={<EmailVerification />} />
+              <Route path="/auth/resend-verification" element={<ResendVerification />} />
+              <Route path="/verify" element={<EmailVerification />} />
+              <Route path="/verify/:token" element={<EmailVerification />} />
 
-            <Route
-                path="/all-courses/case-practice"
-                element={<CasePracticePage />}
-            />
-            <Route
-                path="/all-courses/business-frameworks"
-                element={<BusinessFrameworksPage />}
-            />
-            <Route
-                path="/all-courses/case-interview"
-                element={<CaseInterviewWrapper />}
-            />
-            {/* UPDATED: Change to use SWOTAnalysisPage instead of SWOTAppWrapper */}
-            <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAnalysisPage />} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
 
-            {/* Add OAuth callback route */}
-            <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
-
-            {/* Email verification routes - Only Link verification is now supported */}
-            <Route path="/auth/verify-email" element={<EmailVerification />} />
-            <Route path="/auth/resend-verification" element={<ResendVerification />} />
-            {/* Supabase verification route - this is the route that Supabase uses in verification emails */}
-            <Route path="/verify" element={<EmailVerification />} />
-            <Route path="/verify/:token" element={<EmailVerification />} />
-
-            {/* Add Dashboard route */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-
-            {/* NEW: Forgot Password and Reset Password routes */}
-            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-            <Route path="/auth/reset-password" element={<ResetPassword />} />
-
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </CasePracticeProvider>
         </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

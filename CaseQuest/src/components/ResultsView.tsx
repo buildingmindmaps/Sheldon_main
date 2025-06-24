@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SolvedCaseTab } from './SolvedCaseTab';
@@ -13,11 +12,17 @@ import { useNavigate } from 'react-router-dom';
 interface ResultsViewProps {
   caseData: CaseData & { id: number };
   caseStatement: string;
+  onComplete?: () => void; // Add this prop
 }
 
-export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatement }) => {
+export const ResultsView: React.FC<ResultsViewProps> = ({ 
+  caseData, 
+  caseStatement, 
+  onComplete 
+}) => {
   const [timeElapsed, setTimeElapsed] = useState(caseData.timeElapsed);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
   const navigate = useNavigate();
 
   const caseInstructions = [
@@ -29,8 +34,21 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
     "Time management is key. Allocate your time wisely across different phases of the case."
   ];
 
-  const handleCompleteCase = () => {
-    setShowFeedbackModal(true);
+  const handleCompleteCase = async () => {
+    if (onComplete) {
+      setIsCompleting(true);
+      try {
+        await onComplete(); // Call the backend completion
+        setShowFeedbackModal(true);
+      } catch (error) {
+        console.error('Failed to complete case:', error);
+        // Handle error appropriately
+      } finally {
+        setIsCompleting(false);
+      }
+    } else {
+      setShowFeedbackModal(true);
+    }
   };
 
   const handleFeedbackClose = () => {
@@ -66,6 +84,13 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Loading overlay during case completion */}
+      {isCompleting && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="text-white text-xl">Completing case...</div>
+        </div>
+      )}
+
       {/* Mobile Layout */}
       <div className="block lg:hidden">
         <div className="h-screen">
@@ -94,9 +119,10 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
               <div className="mt-4 w-full">
                 <button
                   onClick={handleCompleteCase}
-                  className="w-full px-6 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  disabled={isCompleting}
+                  className="w-full px-6 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
                 >
-                  Complete Case
+                  {isCompleting ? 'Completing...' : 'Complete Case'}
                 </button>
               </div>
             </div>
@@ -148,9 +174,10 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
               </TabsList>
               <button
                 onClick={handleCompleteCase}
-                className="ml-auto px-6 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                disabled={isCompleting}
+                className="ml-auto px-6 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
               >
-                Complete Case
+                {isCompleting ? 'Completing...' : 'Complete Case'}
               </button>
             </div>
 

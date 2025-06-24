@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { CaseInterview } from "./components/CaseInterview"; // Make sure this path is correct
+import { CasePracticeProvider } from "./contexts/CasePracticeContext"; // Import your CasePracticeProvider
 
 const queryClient = new QueryClient();
 
@@ -14,11 +16,16 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        {/* Wrap the routes that need access to the CasePracticeContext with CasePracticeProvider */}
+        <CasePracticeProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            {/* Define the route for your CaseInterview component */}
+            <Route path="/case-interview" element={<CaseInterview />} /> 
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </CasePracticeProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
