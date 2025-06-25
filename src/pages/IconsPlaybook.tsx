@@ -44,7 +44,7 @@ const IconsPlaybook = () => {
           </motion.p>
         </div>
       </header>
-      
+
       {/* Featured Post - with Link to Full Article */}
       <section className="py-8 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <motion.div 
@@ -87,7 +87,7 @@ const IconsPlaybook = () => {
           </div>
         </motion.div>
       </section>
-      
+
       {/* Newsletter/Waitlist CTA - matching the home page style */}
       <section className="py-16 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="bg-brand-gray rounded-2xl p-8 sm:p-12 relative overflow-hidden">

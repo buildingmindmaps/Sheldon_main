@@ -13,4 +13,18 @@ router.get('/by-course/:courseId', async (req, res) => {
   }
 });
 
+// Route to get a single module by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const module = await Module.findById(req.params.id);
+    if (!module) {
+      return res.status(404).json({ error: 'Module not found' });
+    }
+    res.json(module);
+  } catch (err) {
+    console.error('Error fetching module by ID:', err);
+    res.status(500).json({ error: 'Server error while fetching module' });
+  }
+});
+
 module.exports = router;

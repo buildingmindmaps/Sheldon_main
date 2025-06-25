@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { useState, useEffect, FC, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +18,8 @@ import {
     useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+// Import sound effects
+import { SoundEffects, preloadSounds } from '@/lib/sounds';
 
 // In a real project, import these from 'lucide-react'
 // import { Search, Settings, UserCircle, XCircle, ArrowLeft } from 'lucide-react';
@@ -79,6 +81,22 @@ interface HotspotTextInteractionProps { text: string; hotspots: { term: string; 
 interface TOWSMatrixVisualizationProps { customStyles?: { [key: string]: string }; }
 interface HighlightDifficultWordsProps { html: string; }
 //</editor-fold>
+// Custom hook for playing button click sound
+const useButtonClickSound = () => {
+  const [audio] = useState(new Audio('/Sounds/button-click-1.mp3'));
+
+  const playSound = useCallback(() => {
+    // Reset the audio to the beginning in case it's still playing
+    audio.currentTime = 0;
+    // Play the sound
+    audio.play().catch(error => {
+      console.error("Error playing sound:", error);
+    });
+  }, [audio]);
+
+  return playSound;
+};
+
 // Icon Components
 const LightningIcon: React.FC = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -266,10 +284,15 @@ const MultipleChoiceSingleInteraction: FC<MultipleChoiceSingleProps> = ({ questi
   const handleSubmit = (option: string) => {
     setSelected(option);
     setIsAnswered(true);
+
     if (option === correctAnswer) {
+      // Play correct answer sound
+      SoundEffects.playCorrectAnswer();
       setFeedback('Correct! ' + explanation);
       onCorrect();
     } else {
+      // Play wrong answer sound
+      SoundEffects.playWrongAnswer();
       setFeedback('Incorrect. ' + explanation);
       onIncorrect();
     }
@@ -324,13 +347,18 @@ const QuizMultipleCorrectInteraction: FC<QuizMultipleCorrectProps> = ({ question
 
   const handleSubmit = () => {
     setIsAnswered(true);
+
     const isCorrect = correctAnswers.every((ans) => selectedOptions.includes(ans)) &&
                       selectedOptions.length === correctAnswers.length;
 
     if (isCorrect) {
+      // Play correct answer sound
+      SoundEffects.playCorrectAnswer();
       setFeedback('Correct! ' + explanation);
       onCorrect();
     } else {
+      // Play wrong answer sound
+      SoundEffects.playWrongAnswer();
       setFeedback('Incorrect. ' + explanation);
       onIncorrect();
     }
@@ -383,14 +411,20 @@ const TrueFalseStatementInteraction: FC<TrueFalseStatementProps> = ({ question, 
     const [selected, setSelected] = useState<boolean | null>(null);
     const [feedback, setFeedback] = useState('');
     const [isAnswered, setIsAnswered] = useState(false);
+    const playButtonClickSound = useButtonClickSound();
 
     const handleSubmit = (answer: boolean) => {
         setSelected(answer);
         setIsAnswered(true);
+
         if (answer === correctAnswer) {
+            // Play correct answer sound
+            SoundEffects.playCorrectAnswer();
             setFeedback('Correct! ' + explanation);
             onCorrect();
         } else {
+            // Play wrong answer sound
+            SoundEffects.playWrongAnswer();
             setFeedback('Incorrect. ' + explanation);
             onIncorrect();
         }
@@ -446,6 +480,7 @@ const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({
   const [isAnswered, setIsAnswered] = useState(false);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [targetPosition, setTargetPosition] = useState<number | null>(null);
+  const playButtonClickSound = useButtonClickSound();
 
   const handleItemClick = (item: string, index: number) => {
       if (!isAnswered) {
@@ -483,8 +518,18 @@ const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({
   const handleSubmit = () => {
       setIsAnswered(true);
       const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(correctOrder);
-      isCorrect ? onCorrect() : onIncorrect();
-      setFeedback(isCorrect ? 'Correct! You have ordered them correctly.' : 'Incorrect. Review the proper sequence.');
+
+      if (isCorrect) {
+          // Play correct answer sound
+          SoundEffects.playCorrectAnswer();
+          setFeedback('Correct! You have ordered them correctly.');
+          onCorrect();
+      } else {
+          // Play wrong answer sound
+          SoundEffects.playWrongAnswer();
+          setFeedback('Incorrect. Review the proper sequence.');
+          onIncorrect();
+      }
   };
 
   const handleRetry = () => {
@@ -526,7 +571,7 @@ const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({
                             : 'border-transparent'} 
                         ${selectedItem === item ? 'bg-blue-100 border-blue-500' : 'bg-white'}`}
                 >
-                    {item}
+                  {item}
                 </div>
             ))}
         </div>
@@ -542,18 +587,24 @@ const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({
             )}
             
             {isAnswered && (
-                <button
-                    onClick={handleRetry}
-                    className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-                >
-                    Retry
-                </button>
+                <>
+                    <button
+                        onClick={handleRetry}
+                        className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                    >
+                        Retry
+                    </button>
+
+                    <button
+                        onClick={onCorrect}
+                        className="px-6 py-2 bg-lime-500 text-white rounded-lg hover:bg-lime-600"
+                    >
+                        Continue
+                    </button>
+                </>
             )}
         </div>
 
-
-          
-          
       </div>
   );
 };
@@ -566,10 +617,15 @@ const ScenarioDecisionMakingInteraction: FC<ScenarioDecisionMakingProps> = ({ sc
     const handleSubmit = (choice: { text: string; feedback: string }) => {
         setSelectedChoice(choice.text);
         setIsAnswered(true);
+
         if (choice.text === correctChoice) {
+            // Play correct answer sound
+            SoundEffects.playCorrectAnswer();
             setFeedback('Correct! ' + choice.feedback);
             onCorrect();
         } else {
+            // Play wrong answer sound
+            SoundEffects.playWrongAnswer();
             setFeedback('Incorrect. ' + choice.feedback);
             onIncorrect();
         }
@@ -741,14 +797,18 @@ const CategorySortingInteraction: FC<CategorySortingProps> = ({ question, catego
     ));
   };
 
-
   const handleSubmit = () => {
     setIsAnswered(true);
     const allCorrect = currentItems.every(item => item.currentCategory === item.category);
+
     if (allCorrect) {
+      // Play correct answer sound
+      SoundEffects.playCorrectAnswer();
       setFeedback('Correct! All items categorized accurately.');
       onCorrect();
     } else {
+      // Play wrong answer sound
+      SoundEffects.playWrongAnswer();
       setFeedback('Incorrect. Some items are in the wrong category.');
       onIncorrect();
     }
@@ -1139,7 +1199,7 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
       title: 'The TOWS Matrix: Extending SWOT',
       content: `
         <p>The <strong>TOWS Matrix</strong> is an extension of SWOT that focuses on developing strategies by matching internal and external factors. While SWOT identifies the factors, TOWS helps to formulate specific strategies based on those factors.</p>
-        
+
         <div class="bg-gray-50 p-6 rounded-lg shadow-sm my-4">
           <h3 class="font-semibold text-gray-700 mb-3">Strategic Approaches in TOWS</h3>
           <ul class="space-y-2">
@@ -1149,7 +1209,7 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
             <li><strong>WT (Weaknesses-Threats):</strong> Minimize weaknesses to avoid threats.</li>
           </ul>
         </div>
-        
+
         <p class="mt-4">The TOWS matrix provides a framework for translating the raw insights from SWOT into actionable strategic initiatives.</p>
       `,
       interactionType: 'custom_tows_visualization',
@@ -1237,8 +1297,8 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
         <td style="padding: 12px; border-bottom: 1px solid #eaecef;">Matrix matching <span>internal/external</span></td>
       </tr>
       <tr>
-        <td style="font-weight: bold; padding: 12px;">Output</td>
-        <td style="padding: 12px;">List of factors</td>
+        <td style="font-weight: bold; padding: 12px; border-bottom: 1px solid #eaecef;">Output</td>
+               <td style="padding: 12px;">List of factors</td>
         <td style="padding: 12px;">Actionable strategies</td>
       </tr>
     </tbody>
@@ -1262,7 +1322,7 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
     },
 
     ]
-    
+
   const totalParts = moduleContent.length;
 
   const handleCompletePart = () => {
@@ -1286,7 +1346,7 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
   const handlePreviousPart = () => {
     if (currentPartIndex > 0) setCurrentPartIndex((prev) => prev - 1);
   };
-  
+
   const handleRestart = () => {
       setCurrentPartIndex(0);
       setCompletedParts(new Set());
@@ -1305,7 +1365,7 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
   const isInteractivePart = !nonInteractiveTypes.includes(currentPart.interactionType);
   const isContinueDisabled = isInteractivePart && !completedParts.has(currentPartIndex);
 
-  
+
   return (
     <div className="min-h-screen font-sans antialiased" style={{ backgroundColor: theme.colors.background }}>
       {/* Header */}
@@ -1329,7 +1389,7 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
                 </Button>
               </div>
             </div>
-      
+
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <ProgressBar currentPart={completedParts.size} totalParts={totalParts} />
 
@@ -1351,17 +1411,17 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
                     <button onClick={handlePreviousPart} disabled={currentPartIndex === 0} className={`px-8 py-3 rounded-lg font-semibold text-base transition-all duration-300 ${currentPartIndex === 0 ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                         Previous
                     </button>
-                    <button 
-                        onClick={handleNextPart} 
+                    <button
+                        onClick={handleNextPart}
                         disabled={isContinueDisabled}
                         style={isContinueDisabled ? {} : { // Clear inline styles when disabled for classes to take over
-                            backgroundColor: isLastPart ? 'transparent' : theme.colors.primary, 
-                            color: theme.colors.buttonText, 
-                            backgroundImage: isLastPart ? `linear-gradient(to right, ${theme.colors.gradients.purple.start}, ${theme.colors.gradients.purple.end})` : 'none' 
-                        }} 
-                        className={`px-8 py-3 rounded-lg font-semibold text-base transition-all duration-300 
-                            ${isContinueDisabled 
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                            backgroundColor: isLastPart ? 'transparent' : theme.colors.primary,
+                            color: theme.colors.buttonText,
+                            backgroundImage: isLastPart ? `linear-gradient(to right, ${theme.colors.gradients.purple.start}, ${theme.colors.gradients.purple.end})` : 'none'
+                        }}
+                        className={`px-8 py-3 rounded-lg font-semibold text-base transition-all duration-300
+                            ${isContinueDisabled
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                 : 'hover:bg-black hover:text-white'
                             }`
                         }>

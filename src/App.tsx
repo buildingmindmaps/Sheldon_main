@@ -29,9 +29,9 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Contact from "./pages/Contact";
 import ArticlePage from "./pages/ArticlePage";
-import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
+import AllCourses, { CasePracticePage } from "./pages/AllCourses";
 import { CaseInterview } from "../CaseQuest/src/components/CaseInterview";
-import { SWOTApp } from "./components/SWOTApp";
+import InteractiveSWOTAnalysis from "./components/Interactive SWOT Analysis App";
 
 // Modified CaseInterviewWrapper to pass the onBack prop
 const CaseInterviewWrapper = () => {
@@ -47,10 +47,10 @@ const CaseInterviewWrapper = () => {
 const SWOTAppWrapper = () => {
   const navigate = useNavigate();
   const handleBack = () => {
-    // Navigate back to the business frameworks page
-    navigate('/all-courses/business-frameworks');
+    // Use browser history to go back to the previous page
+    navigate(-1);
   };
-  return <SWOTApp onBack={handleBack} />; // Pass onBack prop
+  return <InteractiveSWOTAnalysis onBack={handleBack} />; // Use InteractiveSWOTAnalysis instead of SWOTApp
 };
 
 const queryClient = new QueryClient();
@@ -75,18 +75,20 @@ const App = () => (
               <Route path="/all-courses" element={<AllCourses />} />
               <Route path="/all-courses/:slug" element={<CourseModules />} />
               <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
-              <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
 
               {/* CaseInterview route using the wrapper */}
               <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
 
               {/* SWOTApp route using the wrapper */}
-              <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
+              <Route path="/all-courses/business-frameworks-fundamentals/swot-analysis" element={<SWOTAppWrapper />} />
 
               {/* Course progress tracking routes */}
               <Route path="/dashboard/courses" element={<CourseDashboard />} />
               <Route path="/dashboard/courses/:courseId" element={<CourseDetail />} />
               <Route path="/dashboard/courses/modules/:moduleId" element={<CourseModules />} /> {/* New route for CourseDetail component */}
+
+              {/* Add missing route for modules with the same pattern that's causing the error */}
+              <Route path="/modules/:courseSlug/module/:moduleId" element={<CourseModules />} />
 
               <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
               <Route path="/auth/verify-email" element={<EmailVerification />} />

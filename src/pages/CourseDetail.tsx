@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
@@ -44,23 +44,31 @@ interface Module {
     isLocked: boolean;
     courseId: string;
     order: number;
+    content?: string;
+    resources?: string[];
 }
 
 export default function CourseDetail() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { course } = location.state as { course: Course };
+    const params = useParams();
+
+    // Fix: Add null check before destructuring and implement fallback
+    const courseFromState = location.state?.course;
+    const [course, setCourse] = useState<Course | null>(courseFromState || null);
 
     const [modules, setModules] = useState<Module[]>([]);
     const [selectedModule, setSelectedModule] = useState<Module | null>(null);
     const [loadingModules, setLoadingModules] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [moduleContent, setModuleContent] = useState<string | null>(null);
+    const [loadingContent, setLoadingContent] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchModules = async () => {
             try {
                 setLoadingModules(true);
-                const response = await axios.get(`/api/modules/by-course/${course._id}`);
+                const response = await axios.get(`/api/modules/by-course/${course?._id}`);
                 const fetchedModules = response.data;
                 setModules(fetchedModules);
 
@@ -80,10 +88,37 @@ export default function CourseDetail() {
         }
     }, [course]);
 
+    // If course wasn't provided in state, fetch it based on URL params
+    useEffect(() => {
+        // Only fetch if we don't have the course data already
+        if (!course && params.courseId) {
+            const fetchCourse = async () => {
+                try {
+                    // You'll need to implement this API endpoint
+                    const response = await fetch(`/api/courses/${params.courseId}`);
+                    if (!response.ok) throw new Error('Failed to fetch course details');
+                    const data = await response.json();
+                    setCourse(data);
+                } catch (err) {
+                    console.error('Error fetching course:', err);
+                    setError('Failed to load course details. Please try again later.');
+                }
+            };
+            fetchCourse();
+        }
+    }, [course, params.courseId]);
+
     // Handle starting a module
     const handleStartModule = () => {
         if (selectedModule && !selectedModule.isLocked) {
-            // Navigate to the module content page (you'll need to implement this)
+            // Check if the module is SWOT Analysis
+            if (selectedModule.title === "SWOT Analysis") {
+                // Navigate to the SWOT Analysis page with proper course path
+                navigate(`/all-courses/business-frameworks-fundamentals/swot-analysis`);
+                return;
+            }
+
+            // Navigate to the module content page for other modules
             navigate(`/all-courses/${course.slug}/module/${selectedModule._id}`, {
                 state: { module: selectedModule, course }
             });
@@ -91,9 +126,24 @@ export default function CourseDetail() {
     };
 
     // Function to handle module selection from the list
-    const handleModuleSelection = (module: Module) => {
+    const handleModuleSelection = async (module: Module) => {
         if (!module.isLocked) {
             setSelectedModule(module);
+
+            try {
+                setLoadingContent(true);
+                // Fetch the module content from the database using the endpoint we added
+                const response = await axios.get(`/api/modules/${module._id}`);
+                const moduleData = response.data;
+
+                // Update the module content
+                setModuleContent(moduleData.content || "No content available for this module.");
+            } catch (error) {
+                console.error('Error fetching module content:', error);
+                setModuleContent("Failed to load module content. Please try again.");
+            } finally {
+                setLoadingContent(false);
+            }
         }
     };
 
@@ -107,7 +157,7 @@ export default function CourseDetail() {
                             <ArrowLeft className="h-4 w-4" />
                         </div>
                     </Button>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-8">{course.title}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-8">{course?.title}</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
                             {selectedModule && (
@@ -118,7 +168,18 @@ export default function CourseDetail() {
                                             <div>
                                                 {selectedModule.badge && <Badge className="mb-2 bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedModule.badge}</Badge>}
                                                 <CardTitle className="text-2xl font-bold mb-2">{selectedModule.title}</CardTitle>
-                                                <CardDescription className="text-base text-gray-700 mb-4">{selectedModule.description}</CardDescription>
+                                                <p
+                                                    data-lov-id="src/pages/CourseDetail.tsx:153:52"
+                                                    data-lov-name="CardDescription"
+                                                    data-component-path="src/pages/CourseDetail.tsx"
+                                                    data-component-line="153"
+                                                    data-component-file="CourseDetail.tsx"
+                                                    data-component-name="CardDescription"
+                                                    data-component-content="%7B%22className%22%3A%22text-base%20text-gray-700%20mb-4%22%7D"
+                                                    className="text-base text-gray-700 mb-4"
+                                                >
+                                                    {loadingContent ? 'Loading content...' : moduleContent || selectedModule.description}
+                                                </p>
                                                 <div className="flex flex-wrap gap-2 mt-4">
                                                     <Badge variant="outline" className="bg-gray-50 text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-full">{selectedModule.level}</Badge>
                                                     <Badge variant="outline" className="bg-gray-50 text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-full flex items-center gap-1.5">
@@ -146,7 +207,7 @@ export default function CourseDetail() {
                                 </Card>
                             )}
 
-                            <h2 className="text-xl font-bold mb-4">{course.title} Modules</h2>
+                            <h2 className="text-xl font-bold mb-4">{course?.title} Modules</h2>
                             {loadingModules ? (
                                 <div className="flex justify-center items-center h-64">
                                     <Loader className="h-8 w-8 animate-spin text-gray-500" />
@@ -202,7 +263,7 @@ export default function CourseDetail() {
                             <Card className="bg-white border">
                                 <CardHeader><CardTitle className="text-lg font-bold">User Reviews</CardTitle></CardHeader>
                                 <CardContent className="space-y-4">
-                                    {course.reviews && course.reviews.map((review, idx) => (
+                                    {course?.reviews && course.reviews.map((review, idx) => (
                                         <div key={idx} className="border-b pb-4 last:border-0">
                                             <div className="flex items-center mb-2">
                                                 <img src={review.avatar} alt={review.name} className="h-10 w-10 rounded-full object-cover mr-3" />

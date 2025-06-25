@@ -43,8 +43,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
             <div className="px-4 pt-4">
               {/* Back button for mobile */}
               <div className="mb-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={handleBackToCasePractice}
                   className="mb-2 p-2"
                   size="sm"
@@ -53,7 +53,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
                   Back to Case Practice
                 </Button>
               </div>
-              
+
               <TabsList className="grid w-full grid-cols-3 bg-transparent p-0 gap-1">
                 <TabsTrigger 
                   value="solved-case"
@@ -104,8 +104,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
             <div className="border-b border-gray-200 px-6 pt-6">
               {/* Back button for desktop */}
               <div className="mb-4">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={handleBackToCasePractice}
                   className="mb-2 p-2"
                   size="sm"
@@ -114,7 +114,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ caseData, caseStatemen
                   Back to Case Practice
                 </Button>
               </div>
-              
+
               <div className="flex justify-center">
                 <TabsList className="grid grid-cols-3 max-w-2xl w-full bg-transparent p-0 gap-1">
                   <TabsTrigger 
