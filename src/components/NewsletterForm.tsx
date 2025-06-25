@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { submitToWaitlist } from "@/services/waitlistService";
 
 // Define form validation schema
 const newsletterSchema = z.object({
@@ -35,18 +34,13 @@ export function NewsletterForm() {
     setIsLoading(true);
     
     try {
-      // Insert data into Supabase waitlist table
-      const { error } = await supabase
-        .from('waitlist')
-        .insert([
-          {
-            name: 'Newsletter Subscriber', // Default name for newsletter signups
-            education: 'Not specified', // Default education for newsletter signups
-            email: email
-          }
-        ]);
-
-      if (error) throw error;
+      // Submit data to MongoDB via our API
+      const result = await submitToWaitlist({
+        name: 'Newsletter Subscriber', // Default name for newsletter signups
+        education: 'Not specified', // Default education for newsletter signups
+        email: email,
+        source: 'newsletter'
+      });
 
       toast({
         title: "You're on the list!",

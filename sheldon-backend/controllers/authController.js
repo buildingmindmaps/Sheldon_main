@@ -2,7 +2,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const { sendVerificationEmail, sendVerificationEmailWithOTP } = require('../utils/emailService');
+const { sendVerificationEmail, sendVerificationEmailWithOTP, sendPasswordResetEmail } = require('../utils/emailService');
 
 // Helper function to generate a JWT
 const generateToken = (id) => {
@@ -310,6 +310,112 @@ const verifyEmailWithOTP = async (req, res) => {
   }
 };
 
+// @desc    Forgot password - generates a reset token and sends email
+// @route   POST /api/auth/forgot-password
+// @access  Public
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required.' });
+  }
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      // For security reasons, return a 200 even if user not found
+      // This prevents user enumeration attacks
+      return res.status(200).json({
+        message: 'If an account with that email exists, a password reset link has been sent.'
+      });
+    }
+
+    // Generate a secure token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    // Set token expiry (1 hour from now)
+    const resetExpiry = new Date();
+    resetExpiry.setHours(resetExpiry.getHours() + 1);
+
+    // Hash the token before saving it (for security)
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+
+    // Save the hashed token and expiry to the user document
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpiry = resetExpiry;
+    await user.save();
+
+    // Send password reset email with the unhashed token
+    await sendPasswordResetEmail(user.email, user.username, resetToken);
+
+    res.status(200).json({
+      message: 'If an account with that email exists, a password reset link has been sent.'
+    });
+  } catch (error) {
+    console.error('Error in forgot password process:', error);
+    res.status(500).json({
+      message: 'An error occurred while processing your request. Please try again.'
+    });
+  }
+};
+
+// @desc    Reset password with token
+// @route   POST /api/auth/reset-password
+// @access  Public
+const resetPassword = async (req, res) => {
+  const { token, email, password } = req.body;
+
+  if (!token || !email || !password) {
+    return res.status(400).json({
+      message: 'Token, email, and new password are required.'
+    });
+  }
+
+  try {
+    // Hash the received token for comparison with stored hash
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(token)
+      .digest('hex');
+
+    // Find user with the token and valid expiry
+    const user = await User.findOne({
+      email,
+      resetPasswordToken: hashedToken,
+      resetPasswordExpiry: { $gt: new Date() } // Token must not be expired
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: 'Invalid or expired reset token. Please request a new password reset.'
+      });
+    }
+
+    // Set the new password (will be hashed by the pre-save middleware)
+    user.password = password;
+
+    // Clear the reset token fields
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiry = undefined;
+
+    await user.save();
+
+    res.status(200).json({
+      message: 'Password has been successfully reset. You can now log in with your new password.'
+    });
+  } catch (error) {
+    console.error('Error in reset password process:', error);
+    res.status(500).json({
+      message: 'An error occurred while resetting your password. Please try again.'
+    });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -318,5 +424,7 @@ module.exports = {
   resendVerificationEmail,
   sendVerificationOTP,
   verifyEmailWithOTP,
-  generateToken
+  forgotPassword,
+  resetPassword,
+  generateToken, // Added generateToken to the exports
 };

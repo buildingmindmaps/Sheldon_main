@@ -1,4 +1,7 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+console.log('✅ CaseInterview component mounted');
+
+
+import React, { useState, useCallback, useEffect } from 'react';
 import { Timer } from './Timer';
 import { CaseStatement } from './CaseStatement';
 import { QuestionPanel } from './QuestionPanel';
@@ -192,6 +195,8 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
     } else {
       setShowFeedbackModal(true); // fallback
     }
+
+
   };
 
   const handleFeedbackClose = () => {
@@ -216,11 +221,11 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
             frameworkSubmitted: state.isFrameworkSubmitted, // Use actual state
           },
           areasForImprovement: state.questions
-            .filter(q => q.feedback === 'needs-improvement' || q.feedback === 'critical')
-            .map(q => ({
-              category: "Question Quality",
-              feedback: q.evaluation?.constructiveFeedback || "Needs improvement"
-            })),
+              .filter(q => q.feedback === 'needs-improvement' || q.feedback === 'critical')
+              .map(q => ({
+                category: "Question Quality",
+                feedback: q.evaluation?.constructiveFeedback || "Needs improvement"
+              })),
           totalTimeSpent: timeElapsed
         };
 
@@ -241,130 +246,130 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
 
   if (state.loading && !state.currentSession) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl">Starting case session...</div>
-      </div>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-xl">Starting case session...</div>
+        </div>
     );
   }
 
   if (state.error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-red-600">Error: {state.error}</div>
-      </div>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-red-600">Error: {state.error}</div>
+        </div>
     );
   }
 
   if (isCompleted) {
     return (
-      <ResultsView
-        caseData={{
-          id: caseId,
-          questions: state.questions,
-          timeElapsed,
-          frameworkText: state.framework || '',
-          isCompleted: true,
-          conversation,
-        }}
-        caseStatement={caseStatement}
-        onComplete={handleCaseComplete}
-      />
+        <ResultsView
+            caseData={{
+              id: caseId,
+              questions: state.questions,
+              timeElapsed,
+              frameworkText: state.framework || '',
+              isCompleted: true,
+              conversation,
+            }}
+            caseStatement={caseStatement}
+            onComplete={handleCaseComplete}
+        />
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {state.loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="text-white text-xl">Saving to database...</div>
-        </div>
-      )}
-
-      {/* Mobile Layout */}
-      <div className="lg:hidden h-screen flex flex-col">
-        <MobileCaseHeader
-          statement={caseStatement}
-          instructions={caseInstructions}
-          timeElapsed={timeElapsed}
-          onTimeUpdate={onTimeUpdate}
-          isCompleted={isCompleted}
-          questionCount={state.questions.length}
-          onBack={handleBack}
-        />
-
-        <div className="flex-1 overflow-y-auto">
-          <QuestionPanel
-            questions={state.questions}
-            onAddQuestion={handleAddQuestion}
-            onUpdateFeedback={handleUpdateFeedback}
-            maxQuestions={10}
-            isLoading={state.loading}
-          />
-        </div>
-
-        {canSubmitFramework && (
-          <div className="p-3 border-t border-gray-200 bg-white">
-            <Button
-              onClick={() => setIsFrameworkModalOpen(true)}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white h-10"
-            >
-              Submit Framework
-            </Button>
-          </div>
+      <div className="min-h-screen bg-gray-50">
+        {state.loading && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="text-white text-xl">Saving to database...</div>
+            </div>
         )}
-      </div>
 
-      {/* Desktop Layout */}
-      <div className="hidden lg:flex h-screen">
-        <div className="flex-1 bg-white border-r border-gray-200 flex flex-col">
+        {/* Mobile Layout */}
+        <div className="lg:hidden h-screen flex flex-col">
+          <MobileCaseHeader
+              statement={caseStatement}
+              instructions={caseInstructions}
+              timeElapsed={timeElapsed}
+              onTimeUpdate={onTimeUpdate}
+              isCompleted={isCompleted}
+              questionCount={state.questions.length}
+              onBack={handleBack}
+          />
+
           <div className="flex-1 overflow-y-auto">
             <QuestionPanel
-              questions={state.questions}
-              onAddQuestion={handleAddQuestion}
-              onUpdateFeedback={handleUpdateFeedback}
-              maxQuestions={10}
-              isLoading={state.loading}
+                questions={state.questions}
+                onAddQuestion={handleAddQuestion}
+                onUpdateFeedback={handleUpdateFeedback}
+                maxQuestions={10}
+                isLoading={state.loading}
             />
           </div>
 
           {canSubmitFramework && (
-            <div className="p-6 border-t border-gray-200 bg-white">
-              <Button
-                onClick={() => setIsFrameworkModalOpen(true)}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                size="lg"
-              >
-                Submit Framework
-              </Button>
-            </div>
+              <div className="p-3 border-t border-gray-200 bg-white">
+                <Button
+                    onClick={() => setIsFrameworkModalOpen(true)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white h-10"
+                >
+                  Submit Framework
+                </Button>
+              </div>
           )}
         </div>
 
-        <div className="w-96 bg-gray-50 p-6 flex flex-col">
-          <Timer
-            timeElapsed={timeElapsed}
-            onTimeUpdate={onTimeUpdate}
-            isCompleted={isCompleted}
-          />
+        {/* Desktop Layout */}
+        <div className="hidden lg:flex h-screen">
+          <div className="flex-1 bg-white border-r border-gray-200 flex flex-col">
+            <div className="flex-1 overflow-y-auto">
+              <QuestionPanel
+                  questions={state.questions}
+                  onAddQuestion={handleAddQuestion}
+                  onUpdateFeedback={handleUpdateFeedback}
+                  maxQuestions={10}
+                  isLoading={state.loading}
+              />
+            </div>
 
-          <CaseStatement
-            statement={caseStatement}
-            instructions={caseInstructions}
-          />
+            {canSubmitFramework && (
+                <div className="p-6 border-t border-gray-200 bg-white">
+                  <Button
+                      onClick={() => setIsFrameworkModalOpen(true)}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      size="lg"
+                  >
+                    Submit Framework
+                  </Button>
+                </div>
+            )}
+          </div>
+
+          <div className="w-96 bg-gray-50 p-6 flex flex-col">
+            <Timer
+                timeElapsed={timeElapsed}
+                onTimeUpdate={onTimeUpdate}
+                isCompleted={isCompleted}
+            />
+
+            <CaseStatement
+                statement={caseStatement}
+                instructions={caseInstructions}
+            />
+          </div>
         </div>
+
+        <FrameworkModal
+            isOpen={isFrameworkModalOpen}
+            onClose={() => setIsFrameworkModalOpen(false)}
+            onSubmit={handleFrameworkSubmit}
+            isLoading={state.loading}
+        />
+
+        <FeedbackModal
+            isOpen={showFeedbackModal}
+            onClose={handleFeedbackClose}
+        />
       </div>
-
-      <FrameworkModal
-        isOpen={isFrameworkModalOpen}
-        onClose={() => setIsFrameworkModalOpen(false)}
-        onSubmit={handleFrameworkSubmit}
-        isLoading={state.loading}
-      />
-
-      <FeedbackModal
-        isOpen={showFeedbackModal}
-        onClose={handleFeedbackClose}
-      />
-    </div>
   );
 };

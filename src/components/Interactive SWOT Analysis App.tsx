@@ -558,8 +558,6 @@ const DragAndDropOrderingInteraction: FC<DragAndDropOrderingProps> = ({
   );
 };
 
-export default DragAndDropOrderingInteraction;
-
 const ScenarioDecisionMakingInteraction: FC<ScenarioDecisionMakingProps> = ({ scenario, choices, correctChoice, onCorrect, onIncorrect }) => {
     const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
     const [feedback, setFeedback] = useState('');
@@ -1380,4 +1378,11 @@ export const SWOTApp: FC<SWOTAppProps> = ({ onBack }) => {
     </div>
   );
 };
+
+// Add default export statement
+export default function InteractiveSWOTAnalysis({ onBack }: SWOTAppProps) {
+  return <SWOTApp onBack={onBack} />;
+}
+
 //</editor-fold>
+

@@ -15,6 +15,11 @@ import Dashboard from "./pages/Dashboard"; // Assuming Dashboard is imported
 // CasePracticeProvider import
 import { CasePracticeProvider } from "./contexts/CasePracticeContext";
 
+// Course progress tracking components
+import CourseDashboard from './components/courses/CourseDashboard';
+import CourseDetail from './components/courses/CourseDetail';
+import CourseModules from './pages/CourseDetail'; // Import our new CourseDetail component as CourseModules
+
 // Assuming components are in these locations
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -61,12 +66,14 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/icons-playbook" element={<IconsPlaybook />} />
+              <Route path="/playbook" element={<IconsPlaybook />} /> {/* Route /playbook to the IconsPlaybook component */}
               <Route path="/careers" element={<Careers />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/articles/:slug" element={<ArticlePage />} />
               <Route path="/all-courses" element={<AllCourses />} />
+              <Route path="/all-courses/:slug" element={<CourseModules />} />
               <Route path="/all-courses/case-practice" element={<CasePracticePage />} />
               <Route path="/all-courses/business-frameworks" element={<BusinessFrameworksPage />} />
 
@@ -75,6 +82,11 @@ const App = () => (
 
               {/* SWOTApp route using the wrapper */}
               <Route path="/all-courses/business-frameworks/swot-analysis" element={<SWOTAppWrapper />} />
+
+              {/* Course progress tracking routes */}
+              <Route path="/dashboard/courses" element={<CourseDashboard />} />
+              <Route path="/dashboard/courses/:courseId" element={<CourseDetail />} />
+              <Route path="/dashboard/courses/modules/:moduleId" element={<CourseModules />} /> {/* New route for CourseDetail component */}
 
               <Route path="/auth/callback" element={<OAuthCallbackHandler />} />
               <Route path="/auth/verify-email" element={<EmailVerification />} />

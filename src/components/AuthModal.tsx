@@ -169,11 +169,27 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
     setLoading(true);
 
     try {
-      // If you implement password reset functionality in your backend, call it here
-      // For now, show a message to contact support
-      setSuccess('Please contact support to reset your password.');
+      // Call the forgot-password endpoint
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${apiUrl}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        setSuccess('If an account with that email exists, a password reset link has been sent.');
+        // Clear the email field after successful submission
+        setEmail('');
+      } else {
+        const data = await response.json();
+        setError(data.message || 'An error occurred while processing your request.');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to reset password');
+      console.error('Password reset error:', err);
+      setError('Failed to send password reset email. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -337,7 +353,10 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
               <button
                 type="button"
                 className="text-blue-500 hover:underline"
-                onClick={() => setShowResetPassword(true)}
+                onClick={() => {
+                  onClose(); // Close the modal
+                  window.location.href = '/auth/forgot-password'; // Redirect to the dedicated forgot password page
+                }}
               >
                 Forgot Password?
               </button>

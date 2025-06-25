@@ -1,4 +1,12 @@
+const express = require('express');
+const router = express.Router();
+const { getCourses, getCourseById } = require('../controllers/courseController');
 const User = require('../models/User');
+// Routes for course-related operations
+router.get('/', getCourses);
+router.get('/:id', getCourseById);
+
+module.exports = router;
 
 // @desc    Update user profile details
 // @route   PUT /api/users/profile
@@ -113,3 +121,8 @@ const addExperiencePoints = async (req, res) => {
 };
 
 module.exports = { updateUserProfile, updateModulesCompleted, addExperiencePoints };
+
+
+
+
+

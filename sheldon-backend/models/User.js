@@ -43,18 +43,29 @@ const userSchema = mongoose.Schema(
     verificationOTPExpiry: {
       type: Date,
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpiry: {
+      type: Date,
+    },
     modulesCompleted: [
       {
+        courseId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Course',
+          required: true
+        },
         moduleId: {
-          type: String, // Or mongoose.Schema.Types.ObjectId if you link to a separate Modules collection
-          required: true,
-          trim: true,
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Module',
+          required: true
         },
         completedAt: {
           type: Date,
-          default: Date.now,
-        },
-      },
+          default: Date.now
+        }
+      }
     ],
     dateOfJoining: {
       type: Date,

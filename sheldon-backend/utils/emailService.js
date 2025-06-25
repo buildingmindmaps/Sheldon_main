@@ -57,7 +57,7 @@ const sendVerificationEmail = async (email, username, verificationToken) => {
  * @returns {Promise} - Resolves when the email is sent
  */
 const sendPasswordResetEmail = async (email, username, resetToken) => {
-  const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+  const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
 
   const mailOptions = {
     from: `"Sheldon AI" <${process.env.EMAIL_USER}>`,

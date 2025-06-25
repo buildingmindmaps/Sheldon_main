@@ -26,12 +26,30 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Check if user already exists in database
-        const existingUser = await User.findOne({ googleId: profile.id });
+        // Check if user already exists in database by googleId
+        const existingUserByGoogleId = await User.findOne({ googleId: profile.id });
 
-        if (existingUser) {
-          // User already exists
-          return done(null, existingUser);
+        if (existingUserByGoogleId) {
+          // User already exists with this Google ID
+          // Ensure isVerified is true for existing Google users
+          if (!existingUserByGoogleId.isVerified) {
+            existingUserByGoogleId.isVerified = true;
+            await existingUserByGoogleId.save();
+          }
+          return done(null, existingUserByGoogleId);
+        }
+
+        // Check if user exists with the same email
+        const existingUserByEmail = await User.findOne({ email: profile.emails[0].value });
+
+        if (existingUserByEmail) {
+          // Update existing user with Google ID and ensure they're verified
+          existingUserByEmail.googleId = profile.id;
+          existingUserByEmail.isVerified = true; // Set to true as Google accounts are verified
+          existingUserByEmail.avatar = profile.photos[0].value || existingUserByEmail.avatar;
+
+          await existingUserByEmail.save();
+          return done(null, existingUserByEmail);
         }
 
         // If not, create a new user
@@ -40,7 +58,7 @@ passport.use(
           email: profile.emails[0].value,
           googleId: profile.id,
           avatar: profile.photos[0].value,
-          verified: true // Google accounts are already verified
+          isVerified: true // Google accounts are already verified
         });
 
         await newUser.save();
