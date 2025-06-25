@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Timer } from './Timer';
 import { CaseStatement } from './CaseStatement';
 import { QuestionPanel } from './QuestionPanel';
@@ -39,7 +39,14 @@ export interface CaseData {
   conversation: ConversationMessage[];
 }
 
-export const CaseInterview = () => {
+interface CaseInterviewProps {
+  onBack?: () => void;
+}
+
+
+export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
+  console.log('✅ CaseInterview component mounted, onBack exists:', !!onBack);
+
   const { state, actions } = useCasePractice();
   const [isFrameworkModalOpen, setIsFrameworkModalOpen] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -47,7 +54,11 @@ export const CaseInterview = () => {
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
-  const caseId = 3;
+  // Use a ref to track if the session initialization has been attempted.
+  // This ref's value persists across renders without causing re-renders itself.
+  const hasSessionInitAttempted = useRef(false);
+
+  const caseId = 3; // This seems to be a hardcoded case ID for now.
   const caseStatement = `Your client is a water purifier manufacturer in India, focused on residential customers. The client is experiencing lower profitability (defined as EBITDA/Revenue) compared to competitors. They have hired you to analyze the issue and provide recommendations.`;
 
   const caseInstructions = [
@@ -59,13 +70,19 @@ export const CaseInterview = () => {
     "Time management is key. Allocate your time wisely across different phases of the case."
   ];
 
-  // LOGGING FOR SESSION START
+  // LOGGING FOR SESSION START AND FIX FOR MULTIPLE CREATIONS
   useEffect(() => {
     console.log('[CaseInterview - useEffect] Checking session status. Current state.currentSession:', state.currentSession);
-    if (!state.currentSession) {
+
+    // Only attempt to start a session if one is not active AND
+    // if we haven't already attempted to initialize a session in this component's lifecycle.
+    if (!state.currentSession && !hasSessionInitAttempted.current) {
       console.log('[CaseInterview - useEffect] No active session found, attempting to start a new one...');
+      // Mark that an attempt has been made immediately
+      hasSessionInitAttempted.current = true;
+
       actions.startCase({
-        caseId: "water-purifier-case",
+        caseId: "water-purifier-case", // Consider making this dynamic based on the selected case
         caseTitle: "Water Purifier Profitability",
         caseDifficulty: "Beginner",
         caseStatement: caseStatement
@@ -74,11 +91,15 @@ export const CaseInterview = () => {
       }).catch(error => {
         console.error('[CaseInterview - useEffect] Failed to start case session:', error);
         toast.error("Could not start a new case session. Please try again.");
+        // If the start fails, reset the ref to allow a retry on subsequent renders/user action
+        hasSessionInitAttempted.current = false;
       });
-    } else {
+    } else if (state.currentSession) {
       console.log('[CaseInterview - useEffect] Session already active with ID:', state.currentSession._id);
     }
-  }, [actions, state.currentSession, caseStatement]);
+    // Dependency array: only re-run if 'actions' or 'state.currentSession' changes.
+    // caseStatement is a constant so it does not need to be in the array, but it doesn't hurt.
+  }, [actions, state.currentSession, caseStatement]); // Keep dependencies as is for now, main fix is the ref
 
   const onTimeUpdate = useCallback((newTime: number) => {
     setTimeElapsed(newTime);
@@ -166,7 +187,11 @@ export const CaseInterview = () => {
   };
 
   const handleBack = () => {
-    setShowFeedbackModal(true);
+    if (onBack) {
+      onBack(); // triggers navigate from parent
+    } else {
+      setShowFeedbackModal(true); // fallback
+    }
   };
 
   const handleFeedbackClose = () => {

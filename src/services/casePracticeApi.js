@@ -18,6 +18,7 @@ const apiCall = async (endpoint, options = {}) => {
       ...(token && { 'Authorization': `Bearer ${token}` }),
       ...options.headers,
     },
+    credentials: 'include',  // ← ADD THIS LINE
     ...options,
   };
 
