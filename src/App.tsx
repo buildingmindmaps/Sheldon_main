@@ -29,9 +29,9 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import Contact from "./pages/Contact";
 import ArticlePage from "./pages/ArticlePage";
-import AllCourses, { CasePracticePage } from "./pages/AllCourses";
-import { CaseInterview } from "../CaseQuest/src/components/CaseInterview";
-import InteractiveSWOTAnalysis from "./components/Interactive SWOT Analysis App";
+import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
+import {CaseInterview} from "../CaseQuest/src/components/CaseInterview";
+import { SWOTApp } from "./components/SWOTApp";
 
 // Modified CaseInterviewWrapper to pass the onBack prop
 const CaseInterviewWrapper = () => {

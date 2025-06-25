@@ -121,6 +121,9 @@ export const CasePracticeProvider: React.FC<{ children: React.ReactNode }> = ({ 
       try {
         dispatch({ type: 'SET_LOADING', payload: true });
         console.log('📡 [Context] Calling API: startCase');
+        console.log('casePracticeApi object:', casePracticeApi);
+console.log('API method:', casePracticeApi.startCase);
+
         const response = await casePracticeApi.startCase(caseData);
         console.log('✅ [Context] Case started successfully. Response:', response);
         dispatch({ type: 'START_SESSION', payload: response.data });
