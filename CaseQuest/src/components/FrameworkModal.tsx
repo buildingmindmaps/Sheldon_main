@@ -8,6 +8,7 @@ import { useSpeechToText } from '../hooks/useSpeechToText';
 import { VoiceVisualizer } from './VoiceVisualizer';
 
 interface FrameworkModalProps {
+  
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (framework: string) => void;

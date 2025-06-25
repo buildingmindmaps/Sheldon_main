@@ -38,7 +38,23 @@ const ModuleSchema = new mongoose.Schema({
   order: {
     type: Number,
     default: 0
-  }
+  },
+  // --- NEW FIELD: caseStatement and caseFacts ---
+  caseStatement: {
+    type: String,
+    // Make this required if every module should have a case statement,
+    // otherwise, leave it optional.
+  },
+  caseFacts: [{
+    type: String // An array of strings for case facts
+  }],
+
+  caseConversation: {
+    type: String,
+    // Make this required if every module should have a case statement,
+    // otherwise, leave it optional.
+  },
+  // --- END NEW FIELDS ---
 }, { timestamps: true });
 
 module.exports = mongoose.model('Module', ModuleSchema);

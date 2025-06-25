@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import mermaid from 'mermaid';
 import { generateFrameworkAnalysis, generateFlowchartVisualization, type FrameworkAnalysis } from '../services/analysisService';
@@ -9,6 +8,7 @@ interface FrameworkTabProps {
   questions: Question[];
   caseStatement: string;
   conversation: ConversationMessage[];
+  caseFacts: string[]; // <-- ADD THIS LINE
 }
 
 // Helper component for displaying loading spinner
@@ -30,7 +30,7 @@ const ErrorDisplay = ({ message }: { message: string }) => (
   </div>
 );
 
-export const FrameworkTab: React.FC<FrameworkTabProps> = ({ frameworkText, questions, caseStatement, conversation }) => {
+export const FrameworkTab: React.FC<FrameworkTabProps> = ({ frameworkText, questions, caseStatement, conversation, caseFacts }) => { // <-- ADD caseFacts here
   const [mermaidCode, setMermaidCode] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,12 +101,11 @@ export const FrameworkTab: React.FC<FrameworkTabProps> = ({ frameworkText, quest
     const generateAnalysis = async () => {
       setIsAnalysisLoading(true);
       try {
-        // Temporarily removed the 'conversation' argument to fix a build error.
-        // The underlying analysis service needs to be updated to handle it.
         const analysisResult = await generateFrameworkAnalysis(
           frameworkText,
           questions,
-          caseStatement
+          caseStatement,
+          caseFacts // <-- ADD THIS LINE
         );
         setAnalysis(analysisResult);
       } catch (error) {
@@ -116,8 +115,9 @@ export const FrameworkTab: React.FC<FrameworkTabProps> = ({ frameworkText, quest
       }
     };
 
+    // Make sure to include caseFacts in the dependency array
     generateAnalysis();
-  }, [frameworkText, questions, caseStatement, conversation]);
+  }, [frameworkText, questions, caseStatement, conversation, caseFacts]); // <-- ADD caseFacts here
 
   return (
     <div className="p-6 h-full overflow-y-auto">
