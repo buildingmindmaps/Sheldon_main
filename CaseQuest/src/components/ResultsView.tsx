@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// Corrected import paths: Assuming ResultsView.tsx is in the SAME directory
+// as SolvedCaseTab.tsx, ReviewTab.tsx, FrameworkTab.tsx, and FeedbackModal.tsx
 import { SolvedCaseTab } from './SolvedCaseTab';
 import { ReviewTab } from './ReviewTab';
 import { FrameworkTab } from './FrameworkTab';
-import { Timer } from './Timer';
-import { CaseStatement } from './CaseStatement';
-import { FeedbackModal } from './FeedbackModal';
-import type { CaseData } from './CaseInterview';
+import { FeedbackModal } from './FeedbackModal'; 
+// Corrected import path for CaseData, Question, ConversationMessage
+// It's crucial that this 'types/case' file accurately defines the CaseData interface
+import type { Question, ConversationMessage, CaseData } from './CaseInterview'; // Assuming types are one level up in 'types' directory
 import { useNavigate } from 'react-router-dom';
 
+// Note: The CaseData interface itself is now directly imported from '../types/case'.
+// No local re-definition is needed here as that file should be the single source of truth.
+
 interface ResultsViewProps {
-  caseData: CaseData & { id: number };
-  caseStatement: string;
-  onComplete?: () => void; // Add this prop
+  caseData: CaseData; 
+  caseStatement: string; 
+  onComplete?: () => void;
 }
 
 export const ResultsView: React.FC<ResultsViewProps> = ({ 
@@ -56,7 +61,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
     
     const completedCaseId = caseData.id;
 
-    // Read existing data
+    // Read existing data from localStorage
     const storedCases = localStorage.getItem('caseStudiesData');
     if (storedCases) {
       let cases = JSON.parse(storedCases);
@@ -141,6 +146,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                 questions={caseData.questions}
                 caseStatement={caseStatement}
                 conversation={caseData.conversation}
+                caseFacts={caseData.caseFacts}
               />
             </TabsContent>
           </Tabs>
@@ -197,6 +203,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
                     questions={caseData.questions}
                     caseStatement={caseStatement}
                     conversation={caseData.conversation}
+                    caseFacts={caseData.caseFacts}
                   />
                 </TabsContent>
               </div>

@@ -116,26 +116,42 @@ export const CasePracticeProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [state, dispatch] = useReducer(casePracticeReducer, initialState);
 
   const actions: CasePracticeActions = {
-    startCase: async (caseData) => {
-      console.log('🎯 [Context] Starting case session with data:', caseData);
-      try {
-        dispatch({ type: 'SET_LOADING', payload: true });
-        console.log('📡 [Context] Calling API: startCase');
-        console.log('casePracticeApi object:', casePracticeApi);
-console.log('API method:', casePracticeApi.startCase);
+    // ... inside the 'actions' object
 
-        const response = await casePracticeApi.startCase(caseData);
-        console.log('✅ [Context] Case started successfully. Response:', response);
-        dispatch({ type: 'START_SESSION', payload: response.data });
-        return response.data;
-      } catch (error: any) {
-        console.error('❌ [Context] Error starting case:', error);
-        dispatch({ type: 'SET_ERROR', payload: error.message });
-        throw error;
-      }
-    },
+startCase: async (caseData) => {
+  console.log('📝 Starting case with data:', caseData);
 
-    addQuestionAndResponse: async (qaData) => {
+  // 💡 FIX: Check for an existing session OR if a session is currently being created.
+  if (state.currentSession || state.loading) {
+    console.warn('⚠️ A case session is already active or is being created. Skipping new request.');
+    return state.currentSession;
+  }
+
+  // Convert caseStatement to string if it's an array
+  const fixedCaseData = {
+    ...caseData,
+    caseStatement: Array.isArray(caseData.caseStatement)
+      ? caseData.caseStatement.join(' ')
+      : String(caseData.caseStatement),
+  };
+
+  try {
+    dispatch({ type: 'SET_LOADING', payload: true });
+
+    const response = await casePracticeApi.startCase(fixedCaseData);
+    dispatch({ type: 'START_SESSION', payload: response.data });
+    return response.data;
+  } catch (error: any) {
+    console.error('❌ [Context] Error starting case:', error);
+    dispatch({ type: 'SET_ERROR', payload: error.message });
+    throw error;
+  }
+},
+
+// ... rest of the actions
+
+
+addQuestionAndResponse: async (qaData) => {
       console.log('🎯 [Context] Adding Q&A with data:', qaData);
       try {
         dispatch({ type: 'SET_LOADING', payload: true });

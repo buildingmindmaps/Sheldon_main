@@ -30,6 +30,11 @@ const ModuleSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  experiencePoints: {
+    type: Number,
+    default: 10,
+    min: 0
+  },
   courseId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course',
@@ -38,7 +43,22 @@ const ModuleSchema = new mongoose.Schema({
   order: {
     type: Number,
     default: 0
-  }
+  },
+  // --- NEW FIELD: caseStatement and caseFacts ---
+  caseStatement: {
+    type: String,
+    // Make this required if every module should have a case statement,
+    // otherwise, leave it optional.
+  },
+  caseFacts: [{
+    type: String // An array of strings for case facts
+  }],
+
+  caseConversation: [{
+    sender: String,
+    text: String
+  }],
+  // --- END NEW FIELDS ---
 }, { timestamps: true });
 
 module.exports = mongoose.model('Module', ModuleSchema);

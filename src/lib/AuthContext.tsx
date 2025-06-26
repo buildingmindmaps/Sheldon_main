@@ -15,6 +15,7 @@ export interface User {
     completedAt: string;
   }>;
   experiencePoints: number;
+  unlockedModules: string[]; // Added for module locking feature
   isVerified?: boolean; // Added to track verification status
   avatar?: string; // Added to store user's Google profile image URL
 }

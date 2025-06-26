@@ -67,6 +67,12 @@ const userSchema = mongoose.Schema(
         }
       }
     ],
+    unlockedModules: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Module',
+      }
+    ],
     dateOfJoining: {
       type: Date,
       default: Date.now,

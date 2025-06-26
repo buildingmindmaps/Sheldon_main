@@ -1,6 +1,3 @@
-console.log('✅ CaseInterview component mounted');
-
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Timer } from './Timer';
 import { CaseStatement } from './CaseStatement';
@@ -13,6 +10,14 @@ import { Button } from '@/components/ui/button';
 import { generateResponseWithGemini } from '../services/geminiService';
 import { useCasePractice } from '../../../src/contexts/CasePracticeContext';
 import { toast } from 'sonner';
+import { CaseModule } from '../types/case';
+
+
+  export interface ConversationMessage {
+  sender: 'user' | 'model';
+  message: string;
+}
+
 
 export interface Question {
   id: number;
@@ -28,28 +33,23 @@ export interface Question {
   isLoading?: boolean;
 }
 
-export interface ConversationMessage {
-  sender: 'user' | 'model';
-  message: string;
-}
-
-export interface CaseData {
-  id?: number;
+interface CaseData {
+  id?: string;
   questions: Question[];
   timeElapsed: number;
   frameworkText: string;
   isCompleted: boolean;
   conversation: ConversationMessage[];
+  caseFacts: string[];
+  caseStatement: string;
 }
 
 interface CaseInterviewProps {
   onBack?: () => void;
+  caseModuleData: CaseModule;
 }
 
-
-export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
-  console.log('✅ CaseInterview component mounted, onBack exists:', !!onBack);
-
+export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack, caseModuleData }) => {
   const { state, actions } = useCasePractice();
   const [isFrameworkModalOpen, setIsFrameworkModalOpen] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -57,88 +57,57 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
-  // Use a ref to track if the session initialization has been attempted.
-  // This ref's value persists across renders without causing re-renders itself.
-  const hasSessionInitAttempted = useRef(false);
+  
 
-  const caseId = 3; // This seems to be a hardcoded case ID for now.
-  const caseStatement = `Your client is a water purifier manufacturer in India, focused on residential customers. The client is experiencing lower profitability (defined as EBITDA/Revenue) compared to competitors. They have hired you to analyze the issue and provide recommendations.`;
+  useEffect(() => {
+    if (caseModuleData) {
+      actions.startCase({
+        caseId: caseModuleData._id,
+        caseTitle: caseModuleData.title,
+        caseDifficulty: caseModuleData.level,
+        caseStatement: Array.isArray(caseModuleData.caseStatement) ? caseModuleData.caseStatement : [caseModuleData.caseStatement],
+      });
+    }
+  }, [caseModuleData, actions]);
 
   const caseInstructions = [
     "Analyze the provided data packs thoroughly.",
     "Formulate clarifying questions to gather more information.",
     "Structure your approach logically.",
-    "Develop a logical framework—a structured way to break down the problem into smaller parts",
+    "Develop a logical framework—a structured way to break down the problem.",
     "Be prepared to present your analysis and recommendations clearly.",
-    "Time management is key. Allocate your time wisely across different phases of the case."
+    "Time management is key. Allocate your time wisely."
   ];
 
-  // LOGGING FOR SESSION START AND FIX FOR MULTIPLE CREATIONS
-  useEffect(() => {
-    console.log('[CaseInterview - useEffect] Checking session status. Current state.currentSession:', state.currentSession);
 
-    // Only attempt to start a session if one is not active AND
-    // if we haven't already attempted to initialize a session in this component's lifecycle.
-    if (!state.currentSession && !hasSessionInitAttempted.current) {
-      console.log('[CaseInterview - useEffect] No active session found, attempting to start a new one...');
-      // Mark that an attempt has been made immediately
-      hasSessionInitAttempted.current = true;
-
-      actions.startCase({
-        caseId: "water-purifier-case", // Consider making this dynamic based on the selected case
-        caseTitle: "Water Purifier Profitability",
-        caseDifficulty: "Beginner",
-        caseStatement: caseStatement
-      }).then(sessionData => {
-        console.log('[CaseInterview - useEffect] Case session started successfully:', sessionData);
-      }).catch(error => {
-        console.error('[CaseInterview - useEffect] Failed to start case session:', error);
-        toast.error("Could not start a new case session. Please try again.");
-        // If the start fails, reset the ref to allow a retry on subsequent renders/user action
-        hasSessionInitAttempted.current = false;
-      });
-    } else if (state.currentSession) {
-      console.log('[CaseInterview - useEffect] Session already active with ID:', state.currentSession._id);
-    }
-    // Dependency array: only re-run if 'actions' or 'state.currentSession' changes.
-    // caseStatement is a constant so it does not need to be in the array, but it doesn't hurt.
-  }, [actions, state.currentSession, caseStatement]); // Keep dependencies as is for now, main fix is the ref
 
   const onTimeUpdate = useCallback((newTime: number) => {
     setTimeElapsed(newTime);
   }, []);
 
-  const handleAddQuestion = async (questionText: string) => {
-    // IMMEDIATE LOGGING
-    console.log('--- handleAddQuestion triggered ---');
-    console.log('[handleAddQuestion] User question submitted:', questionText);
-    console.log('[handleAddQuestion] Current state.currentSession:', state.currentSession); // Log current session state immediately
-
+  const handleAddQuestion = useCallback(async (questionText: string) => {
     if (state.questions.length >= 10) {
       toast.info("You have reached the maximum number of questions.");
-      console.log('[handleAddQuestion] Max questions reached.');
       return;
     }
     if (!state.currentSession) {
       toast.error("No active case session. Please refresh the page.");
-      console.error('[handleAddQuestion] No active session found for adding question. Cannot proceed.');
       return;
     }
 
     try {
-      // Log before calling Gemini service
-      console.log('[handleAddQuestion] Calling generateResponseWithGemini...');
-      const geminiResponse = await generateResponseWithGemini(questionText);
-      console.log('[handleAddQuestion] Received Gemini response:', geminiResponse);
+      const geminiResponse = await generateResponseWithGemini(
+        questionText,
+        caseModuleData.caseStatement,
+        caseModuleData.caseFacts || [],
+        caseModuleData.caseConversation,
+      );
 
       if (!geminiResponse) {
         toast.error("Received an empty response from the AI. Please try again.");
-        console.error("[handleAddQuestion] generateResponseWithGemini returned an undefined or null response.");
         return;
       }
 
-      // Log before calling backend API via context
-      console.log('[handleAddQuestion] Calling actions.addQuestionAndResponse...');
       await actions.addQuestionAndResponse({
         questionNumber: state.questions.length + 1,
         userQuestion: questionText,
@@ -150,7 +119,6 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
           constructiveFeedback: geminiResponse.evaluation?.constructiveFeedback || '',
         }
       });
-      console.log('[handleAddQuestion] actions.addQuestionAndResponse called successfully.'); // After successful context action
 
       setConversation(prev => [
         ...prev,
@@ -160,27 +128,21 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
 
     } catch (error) {
       console.error('[handleAddQuestion] Error during question submission or saving:', error);
-      toast.error("There was an error getting a response or saving your question.");
-    } finally {
-      console.log('--- handleAddQuestion finished ---');
+      toast.error("There was an error getting a response from the AI.");
     }
-  };
+  }, [caseModuleData.caseStatement, caseModuleData.caseFacts, state.currentSession, state.questions.length, actions]);
 
   const handleUpdateFeedback = (questionId: number, feedback: Question['feedback']) => {
-    console.log('[CaseInterview] Updating feedback for question:', questionId, feedback);
     actions.updateQuestionFeedback(questionId, feedback);
   };
 
   const handleFrameworkSubmit = async (framework: string) => {
-    console.log('[CaseInterview] Attempting to submit framework...');
     try {
       if (state.currentSession) {
         await actions.submitFramework(framework);
         setIsCompleted(true);
         setIsFrameworkModalOpen(false);
-        console.log('[CaseInterview] Framework submitted and case marked completed.');
       } else {
-        console.warn('[CaseInterview] No active session to submit framework to.');
         toast.error("No active case session to submit framework.");
       }
     } catch (error) {
@@ -191,12 +153,10 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
 
   const handleBack = () => {
     if (onBack) {
-      onBack(); // triggers navigate from parent
+      onBack();
     } else {
-      setShowFeedbackModal(true); // fallback
+      setShowFeedbackModal(true);
     }
-
-
   };
 
   const handleFeedbackClose = () => {
@@ -204,172 +164,112 @@ export const CaseInterview: React.FC<CaseInterviewProps> = ({ onBack }) => {
     window.history.back();
   };
 
-  const handleCaseComplete = async () => {
-    console.log('[CaseInterview] Attempting to complete case...');
-    try {
-      if (state.currentSession) {
-        const completionData = {
-          performanceMetrics: {
-            overallRating: 8,
-            structure: 7,
-            problemFormulation: 8,
-            communication: 8,
-            confidence: 7,
-            questionsAsked: state.questions.length,
-            excellentQuestions: state.questions.filter(q => q.feedback === 'excellent').length,
-            timeTaken: `${Math.floor(timeElapsed / 60)}m ${timeElapsed % 60}s`,
-            frameworkSubmitted: state.isFrameworkSubmitted, // Use actual state
-          },
-          areasForImprovement: state.questions
-              .filter(q => q.feedback === 'needs-improvement' || q.feedback === 'critical')
-              .map(q => ({
-                category: "Question Quality",
-                feedback: q.evaluation?.constructiveFeedback || "Needs improvement"
-              })),
-          totalTimeSpent: timeElapsed
-        };
-
-        await actions.completeCase(completionData);
-        console.log('[CaseInterview] Case completed successfully.');
-      } else {
-        console.warn('[CaseInterview] No active session to complete.');
-        toast.error("No active case session to complete.");
-      }
-    } catch (error) {
-      console.error('[CaseInterview] Failed to complete case:', error);
-      toast.error("Could not complete the case. Please try again.");
-    }
-  };
-
-  // Adjust this logic to be robust based on state.currentSession
   const canSubmitFramework = state.currentSession && (state.questions.length >= 2 || state.questions.length >= 10);
-
-  if (state.loading && !state.currentSession) {
-    return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-xl">Starting case session...</div>
-        </div>
-    );
-  }
-
-  if (state.error) {
-    return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-red-600">Error: {state.error}</div>
-        </div>
-    );
-  }
 
   if (isCompleted) {
     return (
-        <ResultsView
-            caseData={{
-              id: caseId,
-              questions: state.questions,
-              timeElapsed,
-              frameworkText: state.framework || '',
-              isCompleted: true,
-              conversation,
-            }}
-            caseStatement={caseStatement}
-            onComplete={handleCaseComplete}
-        />
+      <ResultsView
+        caseData={{
+          id: caseModuleData._id,
+          questions: state.questions,
+          timeElapsed,
+          frameworkText: state.framework || '',
+          isCompleted: true,
+          conversation,
+          caseFacts: caseModuleData.caseFacts || [],
+          caseStatement: caseModuleData.caseStatement,
+        }}
+        caseStatement={caseModuleData.caseStatement}
+      />
     );
   }
 
   return (
-      <div className="min-h-screen bg-gray-50">
-        {state.loading && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="text-white text-xl">Saving to database...</div>
-            </div>
-        )}
+    <div className="min-h-screen bg-gray-50">
+      {state.loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="text-white text-xl">Saving to database...</div>
+        </div>
+      )}
 
-        {/* Mobile Layout */}
-        <div className="lg:hidden h-screen flex flex-col">
-          <MobileCaseHeader
-              statement={caseStatement}
-              instructions={caseInstructions}
-              timeElapsed={timeElapsed}
-              onTimeUpdate={onTimeUpdate}
-              isCompleted={isCompleted}
-              questionCount={state.questions.length}
-              onBack={handleBack}
+      <div className="lg:hidden h-screen flex flex-col">
+        <MobileCaseHeader
+          statement={caseModuleData.caseStatement}
+          instructions={caseInstructions}
+          timeElapsed={timeElapsed}
+          onTimeUpdate={onTimeUpdate}
+          isCompleted={isCompleted}
+          questionCount={state.questions.length}
+          onBack={handleBack}
+        />
+        <div className="flex-1 overflow-y-auto">
+          <QuestionPanel
+            questions={state.questions}
+            onAddQuestion={handleAddQuestion}
+            onUpdateFeedback={handleUpdateFeedback}
+            maxQuestions={10}
+            isLoading={state.loading}
           />
+        </div>
+        {canSubmitFramework && (
+          <div className="p-3 border-t border-gray-200 bg-white">
+            <Button
+              onClick={() => setIsFrameworkModalOpen(true)}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white h-10"
+            >
+              Submit Framework
+            </Button>
+          </div>
+        )}
+      </div>
 
+      <div className="hidden lg:flex h-screen">
+        <div className="flex-1 bg-white border-r border-gray-200 flex flex-col">
           <div className="flex-1 overflow-y-auto">
             <QuestionPanel
-                questions={state.questions}
-                onAddQuestion={handleAddQuestion}
-                onUpdateFeedback={handleUpdateFeedback}
-                maxQuestions={10}
-                isLoading={state.loading}
+              questions={state.questions}
+              onAddQuestion={handleAddQuestion}
+              onUpdateFeedback={handleUpdateFeedback}
+              maxQuestions={10}
+              isLoading={state.loading}
             />
           </div>
-
           {canSubmitFramework && (
-              <div className="p-3 border-t border-gray-200 bg-white">
-                <Button
-                    onClick={() => setIsFrameworkModalOpen(true)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white h-10"
-                >
-                  Submit Framework
-                </Button>
-              </div>
+            <div className="p-6 border-t border-gray-200 bg-white">
+              <Button
+                onClick={() => setIsFrameworkModalOpen(true)}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                size="lg"
+              >
+                Submit Framework
+              </Button>
+            </div>
           )}
         </div>
 
-        {/* Desktop Layout */}
-        <div className="hidden lg:flex h-screen">
-          <div className="flex-1 bg-white border-r border-gray-200 flex flex-col">
-            <div className="flex-1 overflow-y-auto">
-              <QuestionPanel
-                  questions={state.questions}
-                  onAddQuestion={handleAddQuestion}
-                  onUpdateFeedback={handleUpdateFeedback}
-                  maxQuestions={10}
-                  isLoading={state.loading}
-              />
-            </div>
-
-            {canSubmitFramework && (
-                <div className="p-6 border-t border-gray-200 bg-white">
-                  <Button
-                      onClick={() => setIsFrameworkModalOpen(true)}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                      size="lg"
-                  >
-                    Submit Framework
-                  </Button>
-                </div>
-            )}
-          </div>
-
-          <div className="w-96 bg-gray-50 p-6 flex flex-col">
-            <Timer
-                timeElapsed={timeElapsed}
-                onTimeUpdate={onTimeUpdate}
-                isCompleted={isCompleted}
-            />
-
-            <CaseStatement
-                statement={caseStatement}
-                instructions={caseInstructions}
-            />
-          </div>
+        <div className="w-96 bg-gray-50 p-6 flex flex-col">
+          <Timer
+            timeElapsed={timeElapsed}
+            onTimeUpdate={onTimeUpdate}
+            isCompleted={isCompleted}
+          />
+          <CaseStatement
+            statement={caseModuleData.caseStatement}
+            instructions={caseInstructions}
+          />
         </div>
-
-        <FrameworkModal
-            isOpen={isFrameworkModalOpen}
-            onClose={() => setIsFrameworkModalOpen(false)}
-            onSubmit={handleFrameworkSubmit}
-            isLoading={state.loading}
-        />
-
-        <FeedbackModal
-            isOpen={showFeedbackModal}
-            onClose={handleFeedbackClose}
-        />
       </div>
+
+      <FrameworkModal
+        isOpen={isFrameworkModalOpen}
+        onClose={() => setIsFrameworkModalOpen(false)}
+        onSubmit={handleFrameworkSubmit}
+        isLoading={state.loading}
+      />
+      <FeedbackModal
+        isOpen={showFeedbackModal}
+        onClose={handleFeedbackClose}
+      />
+    </div>
   );
 };

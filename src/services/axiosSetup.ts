@@ -14,7 +14,7 @@ export const axiosInstance = axios.create({
 // Request interceptor to add auth token from localStorage if available
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('auth_token'); // Fixed: Using 'auth_token' instead of 'token'
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

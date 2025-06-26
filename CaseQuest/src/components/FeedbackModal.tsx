@@ -4,6 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -19,6 +21,7 @@ interface FeedbackData {
 }
 
 export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
   const [feedback, setFeedback] = useState<FeedbackData>({
     problemSolvingSkills: 0,
     clarityRealism: 0,
@@ -54,28 +57,27 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose })
   };
 
   const handleSubmit = () => {
-    // Here you can save the feedback data to localStorage or send to backend
-    console.log('Feedback submitted:', feedback);
-    
-    // Store feedback in localStorage for now
-    const existingFeedback = JSON.parse(localStorage.getItem('caseFeedback') || '[]');
-    existingFeedback.push({
-      ...feedback,
-      timestamp: new Date().toISOString(),
-      caseId: 3 // Water Purifier case
-    });
-    localStorage.setItem('caseFeedback', JSON.stringify(existingFeedback));
+  console.log('Feedback submitted:', feedback);
 
-    // Reset form and close modal
-    setFeedback({
-      problemSolvingSkills: 0,
-      clarityRealism: 0,
-      userExperience: 0,
-      recommendation: 0,
-      suggestions: ''
-    });
-    onClose();
-  };
+  const existingFeedback = JSON.parse(localStorage.getItem('caseFeedback') || '[]');
+  existingFeedback.push({
+    ...feedback,
+    timestamp: new Date().toISOString(),
+    caseId: 3
+  });
+  localStorage.setItem('caseFeedback', JSON.stringify(existingFeedback));
+
+  setFeedback({
+    problemSolvingSkills: 0,
+    clarityRealism: 0,
+    userExperience: 0,
+    recommendation: 0,
+    suggestions: ''
+  });
+
+  onClose();
+  navigate('/all-courses/profitability-case-practice');
+};
 
   const isFormValid = () => {
     return feedback.problemSolvingSkills > 0 && 
