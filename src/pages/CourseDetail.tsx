@@ -10,8 +10,11 @@ import {
     Star,
     ArrowLeft,
     Lock,
-    Loader
+    Loader,
+    Check
 } from 'lucide-react';
+import { useAuth } from '../lib/AuthContext'; // Updated import path to use existing AuthContext
+import { getModulesWithStatus, markModuleCompleted } from '@/services/courseProgressService'; // Import our service functions
 
 // Import the icon mapping and helper functions from AllCourses
 import { getIcon, renderStars } from './AllCourses';
@@ -46,12 +49,16 @@ interface Module {
     order: number;
     content?: string;
     resources?: string[];
+    isCompleted?: boolean; // Flag for completed modules
+    isUnlocked?: boolean; // Flag for unlocked modules
+    experiencePoints?: number; // XP awarded for completion
 }
 
 export default function CourseDetail() {
     const navigate = useNavigate();
     const location = useLocation();
     const params = useParams();
+    const { user } = useAuth(); // Get the current user from auth context
 
     // Fix: Add null check before destructuring and implement fallback
     const courseFromState = location.state?.course;
@@ -63,17 +70,24 @@ export default function CourseDetail() {
     const [error, setError] = useState<string | null>(null);
     const [moduleContent, setModuleContent] = useState<string | null>(null);
     const [loadingContent, setLoadingContent] = useState<boolean>(false);
+    const [userExperiencePoints, setUserExperiencePoints] = useState<number>(0);
+    const [completingModule, setCompletingModule] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchModules = async () => {
+            if (!user || !course?._id) return;
+
             try {
                 setLoadingModules(true);
-                const response = await axios.get(`/api/modules/by-course/${course?._id}`);
-                const fetchedModules = response.data;
+
+                // Use our new service function to get modules with their status
+                const response = await getModulesWithStatus(user._id, course._id);
+                const fetchedModules = response.modules;
                 setModules(fetchedModules);
+                setUserExperiencePoints(response.userExperiencePoints);
 
                 // Select the first unlocked module or the first module if all are locked
-                const firstUnlockedModule = fetchedModules.find((module: Module) => !module.isLocked);
+                const firstUnlockedModule = fetchedModules.find((module: Module) => module.isUnlocked);
                 setSelectedModule(firstUnlockedModule || (fetchedModules.length > 0 ? fetchedModules[0] : null));
             } catch (err) {
                 console.error('Error fetching modules:', err);
@@ -83,10 +97,10 @@ export default function CourseDetail() {
             }
         };
 
-        if (course && course._id) {
+        if (course && course._id && user) {
             fetchModules();
         }
-    }, [course]);
+    }, [course, user]);
 
     // If course wasn't provided in state, fetch it based on URL params
     useEffect(() => {
@@ -127,7 +141,7 @@ export default function CourseDetail() {
 
     // Function to handle module selection from the list
     const handleModuleSelection = async (module: Module) => {
-        if (!module.isLocked) {
+        if (!module.isLocked && module.isUnlocked) {
             setSelectedModule(module);
 
             try {
@@ -147,6 +161,48 @@ export default function CourseDetail() {
         }
     };
 
+    // Function to handle module completion
+    const handleCompleteModule = async () => {
+        if (!selectedModule || !user || !course) return;
+
+        try {
+            setCompletingModule(true);
+
+            // Call the API to mark the module as completed
+            const result = await markModuleCompleted(user._id, course._id, selectedModule._id);
+
+            // Update the local state to reflect the completion
+            setModules(modules.map(module => {
+                if (module._id === selectedModule._id) {
+                    return { ...module, isCompleted: true };
+                }
+
+                // If there's a next module that was just unlocked, update it
+                if (result.nextModuleUnlocked && module._id === result.nextModuleUnlocked) {
+                    return { ...module, isUnlocked: true };
+                }
+
+                return module;
+            }));
+
+            // Update user's experience points
+            setUserExperiencePoints(result.totalExperiencePoints);
+
+            // Show success message or notification
+            alert(`Module completed! You earned ${result.experiencePointsGained} XP.`);
+
+            // Refresh the modules to get the updated unlock status
+            const response = await getModulesWithStatus(user._id, course._id);
+            setModules(response.modules);
+
+        } catch (error) {
+            console.error('Error completing module:', error);
+            alert('Failed to complete module. Please try again.');
+        } finally {
+            setCompletingModule(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
             <NavBar />
@@ -157,7 +213,12 @@ export default function CourseDetail() {
                             <ArrowLeft className="h-4 w-4" />
                         </div>
                     </Button>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-8">{course?.title}</h1>
+                    <div className="flex justify-between items-center mb-8">
+                        <h1 className="text-3xl font-bold text-gray-900">{course?.title}</h1>
+                        <div className="bg-lime-100 text-lime-800 px-3 py-1 rounded-full text-sm font-medium">
+                            XP: {userExperiencePoints}
+                        </div>
+                    </div>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2">
                             {selectedModule && (
@@ -168,16 +229,7 @@ export default function CourseDetail() {
                                             <div>
                                                 {selectedModule.badge && <Badge className="mb-2 bg-lime-100 text-lime-700 hover:bg-lime-100">{selectedModule.badge}</Badge>}
                                                 <CardTitle className="text-2xl font-bold mb-2">{selectedModule.title}</CardTitle>
-                                                <p
-                                                    data-lov-id="src/pages/CourseDetail.tsx:153:52"
-                                                    data-lov-name="CardDescription"
-                                                    data-component-path="src/pages/CourseDetail.tsx"
-                                                    data-component-line="153"
-                                                    data-component-file="CourseDetail.tsx"
-                                                    data-component-name="CardDescription"
-                                                    data-component-content="%7B%22className%22%3A%22text-base%20text-gray-700%20mb-4%22%7D"
-                                                    className="text-base text-gray-700 mb-4"
-                                                >
+                                                <p className="text-base text-gray-700 mb-4">
                                                     {loadingContent ? 'Loading content...' : moduleContent || selectedModule.description}
                                                 </p>
                                                 <div className="flex flex-wrap gap-2 mt-4">
@@ -185,23 +237,44 @@ export default function CourseDetail() {
                                                     <Badge variant="outline" className="bg-gray-50 text-gray-700 hover:bg-gray-50 px-3 py-1.5 rounded-full flex items-center gap-1.5">
                                                         <Clock className="h-4 w-4"/>{selectedModule.duration} mins
                                                     </Badge>
+                                                    {selectedModule.experiencePoints && (
+                                                        <Badge variant="outline" className="bg-lime-50 text-lime-700 hover:bg-lime-50 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                                                            <Star className="h-4 w-4"/>{selectedModule.experiencePoints} XP
+                                                        </Badge>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="flex justify-center my-4">
+                                        <div className="flex justify-center gap-4 my-4">
                                             <Button
                                                 className={`font-medium py-3 px-8 rounded-lg ${
-                                                    selectedModule.isLocked
+                                                    !selectedModule.isUnlocked
                                                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                                         : 'bg-[#a3e635] hover:bg-[#84cc16] text-black'
                                                 }`}
                                                 onClick={handleStartModule}
-                                                disabled={selectedModule.isLocked}
+                                                disabled={!selectedModule.isUnlocked}
                                             >
-                                                {selectedModule.isLocked ? 'Locked' : 'Start Module'}
+                                                {!selectedModule.isUnlocked ? 'Locked' : 'Start Module'}
                                             </Button>
+
+                                            {selectedModule.isUnlocked && !selectedModule.isCompleted && (
+                                                <Button
+                                                    className="font-medium py-3 px-8 rounded-lg bg-blue-500 hover:bg-blue-600 text-white"
+                                                    onClick={handleCompleteModule}
+                                                    disabled={completingModule}
+                                                >
+                                                    {completingModule ? 'Completing...' : 'Complete Module'}
+                                                </Button>
+                                            )}
+
+                                            {selectedModule.isCompleted && (
+                                                <Badge className="flex items-center gap-2 bg-green-100 text-green-700 py-2 px-4">
+                                                    <Check className="h-4 w-4" /> Completed
+                                                </Badge>
+                                            )}
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -226,18 +299,27 @@ export default function CourseDetail() {
                                         <Card
                                             key={module._id}
                                             className={`bg-white transition-shadow relative ${
-                                                module.isLocked
+                                                !module.isUnlocked
                                                     ? 'opacity-50 cursor-not-allowed'
                                                     : 'hover:shadow-md cursor-pointer'
                                             } ${
                                                 selectedModule && selectedModule._id === module._id ? 'ring-2 ring-offset-2 ring-lime-400' : 'border'
+                                            } ${
+                                                module.isCompleted ? 'bg-gray-50' : ''
                                             }`}
                                             onClick={() => handleModuleSelection(module)}
                                         >
-                                            {module.isLocked && (
+                                            {!module.isUnlocked && (
                                                 <div className="absolute top-2 right-2 z-10">
                                                     <div className="bg-gray-800 bg-opacity-75 rounded-full p-1">
                                                         <Lock className="h-4 w-4 text-white" />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {module.isCompleted && (
+                                                <div className="absolute top-2 right-2 z-10">
+                                                    <div className="bg-green-500 bg-opacity-75 rounded-full p-1">
+                                                        <Check className="h-4 w-4 text-white" />
                                                     </div>
                                                 </div>
                                             )}
@@ -252,6 +334,11 @@ export default function CourseDetail() {
                                                 <div className="flex items-center gap-2 text-xs text-gray-500">
                                                     <Badge variant="outline" className="font-normal">{module.level}</Badge>
                                                     <Badge variant="outline" className="font-normal flex items-center gap-1"><Clock className="h-3 w-3" />{module.duration} mins</Badge>
+                                                    {module.experiencePoints && (
+                                                        <Badge variant="outline" className="font-normal flex items-center gap-1 bg-lime-50 text-lime-700 border-lime-200">
+                                                            <Star className="h-3 w-3" />{module.experiencePoints} XP
+                                                        </Badge>
+                                                    )}
                                                 </div>
                                             </CardFooter>
                                         </Card>

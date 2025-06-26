@@ -30,7 +30,7 @@ export const markModuleCompleted = async (
   moduleId: string
 ): Promise<any> => {
   try {
-    const response = await axiosInstance.post(`/api/progress/${userId}/progress`, {
+    const response = await axiosInstance.post(`/api/users/${userId}/progress`, {
       courseId,
       moduleId,
     });
@@ -48,6 +48,24 @@ export const getUserProgress = async (userId: string): Promise<UserProgress> => 
     return response.data;
   } catch (error) {
     console.error(`Error fetching progress for user ${userId}:`, error);
+    throw error;
+  }
+};
+
+// Get course modules with their unlock status for a user
+export const getModulesWithStatus = async (
+  userId: string,
+  courseId: string
+): Promise<{
+  courseId: string;
+  modules: (Module & { isCompleted: boolean; isUnlocked: boolean })[];
+  userExperiencePoints: number;
+}> => {
+  try {
+    const response = await axiosInstance.get(`/api/users/${userId}/course/${courseId}/modules`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching modules with status for course ${courseId}:`, error);
     throw error;
   }
 };

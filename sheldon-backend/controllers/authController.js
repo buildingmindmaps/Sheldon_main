@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Course = require('../models/course');
+const Module = require('../models/Module');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -12,9 +14,9 @@ const generateToken = (id) => {
 };
 
 // Helper function to generate a 6-digit OTP
-const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
+// const generateOTP = () => {
+//   return Math.floor(100000 + Math.random() * 900000).toString();
+// };
 
 // @desc    Register a new user with email/password
 // @route   POST /api/auth/register
@@ -36,13 +38,30 @@ const registerUser = async (req, res) => {
     // Generate verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
-    // Create a new user (password will be hashed by the pre-save hook in User model)
+    // Find all courses
+    const courses = await Course.find();
+
+    // Get first module from each course
+    const unlockedModules = [];
+    for (const course of courses) {
+      // Find the first module (lowest order) for this course
+      const firstModule = await Module.findOne({ courseId: course._id })
+        .sort({ order: 1 })
+        .limit(1);
+
+      if (firstModule) {
+        unlockedModules.push(firstModule._id);
+      }
+    }
+
+    // Create a new user with unlocked modules
     const user = await User.create({
       username,
       email,
       password,
       isVerified: false,
       verificationToken,
+      unlockedModules, // Add the first module of each course
     });
 
     if (user) {

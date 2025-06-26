@@ -30,6 +30,11 @@ const ModuleSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  experiencePoints: {
+    type: Number,
+    default: 10,
+    min: 0
+  },
   courseId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course',
@@ -49,11 +54,10 @@ const ModuleSchema = new mongoose.Schema({
     type: String // An array of strings for case facts
   }],
 
-  caseConversation: {
-    type: String,
-    // Make this required if every module should have a case statement,
-    // otherwise, leave it optional.
-  },
+  caseConversation: [{
+    sender: String,
+    text: String
+  }],
   // --- END NEW FIELDS ---
 }, { timestamps: true });
 
