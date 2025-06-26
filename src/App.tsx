@@ -31,7 +31,7 @@ import Contact from "./pages/Contact";
 import ArticlePage from "./pages/ArticlePage";
 import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
 import {CaseInterview} from "../CaseQuest/src/components/CaseInterview";
-import { SWOTApp } from "./components/SWOTApp";
+import InteractiveSWOTAnalysis from "./components/Interactive SWOT Analysis App";
 
 // Modified CaseInterviewWrapper to pass the onBack prop
 const CaseInterviewWrapper = () => {
