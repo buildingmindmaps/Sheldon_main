@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom"; // Ensure useNavigate is imported
+import { BrowserRouter, Routes, Route, useNavigate, useParams, useLocation } from "react-router-dom"; // Add useParams and useLocation
 
 // Auth import
 import { AuthProvider } from "./lib/AuthContext";
@@ -32,6 +32,7 @@ import ArticlePage from "./pages/ArticlePage";
 import AllCourses, { CasePracticePage, BusinessFrameworksPage } from "./pages/AllCourses";
 import {CaseInterview} from "../CaseQuest/src/components/CaseInterview";
 import InteractiveSWOTAnalysis from "./components/Interactive SWOT Analysis App";
+import { useEffect, useState } from "react";
 
 // Modified CaseInterviewWrapper to pass the onBack prop
 const CaseInterviewWrapper = () => {
@@ -41,6 +42,95 @@ const CaseInterviewWrapper = () => {
     navigate('/all-courses/case-practice'); // Example: Navigate to the case practice list
   };
   return <CaseInterview onBack={handleBack} />; // Pass onBack prop
+};
+
+// New component to handle case study routes and directly integrate with CaseQuest
+const CaseStudyWrapper = () => {
+  const { courseSlug, moduleId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [caseModuleData, setCaseModuleData] = useState<any>(null);
+
+  // Handle the back button functionality
+  const handleBack = () => {
+    // Navigate back to case practice page or previous location
+    navigate('/all-courses/case-practice');
+  };
+
+  useEffect(() => {
+    const fetchCaseData = async () => {
+      if (!moduleId) {
+        setError("No module ID provided");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Fetch case module data
+        const response = await fetch(`/api/modules/${moduleId}`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch case module: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Create case module data with required properties
+        setCaseModuleData({
+          _id: data._id || moduleId,
+          title: data.title || "Case Study",
+          description: data.description || "",
+          level: data.level || "Intermediate",
+          duration: data.duration || 30,
+          courseId: data.courseId || "",
+          caseStatement: data.caseStatement || "No case statement available",
+          caseFacts: data.caseFacts || [],
+          caseConversation: data.caseConversation || ""
+        });
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching case module:", err);
+        setError("Failed to load case study. Please try again.");
+        setLoading(false);
+      }
+    };
+
+    fetchCaseData();
+  }, [moduleId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Loading Case Study...</h1>
+          <p className="text-gray-600">Please wait while we prepare your case study.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !caseModuleData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center text-red-500">
+          <h1 className="text-2xl font-bold mb-4">Error</h1>
+          <p>{error || "Failed to load case data"}</p>
+          <button
+            onClick={() => navigate('/all-courses/case-practice')}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Back to Case Practice
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Directly render the CaseInterview component with the caseModuleData
+  return <CaseInterview caseModuleData={caseModuleData} onBack={handleBack} />;
 };
 
 // Modified SWOTAppWrapper to pass the onBack prop
@@ -78,6 +168,9 @@ const App = () => (
 
               {/* CaseInterview route using the wrapper */}
               <Route path="/all-courses/case-interview" element={<CaseInterviewWrapper />} />
+
+              {/* Add the specific case study route */}
+              <Route path="/all-courses/:courseSlug/module/:moduleId" element={<CaseStudyWrapper />} />
 
               {/* SWOTApp route using the wrapper */}
               <Route path="/all-courses/business-frameworks-fundamentals/swot-analysis" element={<SWOTAppWrapper />} />

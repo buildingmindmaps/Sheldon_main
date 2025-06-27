@@ -23,19 +23,22 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-  origin: function(origin, callback) {
-    // allow requests with no origin (like mobile apps, curl, etc.)
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){
-      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+  origin: function (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
     return callback(null, true);
   },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // If you're sending cookies/auth headers
-  optionsSuccessStatus: 204 // Some legacy browsers (IE11, various SmartTVs) choke on 200
+  credentials: true,
+  optionsSuccessStatus: 204,
 };
+
 
 app.use(cors(corsOptions)); // Use CORS middleware with your options
 
