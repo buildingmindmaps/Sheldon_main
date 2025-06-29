@@ -121,7 +121,7 @@ const moduleTemplates = [
   [
     {
       title: 'Porter\'s Five Forces',
-      order: 1,
+      order: 2,
       duration: 35,
       level: 'Beginner',
       description: 'Explore the five forces shaping competitive strategy.',
@@ -129,7 +129,7 @@ const moduleTemplates = [
     },
     {
       title: 'SWOT Analysis',
-      order: 2,
+      order: 1,
       duration: 30,
       level: 'Beginner',
       description: 'Master internal and external business analysis through SWOT.',

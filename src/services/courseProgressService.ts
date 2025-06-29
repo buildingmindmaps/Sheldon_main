@@ -69,3 +69,15 @@ export const getModulesWithStatus = async (
     throw error;
   }
 };
+
+// Get all modules for a course (no authentication required)
+export const getCourseModules = async (courseId: string): Promise<Module[]> => {
+  try {
+    // Using the correct API endpoint that exists in the backend
+    const response = await axiosInstance.get(`/api/modules/by-course/${courseId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching modules for course ${courseId}:`, error);
+    throw error;
+  }
+};

@@ -41,7 +41,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
           // Get current user data
-          const response = await axiosInstance.get('/api/users/me');
+          const response = await axiosInstance.get('/api/auth/profile');
+          console.log('User profile data from API:', response.data);
+          console.log('Unlocked Modules:', response.data.unlockedModules); // Add this line to specifically log unlockedModules
+          console.log('Avatar URL from API:', response.data.avatar);
           setUser(response.data);
         }
       } catch (err) {

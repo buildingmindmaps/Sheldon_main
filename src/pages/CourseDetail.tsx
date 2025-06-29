@@ -5,6 +5,7 @@ import { NavBar } from '@/components/NavBar';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AuthModal } from '@/components/AuthModal';
 import {
     Clock,
     Star,
@@ -14,7 +15,7 @@ import {
     Check
 } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext'; // Updated import path to use existing AuthContext
-import { getModulesWithStatus, markModuleCompleted } from '@/services/courseProgressService'; // Import our service functions
+import { getModulesWithStatus, markModuleCompleted, getCourseModules } from '@/services/courseProgressService'; // Import all service functions from courseProgressService
 
 // Import the icon mapping and helper functions from AllCourses
 import { getIcon, renderStars } from './AllCourses';
@@ -58,7 +59,7 @@ export default function CourseDetail() {
     const navigate = useNavigate();
     const location = useLocation();
     const params = useParams();
-    const { user } = useAuth(); // Get the current user from auth context
+    const { user, setIntended } = useAuth(); // Get the current user and setIntended from auth context
 
     // Fix: Add null check before destructuring and implement fallback
     const courseFromState = location.state?.course;
@@ -72,23 +73,44 @@ export default function CourseDetail() {
     const [loadingContent, setLoadingContent] = useState<boolean>(false);
     const [userExperiencePoints, setUserExperiencePoints] = useState<number>(0);
     const [completingModule, setCompletingModule] = useState<boolean>(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false); // State for managing auth modal visibility
+    const [redirectPath, setRedirectPath] = useState<string | null>(null); // State for storing redirect path
 
     useEffect(() => {
         const fetchModules = async () => {
-            if (!user || !course?._id) return;
+            if (!course?._id) return;
 
             try {
                 setLoadingModules(true);
 
-                // Use our new service function to get modules with their status
-                const response = await getModulesWithStatus(user._id, course._id);
-                const fetchedModules = response.modules;
-                setModules(fetchedModules);
-                setUserExperiencePoints(response.userExperiencePoints);
+                if (user) {
+                    // For authenticated users: Use the existing service function to get modules with their status
+                    const response = await getModulesWithStatus(user._id, course._id);
+                    const fetchedModules = response.modules;
+                    setModules(fetchedModules);
+                    setUserExperiencePoints(response.userExperiencePoints);
 
-                // Select the first unlocked module or the first module if all are locked
-                const firstUnlockedModule = fetchedModules.find((module: Module) => module.isUnlocked);
-                setSelectedModule(firstUnlockedModule || (fetchedModules.length > 0 ? fetchedModules[0] : null));
+                    // Select the first unlocked module or the first module if all are locked
+                    const firstUnlockedModule = fetchedModules.find((module: Module) => module.isUnlocked);
+                    setSelectedModule(firstUnlockedModule || (fetchedModules.length > 0 ? fetchedModules[0] : null));
+                } else {
+                    // For unauthenticated users: Fetch modules without user-specific data
+                    const fetchedModules = await getCourseModules(course._id);
+
+                    // Apply locking logic: First module unlocked, others locked
+                    const modulesWithLockStatus = fetchedModules.map((module: Module, index) => ({
+                        ...module,
+                        isCompleted: false,
+                        isUnlocked: index === 0, // Only the first module is unlocked
+                        isLocked: index !== 0    // All other modules are locked
+                    }));
+
+                    setModules(modulesWithLockStatus);
+                    setUserExperiencePoints(0); // No XP for non-logged-in users
+
+                    // Select the first module (which is unlocked)
+                    setSelectedModule(modulesWithLockStatus.length > 0 ? modulesWithLockStatus[0] : null);
+                }
             } catch (err) {
                 console.error('Error fetching modules:', err);
                 setError('Failed to load modules. Please try again later.');
@@ -97,7 +119,7 @@ export default function CourseDetail() {
             }
         };
 
-        if (course && course._id && user) {
+        if (course && course._id) {
             fetchModules();
         }
     }, [course, user]);
@@ -124,7 +146,30 @@ export default function CourseDetail() {
 
     // Handle starting a module
     const handleStartModule = () => {
-        if (selectedModule && !selectedModule.isLocked) {
+        if (!selectedModule) return;
+
+        // Check if user is authenticated
+        if (!user) {
+            // Store the intended module path in the auth context
+            const targetPath = selectedModule.title === "SWOT Analysis"
+                ? `/all-courses/business-frameworks-fundamentals/swot-analysis`
+                : `/all-courses/${course.slug}/module/${selectedModule._id}`;
+
+            // Store in localStorage for persistence across page reloads/redirects
+            localStorage.setItem('redirectAfterAuth', targetPath);
+
+            // Set the intended path in the auth context for global access
+            setIntended(targetPath);
+
+            // Also store locally for the modal
+            setRedirectPath(targetPath);
+
+            // Show the authentication modal
+            setIsAuthModalOpen(true);
+            return;
+        }
+
+        if (selectedModule.isUnlocked) {
             // Check if the module is SWOT Analysis
             if (selectedModule.title === "SWOT Analysis") {
                 // Navigate to the SWOT Analysis page with proper course path
@@ -368,6 +413,9 @@ export default function CourseDetail() {
                     </div>
                 </div>
             </main>
+
+            {/* Auth modal component */}
+            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} redirectPath={redirectPath} />
         </div>
     );
 }

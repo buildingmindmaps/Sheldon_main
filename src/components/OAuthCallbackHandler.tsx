@@ -34,9 +34,24 @@ const OAuthCallbackHandler = () => {
 
         setStatus('success');
 
-        // Redirect to intended page or dashboard after a short delay
+        // First check for a saved redirect path in localStorage
+        const savedRedirectPath = localStorage.getItem('redirectAfterAuth') || localStorage.getItem('postSignupRedirect');
+
+        // Redirect to intended path, localStorage saved path, or dashboard after a short delay
         setTimeout(() => {
-          navigate(intended || '/dashboard', { replace: true });
+          // Use the first available path in order of priority
+          const redirectTo = intended || savedRedirectPath || '/dashboard';
+          console.log('Redirecting after OAuth to:', redirectTo);
+
+          // Clear any saved paths
+          if (savedRedirectPath) {
+            localStorage.removeItem('redirectAfterAuth');
+            localStorage.removeItem('postSignupRedirect');
+          }
+
+          // Use window.location.replace instead of navigate for a more forceful redirect
+          // This will prevent any subsequent redirects from happening
+          window.location.replace(redirectTo);
         }, 1500);
       } catch (error) {
         console.error('OAuth callback error:', error);

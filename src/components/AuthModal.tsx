@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../lib/AuthContext';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -22,6 +22,7 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
   const [showPassword, setShowPassword] = useState(false);
   const [needsVerification, setNeedsVerification] = useState(false);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   // Check for verification token in URL
   useEffect(() => {
@@ -59,6 +60,15 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
     }
   };
 
+  // Check for redirect path on component mount
+  useEffect(() => {
+    // Log the current redirect path for debugging
+    const savedPath = localStorage.getItem('redirectAfterAuth');
+    if (savedPath) {
+      console.log('Found saved redirect path on modal open:', savedPath);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleEmailAuth = async (e: React.FormEvent) => {
@@ -71,13 +81,22 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
     try {
       if (isLogin) {
         try {
+          // Capture the redirect path from props or localStorage before login
+          // This ensures we have it even if components remount during auth
+          const savedRedirectPath = redirectPath || localStorage.getItem('redirectAfterAuth');
+          console.log('Login attempt with path:', savedRedirectPath);
+
           await login(email, password);
 
-          // If login is successful (no error thrown), close modal
+          // If login is successful, handle redirect
           onClose();
-          // Redirect if needed
-          if (redirectPath) {
-            window.location.href = redirectPath;
+
+          if (savedRedirectPath) {
+            console.log('Redirecting to:', savedRedirectPath);
+            // Use a more forceful approach to redirect
+            window.location.href = savedRedirectPath;
+            // Clear the saved path
+            localStorage.removeItem('redirectAfterAuth');
           }
         } catch (err: any) {
           const errorMessage = err.message || 'Login failed';
@@ -111,12 +130,46 @@ export function AuthModal({ isOpen, onClose, isCompulsory = false, redirectPath 
             return;
           }
 
-          await register(username, email, password);
-          setSuccess('Account created! Please check your email to verify your account before logging in.');
+          // Store the redirect path before registration - this is crucial
+          // as the registration process might clear or reset certain states
+          const savedRedirectPath = redirectPath || localStorage.getItem('redirectAfterAuth');
+          console.log('Signup attempt with saved path:', savedRedirectPath);
 
-          // Don't switch to login mode automatically
-          // Instead, show verification needed message
-          setNeedsVerification(true);
+          // Make sure path is securely stored for after registration
+          if (savedRedirectPath) {
+            // Store with a different key that won't be cleared during auth flow
+            localStorage.setItem('postSignupRedirect', savedRedirectPath);
+          }
+
+          const result = await register(username, email, password);
+
+          // If registration requires verification
+          if (result && result.needsVerification) {
+            setSuccess('Account created! Please check your email to verify your account before logging in.');
+            setNeedsVerification(true);
+          } else {
+            // If verification not required, try auto-login
+            try {
+              await login(email, password);
+              onClose();
+
+              // Retrieve the stored path using our special key
+              const postSignupPath = localStorage.getItem('postSignupRedirect');
+              if (postSignupPath) {
+                console.log('Redirecting after signup to:', postSignupPath);
+                // Use direct page navigation
+                window.location.replace(postSignupPath);
+                // Clean up storage
+                localStorage.removeItem('postSignupRedirect');
+                localStorage.removeItem('redirectAfterAuth');
+                return; // Important to prevent further execution
+              }
+            } catch (loginErr) {
+              console.error('Auto-login after signup failed:', loginErr);
+              setSuccess('Account created successfully! Please log in.');
+              setIsLogin(true);
+            }
+          }
         } catch (err: any) {
           const errorMessage = err.message || 'Registration failed';
 

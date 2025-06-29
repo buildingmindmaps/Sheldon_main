@@ -66,15 +66,38 @@ passport.use(
           }
 
           console.log('Creating new user with avatar:', avatar);
+
+          // Find all courses to unlock first module of each course (Same as in registerUser)
+          const Course = require('../models/course');
+          const Module = require('../models/Module');
+
+          // Find all courses
+          const courses = await Course.find();
+
+          // Get first module from each course
+          const unlockedModules = [];
+          for (const course of courses) {
+            // Find the first module (lowest order) for this course
+            const firstModule = await Module.findOne({ courseId: course._id })
+              .sort({ order: 1 })
+              .limit(1);
+
+            if (firstModule) {
+              unlockedModules.push(firstModule._id);
+            }
+          }
+
           user = await User.create({
             googleId: profile.id,
             email: email,
             username: profile.displayName || email.split('@')[0], // Use display name or part of email
             avatar: avatar, // Save the avatar URL from Google
             isVerified: true, // OAuth users are considered verified
+            unlockedModules: unlockedModules, // Add the first module of each course
             // Password is not stored for OAuth users
           });
           console.log('New user created with avatar:', user.avatar);
+          console.log('New user has unlocked modules:', user.unlockedModules);
           done(null, user);
         }
       } catch (err) {

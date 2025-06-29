@@ -3,11 +3,11 @@ import { useAuth } from '../lib/AuthContext';
 
 export function useAuthPopup(delay: number = 5001) {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     // Skip popup if user is already logged in
-    if (currentUser) return;
+    if (user) return;
 
     // Check if popup has been shown before in this session
     const popupShown = sessionStorage.getItem('auth_popup_shown');
@@ -21,7 +21,7 @@ export function useAuthPopup(delay: number = 5001) {
 
       return () => clearTimeout(timer);
     }
-  }, [currentUser, delay]);
+  }, [user, delay]);
 
   return {
     showAuthModal,

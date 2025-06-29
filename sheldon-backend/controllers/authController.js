@@ -129,6 +129,7 @@ const loginUser = async (req, res) => {
         modulesCompleted: user.modulesCompleted,
         experiencePoints: user.experiencePoints,
         avatar: user.avatar, // Include avatar in the response
+        unlockedModules: user.unlockedModules, // Add unlockedModules to the response
         token: generateToken(user._id),
       });
     } else {
